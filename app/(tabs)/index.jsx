@@ -1,29 +1,28 @@
-import { StyleSheet } from 'react-native';
-import {View, Text} from 'react-native';
-import LandingScreen from '../../Pages/Landing.jsx';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+// Import your screens
 import WelcomeScreen from '../../Pages/Welcome.jsx';
+import LandingScreen from '../../Pages/Landing.jsx';
+import SignupScreen from "../../Pages/signup.jsx";
+import SignInScreen from "../../Pages/signin.jsx";
+
+const Stack = createNativeStackNavigator();
 
 export default function MainScreen() {
-  return(
-          <>
-          <WelcomeScreen/>
-           </>
-  )
-};
+  return (
+      <Stack.Navigator
+        initialRouteName="Welcome" // start screen
+        screenOptions={{
+          headerShown: false, // hides default header
+        }}
+      >
+        <Stack.Screen name="Welcome" component={WelcomeScreen} />
+        <Stack.Screen name="Landing" component={LandingScreen} />
+        <Stack.Screen name="signup" component={SignupScreen} />
+        <Stack.Screen name="Login" component={SignInScreen} />
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
-});
+      </Stack.Navigator>
+  );
+}

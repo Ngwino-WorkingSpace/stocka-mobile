@@ -1,55 +1,106 @@
 import BackgroundScreen from "../components/Background2.jsx";
 import React from "react";
-import {View, Text, StyleSheet,Image} from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
-export default function LandingScreen(){
-    return(
-        <View style={styles.container}>
-          <BackgroundScreen/>
-           <View style={styles.content}>
-            <Image source={require("../assets/images/stockaLogo.png")}
-               style={styles.logo}
-            />
+export default function LandingScreen({navigation}) {
+  return (
+    <View style={styles.container}>
+      <BackgroundScreen />
 
-          </View>
-          <Text style={styles.bottomText}>NGWINO</Text>
-        </View>
+      {/* Centered content */}
+      <View style={styles.centeredContent}>
+        <Image
+          source={require("../assets/images/stockaLogo.png")}
+          style={styles.logo}
+        />
 
-    );
+        <Text style={styles.subtitle}>Welcome to</Text>
+        <Text style={styles.title}>Stocka</Text>
+        <Text style={styles.paragraph}>
+          TradeWise is the smart way to run a business without the headache.
+          It records every transaction automatically, tracks profits and losses
+          in real time, and replaces messy ledgers and complex calculations so
+          you can focus on growing your business, not chasing numbers.
+        </Text>
+
+        <TouchableOpacity style={styles.button}
+         onPress={()=>navigation.navigate("signup")}
+        >
+          <Text style={styles.buttonText}>Continue</Text>
+          <Ionicons name="arrow-forward-circle" size={27} color="#fff" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Bottom right text */}
+      <Text style={styles.bottomText}>NGWINO</Text>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  content: {
+
+  // Centered content container
+  centeredContent: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1,
-    
+    justifyContent: "center", // centers vertically
+    alignItems: "center",     // centers horizontally
+    paddingHorizontal: 30,
+    zIndex: 2,
+    paddingTop:150,
   },
-  logo:{
-        width: 200,   // set your image width
-    height: 100,   // set your image height
-    resizeMode: 'contain', // maintain aspect ratio
-  },
-  title: {
-    fontSize: 28,
-    color: "#FFFFFF",
-    fontWeight: "bold",
+
+  logo: {
+    width: 200,
+    height: 100,
+    resizeMode: "contain",
+    marginBottom: 20,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 25,
     color: "#DCEAF1",
-    marginTop: 8,
+    marginBottom: 5,
   },
-   bottomText: {
-    position: 'absolute',
-    bottom: 20, // distance from the bottom
-    right: 20,  // distance from the right
+  title: {
+    fontSize: 55,
+    color: "#FFFFFF",
+    fontWeight: "bold",
+    marginBottom: 15,
+  },
+  paragraph: {
+    fontSize: 19,
+    color: "#FFFFFF",
+    lineHeight: 22,
+    textAlign: "center",  // centers text horizontally
+    marginBottom: 30,
+    letterSpacing:0.1,
+  },
+  button: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#09364D",
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 30,
+    borderWidth:1,
+    borderColor:"#fff",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 22,
+    fontWeight: "600",
+    marginRight: 8,
+  },
+  bottomText: {
+    position: "absolute",
+    bottom: 20,
+    right: 20,
     fontSize: 23,
-    color: '#fff',
-    fontWeight:"600" // your color
+    color: "#fff",
+    fontWeight: "600",
   },
 });
