@@ -1,11 +1,11 @@
 import { StyleSheet } from 'react-native';
 import {View, Text} from 'react-native';
-import Background from "../../components/Background.jsx";
+import WelcomeScreen from '../../Pages/Welcome.jsx';
 
 export default function MainScreen() {
   return(
     <>
-    <Background/>
+       <WelcomeScreen/>  
     </>
   )
 };
