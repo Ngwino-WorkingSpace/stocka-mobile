@@ -2,13 +2,15 @@ import Background from "../components/Background.jsx";
 import React from "react";
 import {View, Text, StyleSheet,Image} from "react-native";
 
-export default function WelcomeScreen(){
+export default function LandingScreen(){
     return(
         <View style={styles.container}>
           <Background/>
            <View style={styles.content}>
             <Image source={require("../assets/images/stocka.png")}/>
-            </View>
+
+          </View>
+          <Text style={styles.bottomText}>NGWINO</Text>
         </View>
 
     );
@@ -22,7 +24,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    zIndex: 1, // keeps content above background
+    zIndex: 1,
+    paddingTop:50, // keeps content above background
   },
   title: {
     fontSize: 28,
@@ -33,5 +36,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#DCEAF1",
     marginTop: 8,
+  },
+   bottomText: {
+    position: 'absolute',
+    bottom: 20, // distance from the bottom
+    right: 20,  // distance from the right
+    fontSize: 23,
+    color: '#fff',
+    fontWeight:"600" // your color
   },
 });
