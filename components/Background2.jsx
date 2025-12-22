@@ -132,12 +132,12 @@ export default function BackgroundScreen() {
       />
 
       {/* Bottom-left */}
-      <DiagonalStripedCircle
+      {/* <DiagonalStripedCircle
         size={200}
         bottom={-100}
         left={-90}
         rotate={-15}
-      />
+      /> */}
     </View>
   );
 }
