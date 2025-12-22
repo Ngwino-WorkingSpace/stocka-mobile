@@ -1,14 +1,14 @@
 import { StyleSheet } from 'react-native';
 import {View, Text} from 'react-native';
+import Background from "../../components/Background.jsx";
 
-export default function TabOneScreen() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View style={styles.separator}/>
-    </View>
-  );
-}
+export default function MainScreen() {
+  return(
+    <>
+    <Background/>
+    </>
+  )
+};
 
 const styles = StyleSheet.create({
   container: {
