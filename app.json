@@ -31,7 +31,8 @@
       "favicon": "./assets/images/stocka.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
