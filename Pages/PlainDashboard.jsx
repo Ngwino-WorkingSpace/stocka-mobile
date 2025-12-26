@@ -126,7 +126,7 @@ export default function PlainDashboardScreen() {
               source={require("../assets/images/stock.png")}
               style={{ width: 36, height: 36 }}
             />
-            {isExpanded && <Text style={styles.stockaText}>Stocka</Text>}
+            {isExpanded && <Text style={styles.stockText}>Stocka</Text>}
           </View>
         )}
 
@@ -269,7 +269,7 @@ export default function PlainDashboardScreen() {
               />
               <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
             </View>
-            <Ionicons name="search" size={22} color={darkMode ? "#fff" : "#000"} />
+            <Ionicons name="search" size={22} color={darkMode ? "#fff" : "#000"} style={{right:10}} />
           </View>
 
           {/* TABS */}
@@ -425,6 +425,12 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   stockaText: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 18,
+    color: "#000",
+    marginLeft: 10,
+  },
+   stockText: {
     fontFamily: "Poppins_700Bold",
     fontSize: 18,
     color: "#fff",
