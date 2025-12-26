@@ -42,6 +42,8 @@ export default function StockScreen() {
       subText: "Vegetables",
       kilos: "54kg",
       ViewText: "Expiration in 2 months",
+      PurchaseDate: "12th November 2025",
+      ExpiryDate: "2nd January 2026",
     },
     {
       id: 2,
@@ -50,6 +52,8 @@ export default function StockScreen() {
       subText: "Grains",
       kilos: "112kg",
       ViewText: "Expiration in 2 months",
+      PurchaseDate: "12th November 2025",
+      ExpiryDate: "2nd January 2026",
     },
     {
       id: 3,
@@ -58,6 +62,8 @@ export default function StockScreen() {
       subText: "Vegetables",
       kilos: "23kg",
       ViewText: "Expiration in 2 months",
+      PurchaseDate: "12th November 2025",
+      ExpiryDate: "2nd January 2026",
     },
     {
       id: 4,
@@ -66,6 +72,8 @@ export default function StockScreen() {
       subText: "Fruits",
       kilos: "11kg",
       ViewText: "Expiration in 2 months",
+      PurchaseDate: "12th November 2025",
+      ExpiryDate: "2nd January 2026",
     },
     {
       id: 5,
@@ -74,6 +82,8 @@ export default function StockScreen() {
       subText: "Biscuits",
       kilos: "2 boxes (50 pieces each)",
       ViewText: "Expiration in 2 months",
+      PurchaseDate: "12th November 2025",
+      ExpiryDate: "2nd January 2026",
     },
   ];
 
@@ -98,12 +108,11 @@ export default function StockScreen() {
           <Text style={styles.stockaText}>Stocka</Text>
         </View>
 
-        {/* Search and Category */}
+        {/* Search & Category */}
         <View style={styles.searchCategoryContainer}>
           <TextInput
             style={styles.searchInput}
             placeholder="Search..."
-            placeholderTextColor="#888"
             value={searchText}
             onChangeText={setSearchText}
           />
@@ -139,10 +148,9 @@ export default function StockScreen() {
           </View>
         </Modal>
 
-        {/* Title */}
         <Text style={styles.title}>Products in Stock</Text>
 
-        {/* Stock Products */}
+        {/* Products */}
         <FlatList
           data={filteredProducts.filter((p) =>
             p.TextHead.toLowerCase().includes(searchText.toLowerCase())
@@ -155,13 +163,15 @@ export default function StockScreen() {
                 <Text style={styles.productName}>{item.TextHead}</Text>
                 <Text style={styles.productCategory}>{item.subText}</Text>
                 <Text style={styles.productKilos}>{item.kilos}</Text>
-                <View style={styles.warningWrapper}>
-                <Ionicons name="warning" color="#09364D" size={20} style={{ marginRight: 8 }} />
-                  <Text style={styles.productExpiry}>{item.ViewText}</Text>
-               </View>
 
-                <TouchableOpacity style={styles.viewButton}
-                   onPress={() => setSelectedProduct(item)}
+                <View style={styles.warningWrapper}>
+                  <Ionicons name="warning" size={18} color={MAIN} />
+                  <Text style={styles.productExpiry}>{item.ViewText}</Text>
+                </View>
+
+                <TouchableOpacity
+                  style={styles.viewButton}
+                  onPress={() => setSelectedProduct(item)}
                 >
                   <Text style={styles.viewButtonText}>View Details</Text>
                 </TouchableOpacity>
@@ -169,233 +179,123 @@ export default function StockScreen() {
             </View>
           )}
         />
-
-        {/* Add Product */}
-        <TouchableOpacity style={styles.addProductButton}>
-          <Ionicons name="add" size={24} color="#fff" />
-          <Text style={styles.addProductText}>Add a product</Text>
-        </TouchableOpacity>
       </ScrollView>
-          {/* Product Details Modal */}
-      <Modal visible={selectedProduct !== null} transparent animationType="fade">
-        <View style={styles.overlay}>
-          <View style={styles.productDetailsModal}>
-            <Image
-              source={selectedProduct?.Image}
-              style={styles.productDetailsImage}
-            />
-            <Text style={styles.productDetailsName}>
-              {selectedProduct?.TextHead}
-            </Text>
-            <Text style={styles.productDetailsCategory}>
-              {selectedProduct?.subText}
-            </Text>
-            <Text style={styles.productDetailsKilos}>
-              {selectedProduct?.kilos}
-            </Text>
-            <Text style={styles.productDetailsExpiry}>
-              {selectedProduct?.ViewText}
-            </Text>
 
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setSelectedProduct(null)}
-            >
-              <Text style={styles.closeButtonText}>Close</Text>
-            </TouchableOpacity>
+      {/* ================= PRODUCT DETAILS MODAL ================= */}
+      <Modal visible={!!selectedProduct} transparent animationType="fade">
+        <View style={styles.overlay}>
+          <View style={styles.detailsCard}>
+            {/* Header */}
+            <View style={styles.detailsHeader}>
+              <Text style={styles.detailsTitle}>Product Details</Text>
+              <TouchableOpacity onPress={() => setSelectedProduct(null)}>
+                <Ionicons name="close" size={22} color="#333" />
+              </TouchableOpacity>
+            </View>
+
+            {/* Content */}
+            <View style={styles.detailsContent}>
+              {/* Left */}
+              <View style={styles.detailsLeft}>
+                <Detail label="Product" value={selectedProduct?.TextHead} />
+                <Detail label="Category" value={selectedProduct?.subText} />
+                <Detail label="Remaining Stock" value={selectedProduct?.kilos} />
+                <Detail label="Purchase Date" value={selectedProduct?.PurchaseDate} />
+                <Detail label="Expiry Date" value={selectedProduct?.ExpiryDate} />
+              </View>
+
+              {/* Right */}
+              <View style={styles.detailsRight}>
+                <Image
+                  source={selectedProduct?.Image}
+                  style={styles.detailsImage}
+                />
+                <Text style={styles.descriptionText}>
+                  Irish potatoes are a high-demand crop that requires cool,
+                  dry, well-ventilated storage to maintain quality and avoid loss.
+                </Text>
+              </View>
+            </View>
+
+            {/* Buttons */}
+            <View style={styles.detailsActions}>
+              <TouchableOpacity style={styles.actionButton}>
+                <Text style={styles.actionText}>Record Sale</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.actionButtonOutline}>
+                <Text style={styles.actionTextOutline}>Add Stock</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
-
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  logoContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 20,
-    justifyContent:"center"
-  },
-  stockaText: {
-    fontFamily: "Poppins_700Bold",
-    fontSize: 22,
-    color: MAIN,
-    marginLeft: 10,
-  },
-  searchCategoryContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 20,
-  },
-  searchInput: {
-    flex: 1,
-    backgroundColor: "#F0F0F0",
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    marginRight: 10,
-  },
-  warningWrapper: {
-  flexDirection: "row",
-  alignItems: "center",
-  marginTop: 4,
-},
+/* Small reusable component */
+const Detail = ({ label, value }) => (
+  <View style={{ marginBottom: 10 }}>
+    <Text style={styles.detailLabel}>{label}</Text>
+    <Text style={styles.detailValue}>{value}</Text>
+  </View>
+);
 
-  categoryDropdown: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: MAIN,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  categoryText: {
-    color: "#fff",
-    marginRight: 6,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.2)",
-  },
-  modalContainer: {
-    position: "absolute",
-    top: 100,
-    right: 20,
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    paddingVertical: 10,
-    width: 150,
-    elevation: 5,
-  },
-  modalItem: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-  },
-  modalText: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: "#333",
-  },
-  title: {
-    fontFamily: "Poppins_700Bold",
-    fontSize: 18,
-    marginBottom: 12,
-  },
-  productCard: {
-    flexDirection: "row",
-    backgroundColor: "#F5F5F5",
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 12,
-  },
-  productImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 8,
-  },
-  productName: {
-    fontFamily: "Poppins_600SemiBold",
-    fontSize: 16,
-  },
-  productCategory: {
-    fontSize: 12,
-    color: "#555",
-    fontFamily: "Poppins_400Regular",
-  },
-  productKilos: {
-    fontSize: 12,
-    color: "#555",
-    fontFamily: "Poppins_400Regular",
-  },
-  productExpiry: {
-    fontSize: 12,
-    color: "red",
-    marginVertical: 4,
-    fontFamily: "Poppins_400Regular",
-  },
-  viewButton: {
-    backgroundColor: MAIN,
-    borderRadius: 8,
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    alignSelf: "flex-start",
-    marginTop: 4,
-  },
-  viewButtonText: {
-    color: "#fff",
-    fontFamily: "Poppins_500Medium",
-    fontSize: 12,
-  },
-  addProductButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: MAIN,
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    justifyContent: "center",
-    marginTop: 20,
-  },
-  addProductText: {
-    color: "#fff",
-    fontFamily: "Poppins_600SemiBold",
-    fontSize: 14,
-    marginLeft: 8,
-  },
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 100, 255, 0.2)", // soft blue overlay
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  productDetailsModal: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 20,
-    width: "85%",
-    alignItems: "center",
-    elevation: 10,
-  },
-  productDetailsImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 8,
-    marginBottom: 12,
-  },
-  productDetailsName: {
-    fontFamily: "Poppins_700Bold",
-    fontSize: 18,
-    marginBottom: 6,
-  },
-  productDetailsCategory: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: "#555",
-    marginBottom: 4,
-  },
-  productDetailsKilos: {
-    fontFamily: "Poppins_400Regular",
-    fontSize: 14,
-    color: "#555",
-    marginBottom: 4,
-  },
-  productDetailsExpiry: {
-    fontFamily: "Poppins_400Regular",
-    fontSize: 14,
-    color: "red",
-    marginBottom: 12,
-  },
-  closeButton: {
-    backgroundColor: MAIN,
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-  },
-  closeButtonText: {
-    color: "#fff",
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-  },
+/* ================= STYLES ================= */
+const styles = StyleSheet.create({
+  logoContainer: { flexDirection: "row", justifyContent: "center", marginBottom: 20 },
+  stockaText: { fontFamily: "Poppins_700Bold", fontSize: 22, color: MAIN, marginLeft: 10 },
+
+  searchCategoryContainer: { flexDirection: "row", marginBottom: 20 },
+  searchInput: { flex: 1, backgroundColor: "#F0F0F0", borderRadius: 8, padding: 10, marginRight: 10 },
+
+  categoryDropdown: { flexDirection: "row", backgroundColor: MAIN, padding: 10, borderRadius: 8 },
+  categoryText: { color: "#fff", marginRight: 5 },
+
+  modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.2)" },
+  modalContainer: { position: "absolute", top: 100, right: 20, backgroundColor: "#fff", borderRadius: 10, width: 160 },
+
+  modalItem: { padding: 12 },
+  modalText: { fontFamily: "Poppins_500Medium" },
+
+  title: { fontFamily: "Poppins_700Bold", fontSize: 18, marginBottom: 12 },
+
+  productCard: { flexDirection: "row", backgroundColor: "#F5F5F5", padding: 12, borderRadius: 12, marginBottom: 12 },
+  productImage: { width: 80, height: 80, borderRadius: 8 },
+
+  productName: { fontFamily: "Poppins_600SemiBold", fontSize: 16 },
+  productCategory: { fontSize: 12, color: "#555", fontFamily:"Poppins_400Regular" },
+  productKilos: { fontSize: 12, color: "#555" , fontFamily:"Poppins_400Regular"},
+
+  warningWrapper: { flexDirection: "row", alignItems: "center", marginVertical: 4 },
+  productExpiry: { fontSize: 12, color: "red", marginLeft: 6 },
+
+  viewButton: { backgroundColor: MAIN, padding: 8, borderRadius: 8, marginTop: 4, alignSelf: "flex-start" },
+  viewButtonText: { color: "#fff", fontSize: 12 },
+
+  /* ===== MODAL ===== */
+  overlay: { flex: 1, backgroundColor: "rgba(9,54,77,0.25)", justifyContent: "center", alignItems: "center" },
+  detailsCard: { width: "90%", backgroundColor: "#fff", borderRadius: 16, padding: 20 },
+
+  detailsHeader: { flexDirection: "row", justifyContent: "space-between", marginBottom: 15 },
+  detailsTitle: { fontFamily: "Poppins_700Bold", fontSize: 18 },
+
+  detailsContent: { flexDirection: "row" },
+  detailsLeft: { flex: 1 },
+  detailsRight: { flex: 1, alignItems: "center" },
+
+  detailsImage: { width: 120, height: 120, borderRadius: 10, marginBottom: 10 },
+
+  descriptionText: { fontSize: 12, color: "#555", textAlign: "center" },
+
+  detailLabel: { fontSize: 12, color: "#777" },
+  detailValue: { fontFamily: "Poppins_500Medium" },
+
+  detailsActions: { flexDirection: "row", justifyContent: "space-between", marginTop: 20 },
+
+  actionButton: { backgroundColor: MAIN, padding: 10, borderRadius: 8, flex: 1, marginRight: 8 },
+  actionText: { color: "#fff", textAlign: "center" },
+
+  actionButtonOutline: { borderWidth: 1, borderColor: MAIN, padding: 10, borderRadius: 8, flex: 1 },
+  actionTextOutline: { color: MAIN, textAlign: "center" },
 });
