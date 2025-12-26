@@ -7,6 +7,7 @@ import WelcomeScreen from '../../Pages/Welcome.jsx';
 import LandingScreen from '../../Pages/Landing.jsx';
 import SignupScreen from "../../Pages/signup.jsx";
 import SignInScreen from "../../Pages/signin.jsx";
+import PlainDashboardScreen from "../../Pages/PlainDashboard.jsx";
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +23,7 @@ export default function MainScreen() {
         <Stack.Screen name="Landing" component={LandingScreen} />
         <Stack.Screen name="signup" component={SignupScreen} />
         <Stack.Screen name="Login" component={SignInScreen} />
+         <Stack.Screen name="dashboard" component={PlainDashboardScreen} />
 
       </Stack.Navigator>
   );

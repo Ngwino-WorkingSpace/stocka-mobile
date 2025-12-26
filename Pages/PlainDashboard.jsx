@@ -83,7 +83,7 @@ export default function PlainDashboardScreen() {
       <View
         style={[
           styles.sideBar,
-          { width: sidebarOpen ? 180 : 50 },
+          { width: sidebarOpen ? 58:7 },
         ]}
       >
         <TouchableOpacity onPress={() => setSidebarOpen(!sidebarOpen)}>

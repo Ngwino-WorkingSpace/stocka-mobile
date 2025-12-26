@@ -55,12 +55,13 @@ export default function SignInScreen({ navigation }) {
               Sign up
             </Text>
           </Text>
-            <TouchableOpacity style={styles.button} onPress={handleSignup}>
+            <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate("dashboard")}>
               <Text style={styles.buttonText}>Sign In</Text>
             </TouchableOpacity>
-          </View>
+            </View>
         </ScrollView>
-      </KeyboardAvoidingView>
+
+        </KeyboardAvoidingView>
     </View>
   );
 }
