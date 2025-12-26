@@ -19,7 +19,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 const MAIN = "#09364D";
 
-export default function PlainDashboardScreen() {
+export default function PlainDashboardScreen({navigation}) {
   // Sidebar states: "press" (minimal), "collapsed" (icons only), "expanded" (full)
   const [sidebarState, setSidebarState] = useState("press");
   const [darkMode, setDarkMode] = useState(false);
@@ -42,6 +42,7 @@ export default function PlainDashboardScreen() {
     // Collapse sidebar when clicking on menu items (go back to icons only)
     setSelectedItem(itemName);
     setSidebarState("press");
+    navigation.navigate(itemName);
   };
 
   const handleArrowPress = () => {
