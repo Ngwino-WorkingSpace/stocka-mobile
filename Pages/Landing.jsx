@@ -47,11 +47,13 @@ const styles = StyleSheet.create({
     fontSize: 28,
     color: "#FFFFFF",
     fontWeight: "bold",
+    fontFamily:"Poppins_700Bold",
   },
   subtitle: {
     fontSize: 16,
     color: "#DCEAF1",
     marginTop: 8,
+     fontFamily:"Poppins_400Regular",
   },
    bottomText: {
     position: 'absolute',
@@ -59,6 +61,7 @@ const styles = StyleSheet.create({
     right: 20,  // distance from the right
     fontSize: 23,
     color: '#fff',
-    fontWeight:"600" // your color
+    fontWeight:"600", // your color
+     fontFamily:"Poppins_400Regular",
   },
 });

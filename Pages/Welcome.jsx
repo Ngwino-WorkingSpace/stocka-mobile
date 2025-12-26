@@ -2,8 +2,24 @@ import BackgroundScreen from "../components/Background2.jsx";
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import {
+  useFonts,
+  Poppins_400Regular,
+  Poppins_500Medium,
+  Poppins_600SemiBold,
+  Poppins_700Bold,
+} from "@expo-google-fonts/poppins";
 
 export default function LandingScreen({navigation}) {
+
+  const [fontsLoaded] = useFonts({
+    Poppins_400Regular,
+    Poppins_500Medium,
+    Poppins_600SemiBold,
+    Poppins_700Bold,
+  });
+
+  if (!fontsLoaded) return null;
   return (
     <View style={styles.container}>
       <BackgroundScreen />
@@ -69,14 +85,16 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontWeight: "bold",
     marginBottom: 15,
+    fontFamily:"Poppins_700Bold",
   },
   paragraph: {
-    fontSize: 19,
+    fontSize: 14,
     color: "#FFFFFF",
     lineHeight: 22,
     textAlign: "center",  // centers text horizontally
     marginBottom: 30,
     letterSpacing:0.1,
+    fontFamily:"Poppins_400Regular",
   },
   button: {
     flexDirection: "row",
@@ -94,13 +112,15 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "600",
     marginRight: 8,
+    fontFamily:"Poppins_400Regular",
   },
   bottomText: {
     position: "absolute",
-    bottom: 20,
-    right: 20,
+    bottom: 10,
+    right: 10,
     fontSize: 23,
     color: "#fff",
     fontWeight: "600",
+    fontFamily:"Poppins_400Regular",
   },
 });
