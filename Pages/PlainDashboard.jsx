@@ -3,9 +3,9 @@ import {
   View,
   Text,
   StyleSheet,
-  Image,
   ScrollView,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import {
   useFonts,
@@ -16,57 +16,10 @@ import {
 } from "@expo-google-fonts/poppins";
 import { Ionicons } from "@expo/vector-icons";
 
-const MAIN_COLOR = "#09364D";
+const MAIN = "#09364D";
 
 export default function PlainDashboardScreen() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const DashboardContents = [
-    { id: 1, text: "Total Sales", amount: "200,000 FRW", button: "Reload" },
-    { id: 2, text: "Total Profit", amount: "50,000 FRW", button: "View More" },
-    { id: 3, text: "Total Stock", amount: "150,000 FRW", button: "Graph" },
-  ];
-
-  const TransactionCardContent = [
-    {
-      id: 1,
-      icon: "car-truck-outline",
-      bigText: "Sold 30kg of potatoes",
-      smallText: "24th December 2025",
-      priceAmount: "+260,000 FRW",
-    },
-    {
-      id: 2,
-      icon: "cart-outline",
-      bigText: "Bought 2 tons of kiwi",
-      smallText: "20th December 2025",
-      priceAmount: "-360,000 FRW",
-    },
-    {
-      id: 3,
-      icon: "car-truck-outline",
-      bigText: "50% expired stock",
-      smallText: "15th December 2025",
-      priceAmount: "-160,000 FRW",
-    },
-  ];
-
-  const AlertCardContents = [
-    {
-      id: 1,
-      icon: "warning-outline",
-      alertName: "Low Stock",
-      alertdetails:
-        "80% of your stock has been sold. Please refill your stock.",
-    },
-    {
-      id: 2,
-      icon: "warning-outline",
-      alertName: "Expiration",
-      alertdetails:
-        "20% of your products are about to expire. Please sell them.",
-    },
-  ];
+  const [open, setOpen] = useState(false);
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -74,221 +27,318 @@ export default function PlainDashboardScreen() {
     Poppins_600SemiBold,
     Poppins_700Bold,
   });
-
   if (!fontsLoaded) return null;
 
   return (
-    <>
+    <View style={{ flex: 1, flexDirection: "row", backgroundColor:"#fff"}}>
       {/* SIDEBAR */}
-      <View
-        style={[
-          styles.sideBar,
-          { width: sidebarOpen ? 58:7 },
-        ]}
-      >
-        <TouchableOpacity onPress={() => setSidebarOpen(!sidebarOpen)}>
+      <View style={[styles.sidebar, { width: open ? 58 : 15 }]}>
+        <TouchableOpacity onPress={() => setOpen(!open)}>
           <Ionicons
-            name={sidebarOpen ? "arrow-back" : "arrow-forward"}
+            name={open ? "chevron-back" : "chevron-forward"}
             size={22}
             color="#fff"
           />
         </TouchableOpacity>
 
-        {sidebarOpen && (
-          <Text style={styles.sideBarText}>TRADEWISE</Text>
+        {!open && <Text style={styles.verticalText}>PRESS</Text>}
+
+        {open && (
+          <View style={{ marginTop: 30, alignItems: "center" }}>
+            <Ionicons
+              name="home-outline"
+              size={22}
+              color="#fff"
+              style={{ marginVertical: 12 }}
+            />
+            <Ionicons
+              name="pricetag-outline"
+              size={22}
+              color="#fff"
+              style={{ marginVertical: 12 }}
+            />
+            <Ionicons
+              name="stats-chart-outline"
+              size={22}
+              color="#fff"
+              style={{ marginVertical: 12 }}
+            />
+            <Ionicons
+              name="settings-outline"
+              size={22}
+              color="#fff"
+              style={{ marginVertical: 12 }}
+            />
+          </View>
         )}
       </View>
 
-      <ScrollView contentContainerStyle={{ paddingLeft: sidebarOpen ? 190 : 60 }}>
-        <View style={styles.container}>
-          {/* TOP BAR */}
-          <View style={styles.topIcons}>
-            <Image
-              source={require("../assets/images/stocka.png")}
-              style={{ width: 40, height: 40 }}
-            />
-            <Ionicons name="search" size={22} color="#000" />
-          </View>
+      {/* CONTENT */}
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          padding: 20,
+          marginLeft: open ? 58 : 15, // space not used by sidebar
+          paddingBottom: 20,
+        }}
+      >
+        {/* HEADER */}
+        <View style={styles.header}>
+            <View style={styles.logoContainer}>
+  <Image
+    source={require("../assets/images/stock.png")}
+    style={{ width: 36, height: 36 }}
+  />
+  <Text style={styles.stockaText}>Stocka</Text>
+</View>
 
-          {/* NAVIGATION */}
-          <View style={styles.TopNavigation}>
-            {["Daily", "Weekly", "Monthly", "Annually"].map((item) => (
-              <View key={item} style={styles.navigator}>
-                <Text style={styles.navText}>{item}</Text>
-              </View>
-            ))}
-          </View>
+          <Ionicons name="search" size={22} />
+        </View>
 
-          <Text style={styles.title}>Your Dashboard</Text>
-
-          {/* DASHBOARD CARDS */}
-          <View style={styles.realDashboard}>
-            {DashboardContents.map((item) => (
-              <View key={item.id} style={styles.dashboardCard}>
-                <Text style={styles.cardTitle}>{item.text}</Text>
-                <Text style={styles.cardAmount}>{item.amount}</Text>
-                <TouchableOpacity style={styles.cardButton}>
-                  <Text style={styles.cardButtonText}>{item.button}</Text>
-                </TouchableOpacity>
-              </View>
-            ))}
-          </View>
-
-          <Text style={styles.title}>Recent Transactions</Text>
-
-          {/* TRANSACTIONS */}
-          {TransactionCardContent.map((item) => (
-            <View key={item.id} style={styles.transactionCard}>
-              <Ionicons name={item.icon} size={30} color={MAIN_COLOR} />
-              <View style={{ flex: 1, marginLeft: 10 }}>
-                <Text style={styles.transactionBig}>{item.bigText}</Text>
-                <Text style={styles.transactionSmall}>{item.smallText}</Text>
-              </View>
-              <Text
-                style={[
-                  styles.price,
-                  item.priceAmount.startsWith("-") && { color: "red" },
-                ]}
-              >
-                {item.priceAmount}
-              </Text>
+        {/* TABS */}
+        <View style={styles.tabs}>
+          {["Daily", "Weekly", "Monthly", "Annually"].map((t) => (
+            <View key={t} style={styles.tab}>
+              <Text style={styles.tabText}>{t}</Text>
             </View>
           ))}
+        </View>
 
-          <Text style={styles.title}>Alerts</Text>
+        {/* TITLE */}
+        <Text style={styles.sectionTitle}>Your Dashboard</Text>
 
-          {/* ALERTS */}
-          {AlertCardContents.map((item) => (
-            <View key={item.id} style={styles.alertCard}>
-              <Ionicons name={item.icon} size={24} color="#fff" />
-              <View style={{ marginLeft: 10 }}>
-                <Text style={styles.alertTitle}>{item.alertName}</Text>
-                <Text style={styles.alertText}>{item.alertdetails}</Text>
+        {/* DASHBOARD CARDS - SINGLE BG */}
+        <View style={styles.cardsContainer}>
+          {[
+            { label: "Total Sales", value: "200,000 FRW", btn: "Reload" },
+            { label: "Total Profit", value: "50,000 FRW", btn: "View more" },
+            { label: "Total Stock", value: "150,000 FRW", btn: "Graph" },
+          ].map((c, i) => (
+            <View key={i} style={styles.card}>
+              <Text style={styles.cardLabel}>{c.label}</Text>
+              <Text style={styles.cardValue}>{c.value}</Text>
+              <View style={styles.cardBtn}>
+                <Text style={styles.cardBtnText}>{c.btn}</Text>
               </View>
             </View>
           ))}
         </View>
+
+        {/* TRANSACTIONS */}
+        <Text style={styles.sectionTitle}>Recent transactions</Text>
+
+        {[
+          { txt: "Sold 30kg of potatoes", date: "24th December 2025", price: "+260,000 FRW" },
+          { txt: "Bought 2 tons of kiwi", date: "20th December 2025", price: "-360,000 FRW" },
+          { txt: "50% expired stock", date: "15th December 2025", price: "-160,000 FRW" },
+        ].map((t, i) => (
+          <View key={i} style={styles.transaction}>
+            <Ionicons name="cart-outline" size={24} color={MAIN} />
+            <View style={{ flex: 1, marginLeft: 10 }}>
+              <Text style={styles.transTitle}>{t.txt}</Text>
+              <Text style={styles.transDate}>{t.date}</Text>
+            </View>
+            <Text
+              style={[
+                styles.transPrice,
+                t.price.startsWith("-") && { color: "red" },
+              ]}
+            >
+              {t.price}
+            </Text>
+          </View>
+        ))}
+
+        {/* ALERTS */}
+        <Text style={styles.sectionTitle}>Alerts</Text>
+
+        {[
+          { title: "Low Stock", text: "80% of your stock has been sold please refill your stock" },
+          { title: "Expiration", text: "20% of your products are about to expire" },
+        ].map((a, i) => (
+          <View key={i} style={styles.alert}>
+            <Ionicons name="warning-outline" size={22} color="red" />
+            <View style={{ marginLeft: 10 }}>
+              <Text style={styles.alertTitle}>{a.title}</Text>
+              <Text style={styles.alertText}>{a.text}</Text>
+            </View>
+          </View>
+        ))}
+
+        {/* BOTTOM BUTTONS */}
+        <View style={styles.bottomBtns}>
+          <TouchableOpacity style={styles.actionBtn}>
+            <Text style={styles.actionText}>Record a sale</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.actionBtnOutline}>
+            <Text style={styles.actionTextOutline}>Add a product</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  sideBar: {
+  sidebar: {
     position: "absolute",
-    left: 0,
     top: 0,
     bottom: 0,
-    backgroundColor: MAIN_COLOR,
-    alignItems: "center",
+    left: 0,
+    backgroundColor: MAIN,
     paddingTop: 50,
+    alignItems: "center",
     zIndex: 10,
   },
-  sideBarText: {
+  verticalText: {
     color: "#fff",
     fontFamily: "Poppins_600SemiBold",
-    marginTop: 20,
+    fontSize: 15, // collapsed font size
+    marginTop: 30,
     transform: [{ rotate: "-90deg" }],
   },
 
-  container: {
-    padding: 20,
-  },
-
-  topIcons: {
+  header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
+  logoContainer: {
+  flexDirection: "row",      // make it horizontal
+  alignItems: "center",      // vertically align
+  justifyContent: "center",  // horizontally center in parent
+  marginVertical: 5,        // optional spacing
+},
+stockaText: {
+  fontFamily: "Poppins_700Bold",
+  fontSize: 22,
+  color: MAIN,
+  marginLeft: 10,            // space between image and text
+},
 
-  TopNavigation: {
+
+  tabs: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginVertical: 20,
-  },
-  navigator: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 20,
-    backgroundColor: "#E6EEF2",
-  },
-  navText: {
-    fontFamily: "Poppins_500Medium",
-    color: MAIN_COLOR,
-  },
-
-  title: {
-    fontFamily: "Poppins_700Bold",
-    fontSize: 18,
     marginVertical: 15,
+    backgroundColor: "#E6EEF2",
+    padding: 12,
+    borderRadius: 5,
+  },
+  tab: {
+    paddingHorizontal: 12,
+  },
+  tabText: {
+    fontFamily: "Poppins_500Medium",
+    color: MAIN,
   },
 
-  realDashboard: {
+  sectionTitle: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 16,
+    marginVertical: 12,
+  },
+
+  // SINGLE CARDS BACKGROUND
+  cardsContainer: {
+    backgroundColor: MAIN,
+    borderRadius: 14,
+    padding: 15,
     flexDirection: "row",
     justifyContent: "space-between",
+    marginVertical: 12,
   },
-  dashboardCard: {
+  card: {
     width: "30%",
-    backgroundColor: MAIN_COLOR,
-    borderRadius: 14,
-    padding: 12,
   },
-  cardTitle: {
+  cardLabel: {
+    color: "#fff",
+    fontSize: 11,
+    fontFamily: "Poppins_400Regular",
+  },
+  cardValue: {
     color: "#fff",
     fontFamily: "Poppins_400Regular",
-    fontSize: 12,
+    marginVertical: 6,
+    fontSize:12,
+
   },
-  cardAmount: {
-    color: "#fff",
-    fontFamily: "Poppins_700Bold",
-    marginVertical: 8,
-  },
-  cardButton: {
+  cardBtn: {
     backgroundColor: "#fff",
     borderRadius: 10,
     paddingVertical: 4,
   },
-  cardButtonText: {
-    color: MAIN_COLOR,
+  cardBtnText: {
+    color: MAIN,
     textAlign: "center",
-    fontFamily: "Poppins_500Medium",
     fontSize: 11,
   },
 
-  transactionCard: {
+  transaction: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#F5F5F5",
     padding: 12,
     borderRadius: 12,
-    marginBottom: 10,
+    marginBottom: 8,
   },
-  transactionBig: {
+  transTitle: {
     fontFamily: "Poppins_600SemiBold",
+    fontSize: 13,
   },
-  transactionSmall: {
-    fontFamily: "Poppins_400Regular",
+  transDate: {
     fontSize: 11,
-    color: "#666",
+    color: "#777",
   },
-  price: {
+  transPrice: {
     fontFamily: "Poppins_600SemiBold",
   },
 
-  alertCard: {
+  alert: {
     flexDirection: "row",
-    backgroundColor: MAIN_COLOR,
-    padding: 14,
-    borderRadius: 14,
-    marginBottom: 10,
+    backgroundColor: "#FFF",
+    padding: 11,
+    borderRadius: 10,
+    marginBottom: 8,
+    borderColor:"#888",
+    borderWidth:1,
   },
   alertTitle: {
-    color: "#fff",
     fontFamily: "Poppins_600SemiBold",
+    color: "red",
   },
   alertText: {
-    color: "#E6EEF2",
-    fontFamily: "Poppins_400Regular",
-    fontSize: 12,
+    fontSize: 11.5,
+    color: "#555",
+  },
+
+  bottomBtns: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 15,
+  },
+  actionBtn: {
+    backgroundColor: MAIN,
+    padding: 12,
+    borderRadius: 12,
+    width: "48%",
+  },
+  actionBtnOutline: {
+    borderWidth: 1,
+    borderColor: MAIN,
+    padding: 12,
+    borderRadius: 12,
+    width: "48%",
+  },
+  actionText: {
+    color: "#fff",
+    textAlign: "center",
+    fontFamily: "Poppins_600SemiBold",
+  },
+  actionTextOutline: {
+    color: MAIN,
+    textAlign: "center",
+    fontFamily: "Poppins_600SemiBold",
   },
 });
