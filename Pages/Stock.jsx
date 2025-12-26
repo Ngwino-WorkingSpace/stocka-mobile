@@ -32,6 +32,7 @@ export default function StockScreen() {
   const [searchText, setSearchText] = useState("");
   const [categoryVisible, setCategoryVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("Category");
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   const StockProducts = [
     {
@@ -159,7 +160,9 @@ export default function StockScreen() {
                   <Text style={styles.productExpiry}>{item.ViewText}</Text>
                </View>
 
-                <TouchableOpacity style={styles.viewButton}>
+                <TouchableOpacity style={styles.viewButton}
+                   onPress={() => setSelectedProduct(item)}
+                >
                   <Text style={styles.viewButtonText}>View Details</Text>
                 </TouchableOpacity>
               </View>
@@ -173,6 +176,37 @@ export default function StockScreen() {
           <Text style={styles.addProductText}>Add a product</Text>
         </TouchableOpacity>
       </ScrollView>
+          {/* Product Details Modal */}
+      <Modal visible={selectedProduct !== null} transparent animationType="fade">
+        <View style={styles.overlay}>
+          <View style={styles.productDetailsModal}>
+            <Image
+              source={selectedProduct?.Image}
+              style={styles.productDetailsImage}
+            />
+            <Text style={styles.productDetailsName}>
+              {selectedProduct?.TextHead}
+            </Text>
+            <Text style={styles.productDetailsCategory}>
+              {selectedProduct?.subText}
+            </Text>
+            <Text style={styles.productDetailsKilos}>
+              {selectedProduct?.kilos}
+            </Text>
+            <Text style={styles.productDetailsExpiry}>
+              {selectedProduct?.ViewText}
+            </Text>
+
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setSelectedProduct(null)}
+            >
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
     </View>
   );
 }
@@ -309,5 +343,59 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins_600SemiBold",
     fontSize: 14,
     marginLeft: 8,
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 100, 255, 0.2)", // soft blue overlay
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  productDetailsModal: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 20,
+    width: "85%",
+    alignItems: "center",
+    elevation: 10,
+  },
+  productDetailsImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 8,
+    marginBottom: 12,
+  },
+  productDetailsName: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 18,
+    marginBottom: 6,
+  },
+  productDetailsCategory: {
+    fontFamily: "Poppins_500Medium",
+    fontSize: 14,
+    color: "#555",
+    marginBottom: 4,
+  },
+  productDetailsKilos: {
+    fontFamily: "Poppins_400Regular",
+    fontSize: 14,
+    color: "#555",
+    marginBottom: 4,
+  },
+  productDetailsExpiry: {
+    fontFamily: "Poppins_400Regular",
+    fontSize: 14,
+    color: "red",
+    marginBottom: 12,
+  },
+  closeButton: {
+    backgroundColor: MAIN,
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  closeButtonText: {
+    color: "#fff",
+    fontFamily: "Poppins_500Medium",
+    fontSize: 14,
   },
 });
