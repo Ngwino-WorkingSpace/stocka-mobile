@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Image,
   FlatList,
+  ScrollView,
 } from "react-native";
 import {
   useFonts,
@@ -18,7 +19,23 @@ import {
 const MAIN = "#09364D";
 const ACTIVE_TAB = "#FFD700"; // Gold for active tab
 
-export default function SalesScreen() {
+// Helper function to map display names to route names
+const getRouteName = (itemName) => {
+  const routeMap = {
+    "Dashboard": "dashboard",
+    "Stock": "Stock",
+    "Sales": "Sales",
+    "Reports": "Reports",
+    "Profile": "Profile",
+  };
+  return routeMap[itemName] || itemName;
+};
+
+export default function SalesScreen({ navigation }) {
+  // Sidebar states: "press" (minimal), "collapsed" (icons only), "expanded" (full)
+  const [sidebarState, setSidebarState] = useState("press");
+  const [selectedItem, setSelectedItem] = useState("Sales");
+
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
     Poppins_500Medium,
@@ -83,12 +100,174 @@ export default function SalesScreen() {
 
   if (!fontsLoaded) return null;
 
+  const handlePressTextClick = () => {
+    setSidebarState("collapsed");
+  };
+
+  const handleNavItemPress = (itemName) => {
+    setSelectedItem(itemName);
+    setSidebarState("press");
+    if (navigation) {
+      navigation.navigate(getRouteName(itemName));
+    }
+  };
+
+  const handleArrowPress = () => {
+    setSidebarState("expanded");
+  };
+
+  const handleCloseSidebar = () => {
+    setSidebarState("press");
+  };
+
+  const isPressState = sidebarState === "press";
+  const isCollapsed = sidebarState === "collapsed";
+  const isExpanded = sidebarState === "expanded";
+
   const tabs = ["Daily", "Weekly", "Monthly", "Annually"];
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#fff", padding: 15 }}>
-      {/* Tabs */}
-      <View style={styles.tabs}>
+    <View style={styles.container}>
+      {/* OVERLAY - Shows when sidebar is expanded */}
+      {isExpanded && (
+        <TouchableOpacity
+          style={styles.overlay}
+          activeOpacity={1}
+          onPress={handleCloseSidebar}
+        />
+      )}
+
+      {/* SIDEBAR */}
+      <View
+        style={[
+          styles.sidebar,
+          {
+            width: isPressState ? 40 : isCollapsed ? 58 : 250,
+            backgroundColor: MAIN,
+            alignItems: isPressState ? "center" : isCollapsed ? "center" : "flex-start",
+          },
+        ]}
+      >
+        {/* PRESS State - Show only "PRESS" text vertically */}
+        {isPressState && (
+          <TouchableOpacity
+            onPress={handlePressTextClick}
+            style={styles.pressContainer}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.pressText}>PRESS</Text>
+          </TouchableOpacity>
+        )}
+
+        {/* Toggle Arrow - Only visible when collapsed */}
+        {isCollapsed && (
+          <TouchableOpacity
+            onPress={handleArrowPress}
+            style={styles.arrowButton}
+          >
+            <Ionicons
+              name="chevron-forward"
+              size={22}
+              color="#fff"
+            />
+          </TouchableOpacity>
+        )}
+
+        {/* Close Arrow - Only visible when expanded */}
+        {isExpanded && (
+          <TouchableOpacity
+            onPress={handleCloseSidebar}
+            style={styles.closeButton}
+          >
+            <Ionicons
+              name="chevron-back"
+              size={22}
+              color="#fff"
+            />
+          </TouchableOpacity>
+        )}
+
+        {/* Stocka Logo - Not shown in press state */}
+        {!isPressState && (
+          <View style={[styles.logoContainerSidebar, isExpanded && styles.logoContainerExpanded]}>
+            <Image
+              source={require("../assets/images/stock.png")}
+              style={{ width: 36, height: 36 }}
+            />
+            {isExpanded && <Text style={styles.stockText}>Stocka</Text>}
+          </View>
+        )}
+
+        {/* Menu Items - Not shown in press state */}
+        {!isPressState && (
+          <View style={styles.menuContainer}>
+            <TouchableOpacity 
+              style={[
+                styles.navItem, 
+                isExpanded && styles.navItemExpanded,
+                selectedItem === "Dashboard" && isExpanded && styles.navItemSelected
+              ]}
+              onPress={() => handleNavItemPress("Dashboard")}
+            >
+              <Ionicons name="battery-charging-outline" size={22} color="#fff" />
+              {isExpanded && <Text style={styles.navText}>Dashboard</Text>}
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={[
+                styles.navItem, 
+                isExpanded && styles.navItemExpanded,
+                selectedItem === "Stock" && isExpanded && styles.navItemSelected
+              ]}
+              onPress={() => handleNavItemPress("Stock")}
+            >
+              <Ionicons name="cube-outline" size={22} color="#fff" />
+              {isExpanded && <Text style={styles.navText}>Stock</Text>}
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={[
+                styles.navItem, 
+                isExpanded && styles.navItemExpanded,
+                selectedItem === "Sales" && isExpanded && styles.navItemSelected
+              ]}
+              onPress={() => handleNavItemPress("Sales")}
+            >
+              <Ionicons name="flash-outline" size={22} color="#fff" />
+              {isExpanded && <Text style={styles.navText}>Sales</Text>}
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={[
+                styles.navItem, 
+                isExpanded && styles.navItemExpanded,
+                selectedItem === "Reports" && isExpanded && styles.navItemSelected
+              ]}
+              onPress={() => handleNavItemPress("Reports")}
+            >
+              <Ionicons name="document-text-outline" size={22} color="#fff" />
+              {isExpanded && <Text style={styles.navText}>Reports</Text>}
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={[
+                styles.navItem, 
+                isExpanded && styles.navItemExpanded,
+                selectedItem === "Profile" && isExpanded && styles.navItemSelected
+              ]}
+              onPress={() => handleNavItemPress("Profile")}
+            >
+              <Ionicons name="person-outline" size={22} color="#fff" />
+              {isExpanded && <Text style={styles.navText}>Profile</Text>}
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
+
+      {/* CONTENT */}
+      <View style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 58 : 0, backgroundColor: "#fff", padding: 15 }}>
+        {/* Tabs */}
+        <View style={styles.tabs}>
         {tabs.map((tab) => (
           <TouchableOpacity
             key={tab}
@@ -110,9 +289,9 @@ export default function SalesScreen() {
         ))}
       </View>
 
-      <Text style={styles.headerText}>Sales List</Text>
+        <Text style={styles.headerText}>Sales List</Text>
 
-      <FlatList
+        <FlatList
         data={StockProducts.filter((p) =>
           p.TextHead.toLowerCase().includes(searchText.toLowerCase())
         )}
@@ -168,17 +347,108 @@ export default function SalesScreen() {
         )}
       />
 
-      <View style={styles.MoreButton}>
-  <TouchableOpacity style={styles.MoreButtonTouchable}>
-    <Text style={styles.MoreText}>View More</Text>
-  </TouchableOpacity>
-</View>
-
+        <View style={styles.MoreButton}>
+          <TouchableOpacity style={styles.MoreButtonTouchable}>
+            <Text style={styles.MoreText}>View More</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: "row",
+    backgroundColor: "#fff",
+  },
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(9, 54, 77, 0.3)",
+    zIndex: 5,
+  },
+  sidebar: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    paddingTop: 50,
+    paddingHorizontal: 10,
+    zIndex: 10,
+    justifyContent: "center",
+  },
+  pressContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    height: "100%",
+  },
+  pressText: {
+    color: "#fff",
+    fontFamily: "Poppins_600SemiBold",
+    fontSize: 16,
+    transform: [{ rotate: "-90deg" }],
+    letterSpacing: 2,
+  },
+  arrowButton: {
+    marginBottom: 25,
+    padding: 5,
+  },
+  closeButton: {
+    alignSelf: "flex-end",
+    marginBottom: 25,
+    padding: 2,
+    marginRight: 10,
+  },
+  logoContainerSidebar: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 5,
+    width: "100%",
+  },
+  logoContainerExpanded: {
+    paddingLeft: 10,
+    justifyContent: "flex-start",
+  },
+  stockText: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 18,
+    color: "#fff",
+    marginLeft: 10,
+  },
+  menuContainer: {
+    width: "100%",
+    marginTop: 5,
+  },
+  navItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    width: "100%",
+    justifyContent: "center",
+  },
+  navItemExpanded: {
+    justifyContent: "flex-start",
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+  },
+  navItemSelected: {
+    backgroundColor: "#4a9eff",
+  },
+  navText: {
+    color: "#fff",
+    fontFamily: "Poppins_500Medium",
+    marginLeft: 15,
+    fontSize: 14,
+  },
   tabs: {
     flexDirection: "row",
     justifyContent: "space-between",

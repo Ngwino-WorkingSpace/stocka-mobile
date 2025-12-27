@@ -3,9 +3,9 @@ import {
   View,
   Text,
   StyleSheet,
+  ScrollView,
   TouchableOpacity,
   Image,
-  ScrollView,
 } from "react-native";
 import {
   useFonts,
@@ -17,10 +17,24 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 
 const MAIN = "#09364D";
-const ACTIVE_TAB = "#FFD700";
 
-export default function ReportScreen() {
-  const [activeTab, setActiveTab] = useState("Daily");
+// Helper function to map display names to route names
+const getRouteName = (itemName) => {
+  const routeMap = {
+    "Dashboard": "dashboard",
+    "Stock": "Stock",
+    "Sales": "Sales",
+    "Reports": "Reports",
+    "Profile": "Profile",
+  };
+  return routeMap[itemName] || itemName;
+};
+
+export default function ReportsScreen({ navigation }) {
+  // Sidebar states: "press" (minimal), "collapsed" (icons only), "expanded" (full)
+  const [sidebarState, setSidebarState] = useState("press");
+  const [selectedItem, setSelectedItem] = useState("Reports");
+  const [selectedTab, setSelectedTab] = useState("Daily");
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -28,242 +42,588 @@ export default function ReportScreen() {
     Poppins_600SemiBold,
     Poppins_700Bold,
   });
-
   if (!fontsLoaded) return null;
 
-  const tabs = ["Daily", "Weekly", "Monthly", "Annually"];
+  const handlePressTextClick = () => {
+    setSidebarState("collapsed");
+  };
+
+  const handleNavItemPress = (itemName) => {
+    setSelectedItem(itemName);
+    setSidebarState("press");
+    if (navigation) {
+      navigation.navigate(getRouteName(itemName));
+    }
+  };
+
+  const handleArrowPress = () => {
+    setSidebarState("expanded");
+  };
+
+  const handleCloseSidebar = () => {
+    setSidebarState("press");
+  };
+
+  const isPressState = sidebarState === "press";
+  const isCollapsed = sidebarState === "collapsed";
+  const isExpanded = sidebarState === "expanded";
 
   return (
-    <ScrollView style={styles.container}>
-      {/* Tabs */}
-      <View style={styles.tabs}>
-        {tabs.map((tab) => (
+    <View style={styles.container}>
+      {/* OVERLAY - Shows when sidebar is expanded */}
+      {isExpanded && (
+        <TouchableOpacity
+          style={styles.overlay}
+          activeOpacity={1}
+          onPress={handleCloseSidebar}
+        />
+      )}
+
+      {/* SIDEBAR */}
+      <View
+        style={[
+          styles.sidebar,
+          {
+            width: isPressState ? 40 : isCollapsed ? 58 : 250,
+            backgroundColor: MAIN,
+            alignItems: isPressState ? "center" : isCollapsed ? "center" : "flex-start",
+          },
+        ]}
+      >
+        {/* PRESS State - Show only "PRESS" text vertically */}
+        {isPressState && (
           <TouchableOpacity
-            key={tab}
-            style={[
-              styles.tab,
-              activeTab === tab && styles.activeTab,
-            ]}
-            onPress={() => setActiveTab(tab)}
+            onPress={handlePressTextClick}
+            style={styles.pressContainer}
+            activeOpacity={0.7}
           >
-            <Text
-              style={[
-                styles.tabText,
-                activeTab === tab && styles.activeTabText,
-              ]}
-            >
-              {tab}
-            </Text>
+            <Text style={styles.pressText}>PRESS</Text>
           </TouchableOpacity>
-        ))}
+        )}
+
+        {/* Toggle Arrow - Only visible when collapsed */}
+        {isCollapsed && (
+          <TouchableOpacity
+            onPress={handleArrowPress}
+            style={styles.arrowButton}
+          >
+            <Ionicons
+              name="chevron-forward"
+              size={22}
+              color="#fff"
+            />
+          </TouchableOpacity>
+        )}
+
+        {/* Close Arrow - Only visible when expanded */}
+        {isExpanded && (
+          <TouchableOpacity
+            onPress={handleCloseSidebar}
+            style={styles.closeButton}
+          >
+            <Ionicons
+              name="chevron-back"
+              size={22}
+              color="#fff"
+            />
+          </TouchableOpacity>
+        )}
+
+        {/* Stocka Logo - Not shown in press state */}
+        {!isPressState && (
+          <View style={[styles.logoContainer, isExpanded && styles.logoContainerExpanded]}>
+            <Image
+              source={require("../assets/images/stock.png")}
+              style={{ width: 36, height: 36 }}
+            />
+            {isExpanded && <Text style={styles.stockText}>Stocka</Text>}
+          </View>
+        )}
+
+        {/* Menu Items - Not shown in press state */}
+        {!isPressState && (
+          <>
+            <View style={styles.menuContainer}>
+              <TouchableOpacity 
+                style={[
+                  styles.navItem, 
+                  isExpanded && styles.navItemExpanded,
+                  selectedItem === "Dashboard" && isExpanded && styles.navItemSelected
+                ]}
+                onPress={() => handleNavItemPress("Dashboard")}
+              >
+                <Ionicons name="battery-charging-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Dashboard</Text>}
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={[
+                  styles.navItem, 
+                  isExpanded && styles.navItemExpanded,
+                  selectedItem === "Stock" && isExpanded && styles.navItemSelected
+                ]}
+                onPress={() => handleNavItemPress("Stock")}
+              >
+                <Ionicons name="cube-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Stock</Text>}
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={[
+                  styles.navItem, 
+                  isExpanded && styles.navItemExpanded,
+                  selectedItem === "Sales" && isExpanded && styles.navItemSelected
+                ]}
+                onPress={() => handleNavItemPress("Sales")}
+              >
+                <Ionicons name="flash-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Sales</Text>}
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={[
+                  styles.navItem, 
+                  isExpanded && styles.navItemExpanded,
+                  selectedItem === "Reports" && isExpanded && styles.navItemSelected
+                ]}
+                onPress={() => handleNavItemPress("Reports")}
+              >
+                <Ionicons name="document-text-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Reports</Text>}
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={[
+                  styles.navItem, 
+                  isExpanded && styles.navItemExpanded,
+                  selectedItem === "Profile" && isExpanded && styles.navItemSelected
+                ]}
+                onPress={() => handleNavItemPress("Profile")}
+              >
+                <Ionicons name="person-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Profile</Text>}
+              </TouchableOpacity>
+            </View>
+          </>
+        )}
       </View>
 
-      {/* Sales Report */}
-      <Text style={styles.headerText}>Sales Reports</Text>
-
-      <View style={styles.cropsContainer}>
-        {[
-          { name: "Vegetables", price: "23,000 FRW" },
-          { name: "Fruits", price: "15,000 FRW" },
-          { name: "Grains", price: "18,000 FRW" },
-          { name: "Perishables", price: "20,000 FRW" },
-        ].map((item, index) => (
-          <View key={index} style={styles.oneContent}>
-            <Image
-              source={require("../assets/images/veg.png")}
-              style={styles.cropImage}
-            />
-            <View style={styles.priceContainer}>
-              <Text style={styles.cropLabel}>{item.name}</Text>
-              <Text style={styles.cropPrice}>{item.price}</Text>
+      {/* CONTENT */}
+      <View style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 58 : 0 }}>
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            padding: 20,
+            paddingBottom: 20,
+            backgroundColor: "#fff",
+          }}
+        >
+          {/* HEADER */}
+          <View style={styles.header}>
+            <View style={styles.logoContainerHeader}>
+              <Image
+                source={require("../assets/images/stock.png")}
+                style={{ width: 36, height: 36 }}
+              />
+              <Text style={styles.stockaText}>Stocka</Text>
             </View>
           </View>
-        ))}
-      </View>
 
-      {/* Top Products */}
-      <Text style={styles.headerText}>Top Selling Products</Text>
-
-      <View style={styles.topProductsContainer}>
-        {/* Big Card */}
-        <View style={styles.bigProductCard}>
-          <Image
-            source={require("../assets/images/irish.png")}
-            style={styles.bigProductImage}
-          />
-          <Text style={styles.topText}>Irish Potatoes</Text>
-        </View>
-
-        {/* Small Cards */}
-        <View style={styles.smallCardsRow}>
-          <View style={styles.smallProductCard}>
-            <Image
-              source={require("../assets/images/melon.png")}
-              style={styles.smallProductImage}
-            />
-            <Text style={styles.topText}>Tomatoes</Text>
+          {/* TABS */}
+          <View style={styles.tabs}>
+            {["Daily", "Weekly", "Monthly", "Annually"].map((tab) => (
+              <TouchableOpacity
+                key={tab}
+                onPress={() => setSelectedTab(tab)}
+                style={[
+                  styles.tab,
+                  selectedTab === tab && styles.activeTab,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.tabText,
+                    selectedTab === tab && styles.activeTabText,
+                  ]}
+                >
+                  {tab}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
 
-          <View style={styles.smallProductCard}>
-            <Image
-              source={require("../assets/images/third.png")}
-              style={styles.smallProductImage}
-            />
-            <Text style={styles.topText}>Onions</Text>
+          {/* SALES REPORT SECTION */}
+          <Text style={styles.sectionTitle}>Sales Report</Text>
+          <View style={styles.salesReportContainer}>
+            <View style={styles.salesItem}>
+              <View style={styles.salesIconContainer}>
+                <Ionicons name="cube-outline" size={28} color={MAIN} />
+              </View>
+              <Text style={styles.salesLabel}>Vegetables</Text>
+              <Text style={styles.salesValue}>23,000 FRW</Text>
+            </View>
+
+            <View style={styles.salesItem}>
+              <View style={styles.salesIconContainer}>
+                <Ionicons name="basket-outline" size={28} color={MAIN} />
+              </View>
+              <Text style={styles.salesLabel}>Fruits</Text>
+              <Text style={styles.salesValue}>30,000 FRW</Text>
+            </View>
+
+            <View style={styles.salesItem}>
+              <View style={styles.salesIconContainer}>
+                <Ionicons name="bag-outline" size={28} color={MAIN} />
+              </View>
+              <Text style={styles.salesLabel}>Grains</Text>
+              <Text style={styles.salesValue}>11,000 FRW</Text>
+            </View>
+
+            <View style={styles.salesItem}>
+              <View style={styles.salesIconContainer}>
+                <Ionicons name="cart-outline" size={28} color={MAIN} />
+              </View>
+              <Text style={styles.salesLabel}>Perishables</Text>
+              <Text style={styles.salesValue}>18,000 FRW</Text>
+            </View>
           </View>
-        </View>
+
+          {/* TOP SELLING PRODUCTS SECTION */}
+          <Text style={styles.sectionTitle}>Top Selling products</Text>
+          <View style={styles.topProductsContainer}>
+            <View style={[styles.productCard, styles.productCardSecond]}>
+              <View style={styles.medalContainer}>
+                <Ionicons name="medal" size={32} color="#C0C0C0" />
+              </View>
+              <Text style={styles.productName}>Water Melons</Text>
+            </View>
+
+            <View style={[styles.productCard, styles.productCardFirst]}>
+              <View style={styles.medalContainer}>
+                <Ionicons name="medal" size={32} color="#FFD700" />
+              </View>
+              <Text style={styles.productName}>Irish Potatoes</Text>
+            </View>
+
+            <View style={[styles.productCard, styles.productCardThird]}>
+              <View style={styles.medalContainer}>
+                <Ionicons name="medal" size={32} color="#CD7F32" />
+              </View>
+              <Text style={styles.productName}>Sweet Potatoes</Text>
+            </View>
+          </View>
+
+          {/* STOCK REPORT SECTION */}
+          <Text style={styles.sectionTitle}>Stock report</Text>
+          <View style={styles.stockReportContainer}>
+            <View style={styles.stockItem}>
+              <View style={styles.stockIconContainer}>
+                <Ionicons name="bar-chart-outline" size={28} color={MAIN} />
+              </View>
+              <Text style={styles.stockLabel}>Total stock</Text>
+              <Text style={styles.stockValue}>427,000 FRW</Text>
+            </View>
+
+            <View style={styles.stockItem}>
+              <View style={styles.stockIconContainer}>
+                <Ionicons name="cart-outline" size={28} color={MAIN} />
+              </View>
+              <Text style={styles.stockLabel}>Expired products price</Text>
+              <Text style={styles.stockValue}>23,000 FRW</Text>
+            </View>
+          </View>
+
+          {/* GAIN / LOSS SUMMARY SECTION */}
+          <Text style={styles.sectionTitle}>Gain / Loss Summary</Text>
+          <View style={styles.summaryContainer}>
+            <View style={styles.summaryCard}>
+              <Text style={styles.summaryEmoji}>🥳</Text>
+              <Text style={styles.summaryText}>
+                Congratulations dear user you made a profit.
+              </Text>
+            </View>
+
+            <View style={styles.summaryCard}>
+              <Text style={styles.summaryEmoji}>😔</Text>
+              <Text style={styles.summaryText}>
+                Unfortunately you made a loss wonder how this happened let me help you out.
+              </Text>
+            </View>
+          </View>
+        </ScrollView>
       </View>
-
-      {/* Gain / Loss */}
-      <Text style={styles.headerText}>Gain / Loss Summary</Text>
-
-      <View style={styles.summaryContainer}>
-        <View style={[styles.reactionCard, styles.gain]}>
-          <Ionicons name="trending-up" size={28} color="#2ecc71" />
-          <Text style={styles.messageText}>
-            Congratulations! You made a profit 🎉
-          </Text>
-        </View>
-
-        <View style={[styles.reactionCard, styles.loss]}>
-          <Ionicons name="trending-down" size={28} color="#e74c3c" />
-          <Text style={styles.messageText}>
-            Unfortunately, you made a loss. Let’s analyze this together.
-          </Text>
-        </View>
-      </View>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: "row",
     backgroundColor: "#fff",
-    padding: 15,
   },
-
-  /* Tabs */
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(9, 54, 77, 0.3)",
+    zIndex: 5,
+  },
+  sidebar: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    paddingTop: 50,
+    paddingHorizontal: 10,
+    zIndex: 10,
+    justifyContent: "center",
+  },
+  pressContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    height: "100%",
+  },
+  pressText: {
+    color: "#fff",
+    fontFamily: "Poppins_600SemiBold",
+    fontSize: 16,
+    transform: [{ rotate: "-90deg" }],
+    letterSpacing: 2,
+  },
+  arrowButton: {
+    marginBottom: 25,
+    padding: 5,
+  },
+  closeButton: {
+    alignSelf: "flex-end",
+    marginBottom: 25,
+    padding: 2,
+    marginRight: 10,
+  },
+  logoContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 5,
+    width: "100%",
+  },
+  logoContainerExpanded: {
+    paddingLeft: 10,
+    justifyContent: "flex-start",
+  },
+  stockText: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 18,
+    color: "#fff",
+    marginLeft: 10,
+  },
+  menuContainer: {
+    width: "100%",
+    marginTop: 5,
+  },
+  navItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    width: "100%",
+    justifyContent: "center",
+  },
+  navItemExpanded: {
+    justifyContent: "flex-start",
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+  },
+  navItemSelected: {
+    backgroundColor: "#4a9eff",
+  },
+  navText: {
+    color: "#fff",
+    fontFamily: "Poppins_500Medium",
+    marginLeft: 15,
+    fontSize: 14,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  logoContainerHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  stockaText: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 20,
+    color: MAIN,
+    marginLeft: 10,
+  },
   tabs: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 20,
+    backgroundColor: "#F5F5F5",
+    padding: 4,
+    borderRadius: 8,
   },
   tab: {
+    flex: 1,
     paddingVertical: 8,
-    paddingHorizontal: 14,
-    borderRadius: 20,
-    backgroundColor: "#EAEAEA",
+    paddingHorizontal: 12,
+    borderRadius: 6,
+    alignItems: "center",
   },
   activeTab: {
     backgroundColor: MAIN,
   },
   tabText: {
     fontFamily: "Poppins_500Medium",
-    fontSize: 13,
-    color: "#333",
+    fontSize: 14,
+    color: "#666",
   },
   activeTabText: {
-    color: ACTIVE_TAB,
-  },
-
-  /* Headers */
-  headerText: {
-    fontFamily: "Poppins_700Bold",
-    fontSize: 18,
-    marginVertical: 15,
-    color: MAIN,
-  },
-
-  /* Sales cards */
-  cropsContainer: {
-    gap: 12,
-  },
-  oneContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#F8F8F8",
-    padding: 12,
-    borderRadius: 12,
-  },
-  cropImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 10,
-    marginRight: 12,
-  },
-  priceContainer: {
-    flexDirection: "column",
-  },
-  cropLabel: {
-    fontFamily: "Poppins_600SemiBold",
-    fontSize: 15,
-  },
-  cropPrice: {
-    fontFamily: "Poppins_400Regular",
-    color: "#777",
-    marginTop: 2,
-  },
-
-  /* Top products */
-  topProductsContainer: {
-    marginBottom: 20,
-  },
-  bigProductCard: {
-    backgroundColor: MAIN,
-    borderRadius: 16,
-    padding: 15,
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  bigProductImage: {
-    width: "100%",
-    height: 140,
-    borderRadius: 12,
-    marginBottom: 10,
-  },
-  smallCardsRow: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  smallProductCard: {
-    flex: 1,
-    backgroundColor: "#F3F3F3",
-    borderRadius: 14,
-    padding: 10,
-    alignItems: "center",
-  },
-  smallProductImage: {
-    width: "100%",
-    height: 90,
-    borderRadius: 10,
-    marginBottom: 6,
-  },
-  topText: {
-    fontFamily: "Poppins_600SemiBold",
     color: "#fff",
   },
-
-  /* Gain / Loss */
-  summaryContainer: {
-    gap: 12,
-    marginBottom: 30,
+  sectionTitle: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 18,
+    color: "#333",
+    marginTop: 20,
+    marginBottom: 15,
   },
-  reactionCard: {
+  salesReportContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    marginBottom: 10,
+  },
+  salesItem: {
+    width: "48%",
+    backgroundColor: "#F9F9F9",
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 12,
+    alignItems: "center",
+  },
+  salesIconContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "#E6EEF2",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  salesLabel: {
+    fontFamily: "Poppins_500Medium",
+    fontSize: 14,
+    color: "#333",
+    marginBottom: 4,
+  },
+  salesValue: {
+    fontFamily: "Poppins_600SemiBold",
+    fontSize: 16,
+    color: MAIN,
+  },
+  topProductsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 10,
+    paddingHorizontal: 5,
+  },
+  productCard: {
+    width: "30%",
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 15,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  productCardFirst: {
+    marginTop: -5,
+    zIndex: 3,
+  },
+  productCardSecond: {
+    marginTop: 0,
+    zIndex: 2,
+  },
+  productCardThird: {
+    marginTop: 0,
+    zIndex: 1,
+  },
+  medalContainer: {
+    marginBottom: 10,
+  },
+  productName: {
+    fontFamily: "Poppins_600SemiBold",
+    fontSize: 12,
+    color: "#333",
+    textAlign: "center",
+  },
+  stockReportContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 10,
+  },
+  stockItem: {
+    width: "48%",
+    backgroundColor: "#F9F9F9",
+    borderRadius: 12,
+    padding: 15,
+    alignItems: "center",
+  },
+  stockIconContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "#E6EEF2",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  stockLabel: {
+    fontFamily: "Poppins_500Medium",
+    fontSize: 12,
+    color: "#333",
+    marginBottom: 4,
+    textAlign: "center",
+  },
+  stockValue: {
+    fontFamily: "Poppins_600SemiBold",
+    fontSize: 16,
+    color: MAIN,
+  },
+  summaryContainer: {
+    marginBottom: 20,
+  },
+  summaryCard: {
+    backgroundColor: "#F5F5F5",
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 12,
     flexDirection: "row",
     alignItems: "center",
-    padding: 14,
-    borderRadius: 12,
-    gap: 10,
   },
-  gain: {
-    backgroundColor: "#EAF8F1",
+  summaryEmoji: {
+    fontSize: 28,
+    marginRight: 12,
   },
-  loss: {
-    backgroundColor: "#FDECEC",
-  },
-  messageText: {
-    fontFamily: "Poppins_400Regular",
+  summaryText: {
     flex: 1,
+    fontFamily: "Poppins_400Regular",
+    fontSize: 14,
+    color: "#333",
+    lineHeight: 20,
   },
 });
+

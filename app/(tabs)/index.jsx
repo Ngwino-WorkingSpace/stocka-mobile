@@ -11,6 +11,7 @@ import PlainDashboardScreen from "../../Pages/PlainDashboard.jsx";
 import StockScreen from "../../Pages/Stock.jsx";
 import SalesScreen from "../../Pages/Sales.jsx";
 import ReportScreen from "../../Pages/Reports.jsx";
+import ProfileScreen from "../../Pages/Profile.jsx";
 
 const Stack = createNativeStackNavigator();
 
@@ -29,7 +30,8 @@ export default function MainScreen() {
         <Stack.Screen name="dashboard" component={PlainDashboardScreen} />
         <Stack.Screen name="Stock" component={StockScreen} />
         <Stack.Screen name="Sales" component={SalesScreen} />
-        <Stack.screen name="reports" component={ReportScreen}/>
+        <Stack.Screen name="Reports" component={ReportScreen}/>
+        <Stack.Screen name="Profile" component={ProfileScreen}/>
 
 
       </Stack.Navigator>

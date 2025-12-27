@@ -19,6 +19,18 @@ import { Ionicons } from "@expo/vector-icons";
 
 const MAIN = "#09364D";
 
+// Helper function to map display names to route names
+const getRouteName = (itemName) => {
+  const routeMap = {
+    "Dashboard": "dashboard",
+    "Stock": "Stock",
+    "Sales": "Sales",
+    "Reports": "Reports",
+    "Profile": "Profile",
+  };
+  return routeMap[itemName] || itemName;
+};
+
 export default function PlainDashboardScreen({navigation}) {
   // Sidebar states: "press" (minimal), "collapsed" (icons only), "expanded" (full)
   const [sidebarState, setSidebarState] = useState("press");
@@ -42,7 +54,9 @@ export default function PlainDashboardScreen({navigation}) {
     // Collapse sidebar when clicking on menu items (go back to icons only)
     setSelectedItem(itemName);
     setSidebarState("press");
-    navigation.navigate(itemName);
+    if (navigation) {
+      navigation.navigate(getRouteName(itemName));
+    }
   };
 
   const handleArrowPress = () => {
