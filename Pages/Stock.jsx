@@ -279,6 +279,7 @@ const handleChange = (key, value) => {
             placeholder="Ex: 54kg"
             value={formData.quantity}
             onChangeText={(v) => handleChange("quantity", v)}
+             style={formStyles.input}
           />
 
           <FormInput
@@ -286,6 +287,7 @@ const handleChange = (key, value) => {
             placeholder="Ex: 200 RWF"
             value={formData.price}
             onChangeText={(v) => handleChange("price", v)}
+            style={formStyles.input}
           />
 
           <FormInput
@@ -293,6 +295,7 @@ const handleChange = (key, value) => {
             placeholder="Ex: 15 June 2025"
             value={formData.purchaseDate}
             onChangeText={(v) => handleChange("purchaseDate", v)}
+             style={formStyles.input}
           />
 
           <FormInput
@@ -300,6 +303,7 @@ const handleChange = (key, value) => {
             placeholder="Ex: 15 September 2025"
             value={formData.expiryDate}
             onChangeText={(v) => handleChange("expiryDate", v)}
+             style={formStyles.input}
           />
 
         </View>
@@ -312,12 +316,14 @@ const handleChange = (key, value) => {
           />
 
           <FormInput
-            label="Description (Optional)"
-            placeholder="Key notes about the product..."
-            multiline
-            value={formData.description}
-            onChangeText={(v) => handleChange("description", v)}
-          />
+  label="Description (Optional)"
+  placeholder="Key notes about the product..."
+  multiline
+  value={formData.description}
+  onChangeText={(v) => handleChange("description", v)}
+  inputStyle={formStyles.descriptionInput}
+/>
+
         </View>
 
       </View>
@@ -343,19 +349,27 @@ const Detail = ({ label, value }) => (
   </View>
 );
 
-const FormInput = ({ label, multiline, ...props }) => (
-  <View style={formStyles.formGroup}>
-    <Text style={formStyles.label}>{label}</Text>
+const FormInput = ({
+  label,
+  multiline,
+  inputStyle,
+  containerStyle,
+  ...props
+}) => (
+  <View style={[styles.formGroup, containerStyle]}>
+    <Text style={styles.formLabel}>{label}</Text>
     <TextInput
       style={[
-        formStyles.input,
-        multiline && formStyles.textarea,
+        styles.formInput,
+        multiline && styles.formTextarea,
+        inputStyle,
       ]}
-      placeholderTextColor="#999"
+      multiline={multiline}
       {...props}
     />
   </View>
 );
+
 
 
 /* ================= STYLES ================= */
@@ -567,12 +581,15 @@ const formStyles = StyleSheet.create({
     height: 110,
     borderRadius: 12,
     marginBottom: 10,
+    borderColor:"#c5c5c5ff",
+    borderWidth:2,
   },
 
   staticLabel: {
     fontSize: 12,
     color: "#777",
     marginTop: 6,
+    fontFamily:"Poppins_400Regular",
   },
 
   staticValue: {
@@ -586,8 +603,9 @@ const formStyles = StyleSheet.create({
 
   label: {
     fontSize: 12,
-    color: "#777",
+    color: "#333",
     marginBottom: 4,
+    fontFamily:"Poppins_400Regular",
   },
 
   input: {
@@ -596,6 +614,8 @@ const formStyles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     fontSize: 13,
+    fontFamily:"Poppins_400Regular",
+    color:"#555",
   },
 
   textarea: {
@@ -615,5 +635,12 @@ const formStyles = StyleSheet.create({
     textAlign: "center",
     fontFamily: "Poppins_600SemiBold",
   },
+  descriptionInput: {
+  height: 120,
+  textAlignVertical: "top",
+  paddingTop: 12,
+  color:"#555",
+},
+
 });
 
