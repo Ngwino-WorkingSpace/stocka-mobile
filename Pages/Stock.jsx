@@ -390,6 +390,13 @@ const handleSaleChange = (field, value) => {
             </View>
           )}
         />
+
+         <View style={styles.addProductButton}>
+  <TouchableOpacity style={styles.productButton}>
+    <Text style={styles.addText}>+ Add Product</Text>
+  </TouchableOpacity>
+</View>
+
       </ScrollView>
 
       {/* ================= PRODUCT DETAILS MODAL ================= */}
@@ -759,10 +766,10 @@ const styles = StyleSheet.create({
   stockaText: { fontFamily: "Poppins_700Bold", fontSize: 22, color: MAIN, marginLeft: 10 },
 
   searchCategoryContainer: { flexDirection: "row", marginBottom: 20 },
-  searchInput: { flex: 1, backgroundColor: "#F0F0F0", borderRadius: 8, padding: 10, marginRight: 10 },
+  searchInput: { flex: 1, backgroundColor: "#F0F0F0", borderRadius: 8, padding: 10, marginRight: 10,fontFamily:"Poppins_400Regular" },
 
   categoryDropdown: { flexDirection: "row", backgroundColor: MAIN, padding: 10, borderRadius: 8 },
-  categoryText: { color: "#fff", marginRight: 5 },
+  categoryText: { color: "#fff", marginRight: 5 ,fontFamily:"Poppins_400Regular"},
 
   modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.2)" },
   modalContainer: { position: "absolute", top: 100, right: 20, backgroundColor: "#fff", borderRadius: 10, width: 160 },
@@ -780,10 +787,10 @@ const styles = StyleSheet.create({
   productKilos: { fontSize: 12, color: "#555" , fontFamily:"Poppins_400Regular"},
 
   warningWrapper: { flexDirection: "row", alignItems: "center", marginVertical: 4 },
-  productExpiry: { fontSize: 12, color: "red", marginLeft: 6 },
+  productExpiry: { fontSize: 12, color: "red", marginLeft: 6,fontFamily:"Poppins_400Regular" },
 
   viewButton: { backgroundColor: MAIN, padding: 8, borderRadius: 8, marginTop: 4, alignSelf: "flex-start" },
-  viewButtonText: { color: "#fff", fontSize: 12 },
+  viewButtonText: { color: "#fff", fontSize: 12,fontFamily:"Poppins_400Regular" },
 
   /* ===== MODAL ===== */
   overlay: { flex: 1, backgroundColor: "rgba(9,54,77,0.25)", justifyContent: "center", alignItems: "center" },
@@ -915,26 +922,33 @@ addSecondaryText: {
 },
 
 addProductButton: {
-    marginVertical: 20,
-    alignItems: "center", // center the button horizontally
-  },
-  addProductTouchable: {
-    backgroundColor: MAIN, // "#09364D"
-    paddingVertical: 14,
-    paddingHorizontal: 30,
-    borderRadius: 12,
-    elevation: 3, // adds shadow on Android
-    shadowColor: "#000", // adds shadow on iOS
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontFamily: "Poppins_600SemiBold",
-    textAlign: "center",
-  },
+  width: "100%",
+  marginTop: 15,
+},
+
+productButton: {
+  backgroundColor: "#09364D",
+  paddingVertical: 12,
+  borderRadius: 12,
+  alignItems: "center",
+  justifyContent: "center",
+
+  // Shadow (iOS)
+  shadowColor: "#0A5E8C",
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.4,
+  shadowRadius: 6,
+
+  // Shadow (Android)
+  elevation: 6,
+},
+
+addText: {
+  color: "#fff",
+  fontSize: 16,
+  fontFamily: "Poppins_600SemiBold",
+},
+
 
 
 });

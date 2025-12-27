@@ -16,6 +16,7 @@ import {
   Poppins_700Bold,
 } from "@expo-google-fonts/poppins";
 
+import { Ionicons } from "@expo/vector-icons";
 const MAIN = "#09364D";
 const ACTIVE_TAB = "#FFD700"; // Gold for active tab
 

@@ -580,7 +580,7 @@ const styles = StyleSheet.create({
   cardLabel: { color: "#fff", fontSize: 11, fontFamily: "Poppins_400Regular" },
   cardValue: { color: "#fff", fontFamily: "Poppins_400Regular", marginVertical: 6, fontSize: 12 },
   cardBtn: { backgroundColor: "#fff", borderRadius: 10, paddingVertical: 4 },
-  cardBtnText: { color: MAIN, textAlign: "center", fontSize: 11 },
+  cardBtnText: { color: MAIN, textAlign: "center", fontSize: 11,fontFamily:"Poppins_400Regular" },
   transaction: {
     flexDirection: "row",
     alignItems: "center",
@@ -588,12 +588,13 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 12,
     marginBottom: 8,
+    fontFamily:"Poppins_400Regular"
   },
   darkTransaction: {
     backgroundColor: "#2a2a3e",
   },
   transTitle: { fontFamily: "Poppins_600SemiBold", fontSize: 13, color: "#000" },
-  transDate: { fontSize: 11, color: "#777" },
+  transDate: { fontSize: 11, color: "#777",fontFamily:"Poppins_400Regular" },
   transPrice: { fontFamily: "Poppins_600SemiBold" },
   alert: {
     flexDirection: "row",
@@ -609,7 +610,7 @@ const styles = StyleSheet.create({
     borderColor: "#444",
   },
   alertTitle: { fontFamily: "Poppins_600SemiBold", color: "red" },
-  alertText: { fontSize: 11.5, color: "#555" },
+  alertText: { fontSize: 11.5, color: "#555",fontFamily:"Poppins_400Regular" },
   bottomBtns: { flexDirection: "row", justifyContent: "space-between", marginTop: 15 },
   actionBtn: { backgroundColor: MAIN, padding: 12, borderRadius: 12, width: "48%" },
   actionBtnOutline: { borderWidth: 1, borderColor: MAIN, padding: 12, borderRadius: 12, width: "48%" },

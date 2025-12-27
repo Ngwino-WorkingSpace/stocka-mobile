@@ -1,6 +1,23 @@
 import BackgroundScreen from "../components/Background2.jsx";
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from "react-native";
+
+import {
+  useFonts,
+  Poppins_400Regular,
+  Poppins_500Medium,
+  Poppins_600SemiBold,
+} from "@expo-google-fonts/poppins";
 
 export default function SignupScreen({ navigation }) {
   const [username, setUsername] = useState("");
@@ -8,15 +25,18 @@ export default function SignupScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleSignup = () => {
-    console.log("Signup clicked");
-  };
+  const [fontsLoaded] = useFonts({
+    Poppins_400Regular,
+    Poppins_500Medium,
+    Poppins_600SemiBold,
+  });
+
+  if (!fontsLoaded) return null;
 
   return (
     <View style={styles.container}>
       <BackgroundScreen />
 
-      {/* KeyboardAvoidingView helps with keyboard overlapping */}
       <KeyboardAvoidingView
         style={styles.contentWrapper}
         behavior={Platform.OS === "ios" ? "padding" : null}
@@ -30,6 +50,7 @@ export default function SignupScreen({ navigation }) {
               source={require("../assets/images/stocka.png")}
               style={styles.logo}
             />
+
             <Text style={styles.welcometext}>
               Welcome to TradeWise! Let's get you signed up
             </Text>
@@ -41,6 +62,7 @@ export default function SignupScreen({ navigation }) {
               value={username}
               onChangeText={setUsername}
             />
+
             <TextInput
               style={styles.input}
               placeholder="Email"
@@ -49,29 +71,39 @@ export default function SignupScreen({ navigation }) {
               value={email}
               onChangeText={setEmail}
             />
+
             <TextInput
               style={styles.input}
               placeholder="Password"
               placeholderTextColor="#107EBA"
-              secureTextEntry={true}
+              secureTextEntry
               value={password}
               onChangeText={setPassword}
             />
+
             <TextInput
               style={styles.input}
               placeholder="Confirm Password"
               placeholderTextColor="#107EBA"
-              secureTextEntry={true}
+              secureTextEntry
               value={confirmPassword}
               onChangeText={setConfirmPassword}
             />
+
             <Text style={styles.signinText}>
-  Already have an account?{" "}
-  <Text style={styles.highlighted} onPress={() => navigation.navigate("Login")}>
-    Sign in
-  </Text>
-</Text>
-            <TouchableOpacity style={styles.button} onPress={()=> navigation.navigate("Login")}>
+              Already have an account?{" "}
+              <Text
+                style={styles.highlighted}
+                onPress={() => navigation.navigate("Login")}
+              >
+                Sign in
+              </Text>
+            </Text>
+
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.navigate("Login")}
+            >
               <Text style={styles.buttonText}>Sign Up</Text>
             </TouchableOpacity>
           </View>
@@ -88,56 +120,56 @@ const styles = StyleSheet.create({
 
   contentWrapper: {
     flex: 1,
-    justifyContent: "flex-end", // aligns entire block at bottom
+    justifyContent: "flex-end",
   },
 
   scrollContent: {
     flexGrow: 1,
     justifyContent: "flex-end",
     alignItems: "center",
-    paddingBottom: 10, // space from bottom edge
+    paddingBottom: 10,
     width: "100%",
   },
 
   content: {
     width: "90%",
     alignItems: "center",
-    paddingHorizontal:20,
+    paddingHorizontal: 20,
   },
 
   logo: {
     width: 180,
     height: 80,
     resizeMode: "contain",
-    marginBottom: 0,
   },
+
   welcometext: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 15, // was 16
     textAlign: "center",
     marginBottom: 10,
+    fontFamily: "Poppins_500Medium",
   },
- input: {
-  width: "100%",
-  backgroundColor: "#09364D",
-  paddingVertical: 16,
-  paddingHorizontal: 15,
-  borderRadius: 10,
-  color: "#107EBA",
-  marginBottom: 8,
-  borderWidth: 1,
-  borderColor: "#0F4461",
-  fontSize: 17,
 
-  // iOS shadow
-  shadowColor: "#0A5E8C",
-  shadowOffset: { width: 0, height: 4 },
-  shadowOpacity: 0.5,
-  shadowRadius: 5,
+  input: {
+    width: "100%",
+    backgroundColor: "#09364D",
+    paddingVertical: 16,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    color: "#107EBA",
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: "#0F4461",
+    fontSize: 16, // was 17
+    fontFamily: "Poppins_400Regular",
 
-  // Android shadow
-  elevation: 5,
-},
+    shadowColor: "#0A5E8C",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+    elevation: 5,
+  },
 
   button: {
     width: "100%",
@@ -146,31 +178,30 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     marginTop: 10,
-     shadowColor: "#0A5E8C",
-  shadowOffset: { width: 0, height: 4 },
-  shadowOpacity: 0.5,
-  shadowRadius: 5,
 
-  // Android shadow
-  elevation: 5,
+    shadowColor: "#0A5E8C",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+    elevation: 5,
   },
+
   buttonText: {
     color: "#fff",
-    fontSize: 18,
-    fontWeight: "600",
+    fontSize: 17, // was 18
+    fontFamily: "Poppins_600SemiBold",
   },
 
- signinText: {
-  color: "#fff",
-  fontSize: 16,
-  textAlign: "left", // aligns text to the left
-  margin:5,
-  alignSelf:"flex-start",
-},
+  signinText: {
+    color: "#fff",
+    fontSize: 15, // was 16
+    margin: 5,
+    alignSelf: "flex-start",
+    fontFamily: "Poppins_400Regular",
+  },
 
-highlighted: {
-  color: "#1E90FF", // bright blue to stand out
-  fontWeight: "bold",
-},
-
+  highlighted: {
+    color: "#1E90FF",
+    fontFamily: "Poppins_600SemiBold",
+  },
 });
