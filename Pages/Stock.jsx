@@ -645,6 +645,28 @@ addSecondaryText: {
   fontFamily: "Poppins_500Medium",
 },
 
+addProductButton: {
+    marginVertical: 20,
+    alignItems: "center", // center the button horizontally
+  },
+  addProductTouchable: {
+    backgroundColor: MAIN, // "#09364D"
+    paddingVertical: 14,
+    paddingHorizontal: 30,
+    borderRadius: 12,
+    elevation: 3, // adds shadow on Android
+    shadowColor: "#000", // adds shadow on iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontFamily: "Poppins_600SemiBold",
+    textAlign: "center",
+  },
+
 
 });
 
