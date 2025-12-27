@@ -33,6 +33,15 @@ export default function StockScreen() {
   const [categoryVisible, setCategoryVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("Category");
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [addStockVisible, setAddStockVisible] = useState(false);
+
+const [formData, setFormData] = useState({
+  quantity: "",
+  purchaseDate: "",
+  expiryDate: "",
+  description: "",
+});
+
 
   const StockProducts = [
     {
@@ -222,13 +231,89 @@ export default function StockScreen() {
               <TouchableOpacity style={styles.actionButton}>
                 <Text style={styles.actionText}>Record Sale</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.actionButtonOutline}>
+              <TouchableOpacity style={styles.actionButtonOutline}
+                 onPress={() => setAddStockVisible(true)}
+              >
                 <Text style={styles.actionTextOutline}>Add Stock</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
       </Modal>
+
+  {/* ================= ADD STOCK MODAL ================= */}
+<Modal visible={addStockVisible} transparent animationType="fade">
+  <View style={styles.addOverlay}>
+    <View style={styles.addCard}>
+      
+      {/* Header */}
+      <View style={styles.addHeader}>
+        <Text style={styles.addTitle}>Add Stock</Text>
+        <TouchableOpacity onPress={() => setAddStockVisible(false)}>
+          <Ionicons name="close" size={22} color="#333" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Form */}
+      <View style={styles.addForm}>
+        <FormInput
+          label="Quantity (kg)"
+          value={formData.quantity}
+          onChangeText={(text) =>
+            setFormData({ ...formData, quantity: text })
+          }
+        />
+
+        <FormInput
+          label="Purchase Date"
+          value={formData.purchaseDate}
+          onChangeText={(text) =>
+            setFormData({ ...formData, purchaseDate: text })
+          }
+        />
+
+        <FormInput
+          label="Expiry Date"
+          value={formData.expiryDate}
+          onChangeText={(text) =>
+            setFormData({ ...formData, expiryDate: text })
+          }
+        />
+
+        <FormInput
+          label="Description"
+          multiline
+          value={formData.description}
+          onChangeText={(text) =>
+            setFormData({ ...formData, description: text })
+          }
+        />
+      </View>
+
+      {/* Actions */}
+      <View style={styles.addActions}>
+        <TouchableOpacity
+          style={styles.addPrimaryBtn}
+          onPress={() => {
+            console.log("User Input:", formData);
+            setAddStockVisible(false);
+          }}
+        >
+          <Text style={styles.addPrimaryText}>Save Stock</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.addSecondaryBtn}
+          onPress={() => setAddStockVisible(false)}
+        >
+          <Text style={styles.addSecondaryText}>Cancel</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </View>
+</Modal>
+
+
     </View>
   );
 }
@@ -238,6 +323,17 @@ const Detail = ({ label, value }) => (
   <View style={{ marginBottom: 10 }}>
     <Text style={styles.detailLabel}>{label}</Text>
     <Text style={styles.detailValue}>{value}</Text>
+  </View>
+);
+
+const FormInput = ({ label, multiline, ...props }) => (
+  <View style={styles.formGroup}>
+    <Text style={styles.formLabel}>{label}</Text>
+    <TextInput
+      style={[styles.formInput, multiline && styles.formTextarea]}
+      multiline={multiline}
+      {...props}
+    />
   </View>
 );
 
@@ -286,16 +382,121 @@ const styles = StyleSheet.create({
 
   detailsImage: { width: 120, height: 120, borderRadius: 10, marginBottom: 10 },
 
-  descriptionText: { fontSize: 12, color: "#555", textAlign: "center" },
+  descriptionText: { fontSize: 12, color: "#555", textAlign: "left", fontFamily:"Poppins_400Regular" },
 
-  detailLabel: { fontSize: 12, color: "#777" },
+  detailLabel: { fontSize: 12, color: "#777",fontFamily:"Poppins_400Regular"  },
   detailValue: { fontFamily: "Poppins_500Medium" },
 
   detailsActions: { flexDirection: "row", justifyContent: "space-between", marginTop: 20 },
 
   actionButton: { backgroundColor: MAIN, padding: 10, borderRadius: 8, flex: 1, marginRight: 8 },
-  actionText: { color: "#fff", textAlign: "center" },
+  actionText: { color: "#fff", textAlign: "center",fontFamily:"Poppins_400Regular"  },
 
   actionButtonOutline: { borderWidth: 1, borderColor: MAIN, padding: 10, borderRadius: 8, flex: 1 },
-  actionTextOutline: { color: MAIN, textAlign: "center" },
+  actionTextOutline: { color: MAIN, textAlign: "center",fontFamily:"Poppins_400Regular"  },
+
+  addStockCard: {
+  width: "85%",
+  backgroundColor: "#fff",
+  borderRadius: 16,
+  padding: 20,
+},
+
+input: {
+  backgroundColor: "#F0F0F0",
+  borderRadius: 8,
+  padding: 12,
+  marginBottom: 12,
+  fontFamily: "Poppins_400Regular",
+},
+
+/* ===== ADD STOCK MODAL ===== */
+addOverlay: {
+  flex: 1,
+  backgroundColor: "rgba(9,54,77,0.35)",
+  justifyContent: "center",
+  alignItems: "center",
+},
+
+addCard: {
+  width: "90%",
+  backgroundColor: "#fff",
+  borderRadius: 18,
+  padding: 20,
+},
+
+addHeader: {
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: 15,
+},
+
+addTitle: {
+  fontFamily: "Poppins_700Bold",
+  fontSize: 18,
+  color: MAIN,
+},
+
+addForm: {
+  marginBottom: 15,
+},
+
+formGroup: {
+  marginBottom: 12,
+},
+
+formLabel: {
+  fontSize: 12,
+  color: "#555",
+  marginBottom: 4,
+  fontFamily: "Poppins_400Regular",
+},
+
+formInput: {
+  backgroundColor: "#F2F2F2",
+  borderRadius: 8,
+  padding: 10,
+  fontFamily: "Poppins_400Regular",
+},
+
+formTextarea: {
+  height: 80,
+  textAlignVertical: "top",
+},
+
+addActions: {
+  flexDirection: "row",
+  justifyContent: "space-between",
+},
+
+addPrimaryBtn: {
+  backgroundColor: MAIN,
+  padding: 12,
+  borderRadius: 8,
+  flex: 1,
+  marginRight: 8,
+},
+
+addPrimaryText: {
+  color: "#fff",
+  textAlign: "center",
+  fontFamily: "Poppins_500Medium",
+},
+
+addSecondaryBtn: {
+  borderWidth: 1,
+  borderColor: MAIN,
+  padding: 12,
+  borderRadius: 8,
+  flex: 1,
+},
+
+addSecondaryText: {
+  color: MAIN,
+  textAlign: "center",
+  fontFamily: "Poppins_500Medium",
+},
+
+
 });
