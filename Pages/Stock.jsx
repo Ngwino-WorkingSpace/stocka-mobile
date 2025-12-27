@@ -72,6 +72,7 @@ const handleSaleChange = (field, value) => {
       ViewText: "Expiration in 2 months",
       PurchaseDate: "12th November 2025",
       ExpiryDate: "2nd January 2026",
+      description: "Irish potatoes are a high-demand root vegetable with steady market turnover. They should be stored in a cool, dry, well-ventilated area away from direct light.",
     },
     {
       id: 2,
@@ -82,6 +83,7 @@ const handleSaleChange = (field, value) => {
       ViewText: "Expiration in 2 months",
       PurchaseDate: "12th November 2025",
       ExpiryDate: "2nd January 2026",
+      description: "Maize is a versatile grain crop that requires proper storage in dry conditions to prevent mold and spoilage. Keep in well-ventilated containers away from moisture.",
     },
     {
       id: 3,
@@ -92,6 +94,7 @@ const handleSaleChange = (field, value) => {
       ViewText: "Expiration in 2 months",
       PurchaseDate: "12th November 2025",
       ExpiryDate: "2nd January 2026",
+      description: "Tomatoes are perishable vegetables that should be stored at room temperature until ripe, then refrigerated. Handle with care to avoid bruising.",
     },
     {
       id: 4,
@@ -102,6 +105,7 @@ const handleSaleChange = (field, value) => {
       ViewText: "Expiration in 2 months",
       PurchaseDate: "12th November 2025",
       ExpiryDate: "2nd January 2026",
+      description: "Watermelons are refreshing fruits best stored at room temperature before cutting. Once cut, refrigerate and consume within a few days for best quality.",
     },
     {
       id: 5,
@@ -112,6 +116,7 @@ const handleSaleChange = (field, value) => {
       ViewText: "Expiration in 2 months",
       PurchaseDate: "12th November 2025",
       ExpiryDate: "2nd January 2026",
+      description: "Biscuits should be stored in a cool, dry place in their original packaging to maintain freshness and prevent them from becoming stale or soft.",
     },
   ];
 
@@ -239,8 +244,7 @@ const handleSaleChange = (field, value) => {
                   style={styles.detailsImage}
                 />
                 <Text style={styles.descriptionText}>
-                  Irish potatoes are a high-demand crop that requires cool,
-                  dry, well-ventilated storage to maintain quality and avoid loss.
+                  {selectedProduct?.description || "No description available."}
                 </Text>
               </View>
             </View>
@@ -397,9 +401,7 @@ const handleSaleChange = (field, value) => {
 
           <Text style={saleStyles.descTitle}>Description</Text>
           <Text style={saleStyles.description}>
-            Irish potatoes are a high-demand root vegetable with steady
-            market turnover. They should be stored in a cool, dry,
-            well-ventilated area away from direct light.
+            {selectedProduct?.description || "No description available."}
           </Text>
         </View>
 
@@ -409,21 +411,25 @@ const handleSaleChange = (field, value) => {
       <Text style={saleStyles.sectionTitle}>Record a sale</Text>
 
       <View style={saleStyles.formRow}>
-        <FormInput
-          label="Quantity sold"
-          placeholder="Ex: 54kg"
-          value={saleData.quantity}
-          onChangeText={(v) => handleSaleChange("quantity", v)}
-        />
+        <View style={saleStyles.formInputWrapper}>
+          <FormInput
+            label="Quantity sold"
+            placeholder="Ex: 54kg"
+            value={saleData.quantity}
+            onChangeText={(v) => handleSaleChange("quantity", v)}
+            containerStyle={saleStyles.halfWidthContainer}
+          />
+        </View>
 
-        <FormInput
-          label="Unit Selling Price"
-          placeholder="Ex: 54kg"
-          value={saleData.unitPrice}
-          onChangeText={(v) => handleSaleChange("unitPrice", v)}
-          containerStyle={styles.saleInputContainer}
-          inputStyle={styles.saleInput}
-        />
+        <View style={saleStyles.formInputWrapper}>
+          <FormInput
+            label="Unit Selling Price"
+            placeholder="Ex: 200 RWF"
+            value={saleData.unitPrice}
+            onChangeText={(v) => handleSaleChange("unitPrice", v)}
+            containerStyle={saleStyles.halfWidthContainer}
+          />
+        </View>
       </View>
 
       <FormInput
@@ -809,6 +815,8 @@ const saleStyles = StyleSheet.create({
     height: 110,
     borderRadius: 10,
     marginBottom: 8,
+    borderColor:"#dededeff",
+    borderWidth:2,
   },
 
   descTitle: {
@@ -835,6 +843,15 @@ const saleStyles = StyleSheet.create({
     gap: 10,
   },
 
+  formInputWrapper: {
+    flex: 1,
+  },
+
+  halfWidthContainer: {
+    flex: 1,
+    marginBottom: 12,
+  },
+
   recordButton: {
     backgroundColor: "#09364D",
     paddingVertical: 12,
@@ -847,24 +864,8 @@ const saleStyles = StyleSheet.create({
     textAlign: "center",
     fontFamily: "Poppins_600SemiBold",
   },
-  salesinput:{
-  backgroundColor: "#F2F2F2",
-  borderRadius: 8,
-  paddingVertical: 10,
-  fontFamily: "Poppins_400Regular",
-  },
-  saleInputContainer: {
-  width: "48%",   // 👈 smaller width
-},
 
-saleInput: {
-  backgroundColor: "#F2F2F2",
-  borderRadius: 8,
-  paddingVertical: 8,
-  paddingHorizontal: 2,
-  fontFamily: "Poppins_400Regular",
-  fontSize: 2,
-},
+
 
 });
 
