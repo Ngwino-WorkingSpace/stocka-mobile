@@ -37,10 +37,14 @@ export default function StockScreen() {
 
 const [formData, setFormData] = useState({
   quantity: "",
+  price: "",
   purchaseDate: "",
   expiryDate: "",
   description: "",
 });
+const handleChange = (key, value) => {
+  setFormData({ ...formData, [key]: value });
+};
 
 
   const StockProducts = [
@@ -243,76 +247,89 @@ const [formData, setFormData] = useState({
 
   {/* ================= ADD STOCK MODAL ================= */}
 <Modal visible={addStockVisible} transparent animationType="fade">
-  <View style={styles.addOverlay}>
-    <View style={styles.addCard}>
-      
+  <View style={formStyles.overlay}>
+    <View style={formStyles.card}>
+
       {/* Header */}
-      <View style={styles.addHeader}>
-        <Text style={styles.addTitle}>Add Stock</Text>
+      <View style={formStyles.header}>
+        <Text style={formStyles.title}>Add to Stock</Text>
         <TouchableOpacity onPress={() => setAddStockVisible(false)}>
           <Ionicons name="close" size={22} color="#333" />
         </TouchableOpacity>
       </View>
 
-      {/* Form */}
-      <View style={styles.addForm}>
-        <FormInput
-          label="Quantity (kg)"
-          value={formData.quantity}
-          onChangeText={(text) =>
-            setFormData({ ...formData, quantity: text })
-          }
-        />
+      {/* Body */}
+      <View style={formStyles.body}>
 
-        <FormInput
-          label="Purchase Date"
-          value={formData.purchaseDate}
-          onChangeText={(text) =>
-            setFormData({ ...formData, purchaseDate: text })
-          }
-        />
+        {/* LEFT SIDE */}
+        <View style={formStyles.left}>
 
-        <FormInput
-          label="Expiry Date"
-          value={formData.expiryDate}
-          onChangeText={(text) =>
-            setFormData({ ...formData, expiryDate: text })
-          }
-        />
+          <Text style={formStyles.staticLabel}>Product Name</Text>
+          <Text style={formStyles.staticValue}>
+            {selectedProduct?.TextHead}
+          </Text>
 
-        <FormInput
-          label="Description"
-          multiline
-          value={formData.description}
-          onChangeText={(text) =>
-            setFormData({ ...formData, description: text })
-          }
-        />
+          <Text style={formStyles.staticLabel}>Category</Text>
+          <Text style={formStyles.staticValue}>
+            {selectedProduct?.subText}
+          </Text>
+
+          <FormInput
+            label="Quantity purchased"
+            placeholder="Ex: 54kg"
+            value={formData.quantity}
+            onChangeText={(v) => handleChange("quantity", v)}
+          />
+
+          <FormInput
+            label="Purchase price per unit"
+            placeholder="Ex: 200 RWF"
+            value={formData.price}
+            onChangeText={(v) => handleChange("price", v)}
+          />
+
+          <FormInput
+            label="Purchase Date"
+            placeholder="Ex: 15 June 2025"
+            value={formData.purchaseDate}
+            onChangeText={(v) => handleChange("purchaseDate", v)}
+          />
+
+          <FormInput
+            label="Expiry Date"
+            placeholder="Ex: 15 September 2025"
+            value={formData.expiryDate}
+            onChangeText={(v) => handleChange("expiryDate", v)}
+          />
+
+        </View>
+
+        {/* RIGHT SIDE */}
+        <View style={formStyles.right}>
+          <Image
+            source={selectedProduct?.Image}
+            style={formStyles.image}
+          />
+
+          <FormInput
+            label="Description (Optional)"
+            placeholder="Key notes about the product..."
+            multiline
+            value={formData.description}
+            onChangeText={(v) => handleChange("description", v)}
+          />
+        </View>
+
       </View>
 
-      {/* Actions */}
-      <View style={styles.addActions}>
-        <TouchableOpacity
-          style={styles.addPrimaryBtn}
-          onPress={() => {
-            console.log("User Input:", formData);
-            setAddStockVisible(false);
-          }}
-        >
-          <Text style={styles.addPrimaryText}>Save Stock</Text>
-        </TouchableOpacity>
+      {/* Button */}
+      <TouchableOpacity style={formStyles.addButton}>
+        <Text style={formStyles.addText}>ADD</Text>
+      </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.addSecondaryBtn}
-          onPress={() => setAddStockVisible(false)}
-        >
-          <Text style={styles.addSecondaryText}>Cancel</Text>
-        </TouchableOpacity>
-      </View>
     </View>
   </View>
 </Modal>
-
 
     </View>
   );
@@ -327,15 +344,19 @@ const Detail = ({ label, value }) => (
 );
 
 const FormInput = ({ label, multiline, ...props }) => (
-  <View style={styles.formGroup}>
-    <Text style={styles.formLabel}>{label}</Text>
+  <View style={formStyles.formGroup}>
+    <Text style={formStyles.label}>{label}</Text>
     <TextInput
-      style={[styles.formInput, multiline && styles.formTextarea]}
-      multiline={multiline}
+      style={[
+        formStyles.input,
+        multiline && formStyles.textarea,
+      ]}
+      placeholderTextColor="#999"
       {...props}
     />
   </View>
 );
+
 
 /* ================= STYLES ================= */
 const styles = StyleSheet.create({
@@ -500,3 +521,99 @@ addSecondaryText: {
 
 
 });
+
+const formStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(9,54,77,0.35)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  card: {
+    width: "92%",
+    backgroundColor: "#fff",
+    borderRadius: 18,
+    padding: 18,
+  },
+
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 14,
+  },
+
+  title: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 18,
+  },
+
+  body: {
+    flexDirection: "row",
+  },
+
+  left: {
+    flex: 1,
+    paddingRight: 10,
+  },
+
+  right: {
+    flex: 1,
+    alignItems: "center",
+  },
+
+  image: {
+    width: 110,
+    height: 110,
+    borderRadius: 12,
+    marginBottom: 10,
+  },
+
+  staticLabel: {
+    fontSize: 12,
+    color: "#777",
+    marginTop: 6,
+  },
+
+  staticValue: {
+    fontFamily: "Poppins_600SemiBold",
+    marginBottom: 6,
+  },
+
+  formGroup: {
+    marginBottom: 10,
+  },
+
+  label: {
+    fontSize: 12,
+    color: "#777",
+    marginBottom: 4,
+  },
+
+  input: {
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    borderRadius: 8,
+    padding: 10,
+    fontSize: 13,
+  },
+
+  textarea: {
+    height: 90,
+    textAlignVertical: "top",
+  },
+
+  addButton: {
+    backgroundColor: "#09364D",
+    padding: 14,
+    borderRadius: 10,
+    marginTop: 14,
+  },
+
+  addText: {
+    color: "#fff",
+    textAlign: "center",
+    fontFamily: "Poppins_600SemiBold",
+  },
+});
+
