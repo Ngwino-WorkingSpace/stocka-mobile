@@ -296,7 +296,7 @@ const handleSaleChange = (field, value) => {
             placeholder="Ex: 54kg"
             value={formData.quantity}
             onChangeText={(v) => handleChange("quantity", v)}
-             style={formStyles.input}
+             inputStyle={formStyles.input}
           />
 
           <FormInput
@@ -304,7 +304,7 @@ const handleSaleChange = (field, value) => {
             placeholder="Ex: 200 RWF"
             value={formData.price}
             onChangeText={(v) => handleChange("price", v)}
-            style={formStyles.input}
+            inputStyle={formStyles.input}
           />
 
           <FormInput
@@ -312,7 +312,7 @@ const handleSaleChange = (field, value) => {
             placeholder="Ex: 15 June 2025"
             value={formData.purchaseDate}
             onChangeText={(v) => handleChange("purchaseDate", v)}
-             style={formStyles.input}
+             inputStyle={formStyles.input}
           />
 
           <FormInput
@@ -320,7 +320,7 @@ const handleSaleChange = (field, value) => {
             placeholder="Ex: 15 September 2025"
             value={formData.expiryDate}
             onChangeText={(v) => handleChange("expiryDate", v)}
-             style={formStyles.input}
+             inputStyle={formStyles.input}
           />
 
         </View>
@@ -421,6 +421,8 @@ const handleSaleChange = (field, value) => {
           placeholder="Ex: 54kg"
           value={saleData.unitPrice}
           onChangeText={(v) => handleSaleChange("unitPrice", v)}
+          containerStyle={styles.saleInputContainer}
+          inputStyle={styles.saleInput}
         />
       </View>
 
@@ -845,5 +847,24 @@ const saleStyles = StyleSheet.create({
     textAlign: "center",
     fontFamily: "Poppins_600SemiBold",
   },
+  salesinput:{
+  backgroundColor: "#F2F2F2",
+  borderRadius: 8,
+  paddingVertical: 10,
+  fontFamily: "Poppins_400Regular",
+  },
+  saleInputContainer: {
+  width: "48%",   // 👈 smaller width
+},
+
+saleInput: {
+  backgroundColor: "#F2F2F2",
+  borderRadius: 8,
+  paddingVertical: 8,
+  paddingHorizontal: 2,
+  fontFamily: "Poppins_400Regular",
+  fontSize: 2,
+},
+
 });
 
