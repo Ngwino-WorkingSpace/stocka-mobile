@@ -46,6 +46,21 @@ const handleChange = (key, value) => {
   setFormData({ ...formData, [key]: value });
 };
 
+const [recordSaleVisible, setRecordSaleVisible] = useState(false);
+
+const [saleData, setSaleData] = useState({
+  quantity: "",
+  unitPrice: "",
+  totalPrice: "",
+});
+
+const handleSaleChange = (field, value) => {
+  setSaleData((prev) => ({
+    ...prev,
+    [field]: value,
+  }));
+};
+
 
   const StockProducts = [
     {
@@ -232,7 +247,9 @@ const handleChange = (key, value) => {
 
             {/* Buttons */}
             <View style={styles.detailsActions}>
-              <TouchableOpacity style={styles.actionButton}>
+              <TouchableOpacity style={styles.actionButton}
+                 onPress={() => setRecordSaleVisible(true)}
+              >
                 <Text style={styles.actionText}>Record Sale</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.actionButtonOutline}
@@ -337,6 +354,93 @@ const handleChange = (key, value) => {
   </View>
 </Modal>
 
+{/* ================= SALES RECORD MODAL ================= */}
+<Modal visible={recordSaleVisible} transparent animationType="fade">
+  <View style={saleStyles.overlay}>
+    <View style={saleStyles.card}>
+
+      {/* Header */}
+      <View style={saleStyles.header}>
+        <Text style={saleStyles.title}>Product Details</Text>
+        <TouchableOpacity onPress={() => setRecordSaleVisible(false)}>
+          <Ionicons name="close" size={22} color="#333" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Body */}
+      <View style={saleStyles.body}>
+
+        {/* LEFT */}
+        <View style={saleStyles.left}>
+          <Text style={saleStyles.label}>Product Name</Text>
+          <Text style={saleStyles.value}>{selectedProduct?.TextHead}</Text>
+
+          <Text style={saleStyles.label}>Category</Text>
+          <Text style={saleStyles.value}>{selectedProduct?.subText}</Text>
+
+          <Text style={saleStyles.label}>Remaining stock</Text>
+          <Text style={saleStyles.value}>{selectedProduct?.kilos}</Text>
+
+          <Text style={saleStyles.label}>Purchase date</Text>
+          <Text style={saleStyles.value}>{selectedProduct?.PurchaseDate}</Text>
+
+          <Text style={saleStyles.label}>Expiry date</Text>
+          <Text style={saleStyles.value}>{selectedProduct?.ExpiryDate}</Text>
+        </View>
+
+        {/* RIGHT */}
+        <View style={saleStyles.right}>
+          <Image
+            source={selectedProduct?.Image}
+            style={saleStyles.image}
+          />
+
+          <Text style={saleStyles.descTitle}>Description</Text>
+          <Text style={saleStyles.description}>
+            Irish potatoes are a high-demand root vegetable with steady
+            market turnover. They should be stored in a cool, dry,
+            well-ventilated area away from direct light.
+          </Text>
+        </View>
+
+      </View>
+
+      {/* SALE FORM */}
+      <Text style={saleStyles.sectionTitle}>Record a sale</Text>
+
+      <View style={saleStyles.formRow}>
+        <FormInput
+          label="Quantity sold"
+          placeholder="Ex: 54kg"
+          value={saleData.quantity}
+          onChangeText={(v) => handleSaleChange("quantity", v)}
+        />
+
+        <FormInput
+          label="Unit Selling Price"
+          placeholder="Ex: 54kg"
+          value={saleData.unitPrice}
+          onChangeText={(v) => handleSaleChange("unitPrice", v)}
+        />
+      </View>
+
+      <FormInput
+        label="Total Price"
+        placeholder="0 RWF"
+        value={saleData.totalPrice}
+        onChangeText={(v) => handleSaleChange("totalPrice", v)}
+      />
+
+      {/* BUTTON */}
+      <TouchableOpacity style={saleStyles.recordButton}>
+        <Text style={saleStyles.recordText}>RECORD</Text>
+      </TouchableOpacity>
+
+    </View>
+  </View>
+</Modal>
+
+
     </View>
   );
 }
@@ -415,7 +519,7 @@ const styles = StyleSheet.create({
   detailsLeft: { flex: 1 },
   detailsRight: { flex: 1, alignItems: "center" },
 
-  detailsImage: { width: 120, height: 120, borderRadius: 10, marginBottom: 10 },
+  detailsImage: { width: 120, height: 120, borderRadius: 10, marginBottom: 10, borderColor:"#e1dedeff", borderWidth:2 },
 
   descriptionText: { fontSize: 12, color: "#555", textAlign: "left", fontFamily:"Poppins_400Regular" },
 
@@ -642,5 +746,104 @@ const formStyles = StyleSheet.create({
   color:"#555",
 },
 
+});
+
+
+const saleStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(9,54,77,0.25)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  card: {
+    width: "92%",
+    backgroundColor: "#fff",
+    borderRadius: 18,
+    padding: 20,
+  },
+
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 15,
+  },
+
+  title: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 18,
+  },
+
+  body: {
+    flexDirection: "row",
+    marginBottom: 15,
+  },
+
+  left: {
+    flex: 1,
+  },
+
+  right: {
+    flex: 1,
+    alignItems: "center",
+    paddingLeft: 10,
+  },
+
+  label: {
+    fontSize: 11,
+    color: "#777",
+    fontFamily: "Poppins_400Regular",
+  },
+
+  value: {
+    fontSize: 13,
+    fontFamily: "Poppins_500Medium",
+    marginBottom: 8,
+  },
+
+  image: {
+    width: 110,
+    height: 110,
+    borderRadius: 10,
+    marginBottom: 8,
+  },
+
+  descTitle: {
+    fontSize: 12,
+    fontFamily: "Poppins_600SemiBold",
+    marginBottom: 4,
+  },
+
+  description: {
+    fontSize: 11,
+    color: "#555",
+    fontFamily: "Poppins_400Regular",
+  },
+
+  sectionTitle: {
+    fontFamily: "Poppins_600SemiBold",
+    fontSize: 14,
+    marginVertical: 10,
+  },
+
+  formRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 10,
+  },
+
+  recordButton: {
+    backgroundColor: "#09364D",
+    paddingVertical: 12,
+    borderRadius: 10,
+    marginTop: 15,
+  },
+
+  recordText: {
+    color: "#fff",
+    textAlign: "center",
+    fontFamily: "Poppins_600SemiBold",
+  },
 });
 
