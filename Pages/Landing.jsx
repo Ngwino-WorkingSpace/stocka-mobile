@@ -1,6 +1,6 @@
 import Background from "../components/Background.jsx";
 import React from "react";
-import {View, Text, StyleSheet,Image} from "react-native";
+import {View, Text, StyleSheet,Image, TouchableOpacity} from "react-native";
 import {
   useFonts,
   Poppins_400Regular,
@@ -9,7 +9,7 @@ import {
   Poppins_700Bold,
 } from "@expo-google-fonts/poppins";
 
-export default function LandingScreen(){
+export default function LandingScreen({navigation}){
 
  const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -24,6 +24,13 @@ export default function LandingScreen(){
           <Background/>
            <View style={styles.content}>
             <Image source={require("../assets/images/stocka.png")}/>
+            <View style={styles.GetStarted}>
+  <TouchableOpacity style={styles.getStartedBtn}
+    onPress={()=> navigation.navigate("Welcome")}
+   >
+    <Text style={styles.getStartedText}>Get started</Text>
+  </TouchableOpacity>
+</View>
 
           </View>
           <Text style={styles.bottomText}>NGWINO</Text>
@@ -55,6 +62,26 @@ const styles = StyleSheet.create({
     marginTop: 8,
      fontFamily:"Poppins_400Regular",
   },
+  GetStarted: {
+  alignItems: "center",
+  marginTop: 20,
+},
+
+getStartedBtn: {
+  paddingVertical: 12,
+  paddingHorizontal: 40,
+  borderRadius: 25,
+  borderWidth: 1,
+  borderColor: "#fff", // MAIN color
+  backgroundColor: "transparent", // 👈 key part
+},
+
+getStartedText: {
+  fontFamily: "Poppins_600SemiBold",
+  fontSize: 16,
+  color: "#fff",
+},
+
    bottomText: {
     position: 'absolute',
     bottom: 20, // distance from the bottom

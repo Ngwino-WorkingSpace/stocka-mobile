@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "flex-end",
     alignItems: "center",
-    paddingBottom: 20, // space from bottom edge
+    paddingBottom: 10, // space from bottom edge
     width: "100%",
   },
 
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: 10,
   },
  input: {
   width: "100%",
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   paddingHorizontal: 15,
   borderRadius: 10,
   color: "#107EBA",
-  marginBottom: 15,
+  marginBottom: 8,
   borderWidth: 1,
   borderColor: "#0F4461",
   fontSize: 17,
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   color: "#fff",
   fontSize: 16,
   textAlign: "left", // aligns text to the left
-  marginTop: 20,
+  margin:5,
   alignSelf:"flex-start",
 },
 
