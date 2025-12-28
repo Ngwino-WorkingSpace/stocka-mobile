@@ -4,12 +4,12 @@
     "slug": "tradewise",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/stocka.png",
+    "icon": "./assets/images/stockaLogo.png",
     "scheme": "tradewise",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/stocka.png",
+      "image": "./assets/images/stockaLogo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -28,7 +28,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/stocka.png"
+      "favicon": "./assets/images/stockaLogo.png"
     },
     "plugins": [
       "expo-router",

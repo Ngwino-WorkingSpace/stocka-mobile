@@ -207,7 +207,7 @@ export default function SalesScreen({ navigation }) {
         {/* Menu Items - Not shown in press state */}
         {!isPressState && (
           <>
-            <View style={styles.menuContainer}>
+          <View style={styles.menuContainer}>
             <TouchableOpacity 
               style={[
                 styles.navItem, 
@@ -344,28 +344,28 @@ export default function SalesScreen({ navigation }) {
               <Text style={styles.headerText}>Sales List</Text>
             </View>
 
-            {/* TABS */}
-            <View style={styles.tabs}>
-              {["Daily", "Weekly", "Monthly", "Annually"].map((tab) => (
-                <TouchableOpacity
-                  key={tab}
-                  onPress={() => setSelectedTab(tab)}
-                  style={[
-                    styles.tab,
-                    selectedTab === tab && styles.activeTab,
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.tabText,
-                      selectedTab === tab && styles.activeTabText,
-                    ]}
-                  >
-                    {tab}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+         {/* TABS */}
+                  <View style={styles.tabs}>
+                    {["Daily", "Weekly", "Monthly", "Annually"].map((tab) => (
+                      <TouchableOpacity
+                        key={tab}
+                        onPress={() => setSelectedTab(tab)}
+                        style={[
+                          styles.tab,
+                          selectedTab === tab && styles.activeTab,
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            styles.tabText,
+                            selectedTab === tab && styles.activeTabText,
+                          ]}
+                        >
+                          {tab}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
 
         <FlatList
         data={StockProducts.filter((p) =>
@@ -423,12 +423,12 @@ export default function SalesScreen({ navigation }) {
         )}
       />
 
-            <View style={styles.MoreButton}>
-              <TouchableOpacity style={styles.MoreButtonTouchable}>
-                <Text style={styles.MoreText}>View More</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+        <View style={styles.MoreButton}>
+          <TouchableOpacity style={styles.MoreButtonTouchable}>
+            <Text style={styles.MoreText}>View More</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
         </KeyboardAvoidingView>
       </SafeAreaView>
     </View>
@@ -583,7 +583,7 @@ const styles = StyleSheet.create({
     padding: 8,
     marginRight: 8,
   },
-  tabs: {
+   tabs: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 20,
