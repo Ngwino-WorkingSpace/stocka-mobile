@@ -7,6 +7,9 @@ import {
   Image,
   FlatList,
   ScrollView,
+  SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import {
   useFonts,
@@ -35,6 +38,7 @@ const getRouteName = (itemName) => {
 export default function SalesScreen({ navigation }) {
   // Sidebar states: "press" (minimal), "collapsed" (icons only), "expanded" (full)
   const [sidebarState, setSidebarState] = useState("press");
+  const [darkMode, setDarkMode] = useState(false);
   const [selectedItem, setSelectedItem] = useState("Sales");
   const [selectedTab, setSelectedTab] = useState("Daily");
 
@@ -202,7 +206,8 @@ export default function SalesScreen({ navigation }) {
 
         {/* Menu Items - Not shown in press state */}
         {!isPressState && (
-          <View style={styles.menuContainer}>
+          <>
+            <View style={styles.menuContainer}>
             <TouchableOpacity 
               style={[
                 styles.navItem, 
@@ -263,35 +268,104 @@ export default function SalesScreen({ navigation }) {
               {isExpanded && <Text style={styles.navText}>Profile</Text>}
             </TouchableOpacity>
           </View>
+
+            {/* Divider */}
+            {isExpanded && <View style={styles.divider} />}
+
+            {/* Utility Items */}
+            <View style={styles.utilityContainer}>
+              <TouchableOpacity 
+                style={[styles.navItem, isExpanded && styles.navItemExpanded]}
+                onPress={() => handleNavItemPress("Help")}
+              >
+                <Ionicons name="help-circle-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Help</Text>}
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={[styles.navItem, isExpanded && styles.navItemExpanded]}
+                onPress={() => handleNavItemPress("Logout")}
+              >
+                <Ionicons name="log-out-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Logout</Text>}
+              </TouchableOpacity>
+            </View>
+
+            {/* Theme Toggle - At the bottom, only when expanded */}
+            {isExpanded && (
+              <View style={styles.themeToggleContainer}>
+                <View style={styles.themeToggle}>
+                  <Ionicons
+                    name="sunny"
+                    size={20}
+                    color={!darkMode ? MAIN : "#999"}
+                  />
+                  <TouchableOpacity
+                    style={[
+                      styles.themeToggleSwitch,
+                      darkMode && styles.themeToggleSwitchActive
+                    ]}
+                    onPress={() => setDarkMode(!darkMode)}
+                  >
+                    <View style={[
+                      styles.themeToggleKnob,
+                      darkMode && styles.themeToggleKnobActive
+                    ]} />
+                  </TouchableOpacity>
+                  <Ionicons
+                    name="moon"
+                    size={20}
+                    color={darkMode ? "#fff" : "#999"}
+                  />
+                </View>
+              </View>
+            )}
+          </>
         )}
       </View>
 
       {/* CONTENT */}
-      <View style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 58 : 0, backgroundColor: "#fff", padding: 15 }}>
-         {/* TABS */}
-                  <View style={styles.tabs}>
-                    {["Daily", "Weekly", "Monthly", "Annually"].map((tab) => (
-                      <TouchableOpacity
-                        key={tab}
-                        onPress={() => setSelectedTab(tab)}
-                        style={[
-                          styles.tab,
-                          selectedTab === tab && styles.activeTab,
-                        ]}
-                      >
-                        <Text
-                          style={[
-                            styles.tabText,
-                            selectedTab === tab && styles.activeTabText,
-                          ]}
-                        >
-                          {tab}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
-                  </View>
+      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 58 : 0, backgroundColor: "#fff" }}>
+        <KeyboardAvoidingView 
+          style={{ flex: 1 }}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+          <View style={{ padding: 15 }}>
+            {/* Header with back button */}
+            <View style={styles.headerRow}>
+              {navigation?.canGoBack() && (
+                <TouchableOpacity 
+                  onPress={() => navigation.goBack()}
+                  style={styles.backButton}
+                >
+                  <Ionicons name="arrow-back" size={24} color="#000" />
+                </TouchableOpacity>
+              )}
+              <Text style={styles.headerText}>Sales List</Text>
+            </View>
 
-        <Text style={styles.headerText}>Sales List</Text>
+            {/* TABS */}
+            <View style={styles.tabs}>
+              {["Daily", "Weekly", "Monthly", "Annually"].map((tab) => (
+                <TouchableOpacity
+                  key={tab}
+                  onPress={() => setSelectedTab(tab)}
+                  style={[
+                    styles.tab,
+                    selectedTab === tab && styles.activeTab,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.tabText,
+                      selectedTab === tab && styles.activeTabText,
+                    ]}
+                  >
+                    {tab}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
 
         <FlatList
         data={StockProducts.filter((p) =>
@@ -349,12 +423,14 @@ export default function SalesScreen({ navigation }) {
         )}
       />
 
-        <View style={styles.MoreButton}>
-          <TouchableOpacity style={styles.MoreButtonTouchable}>
-            <Text style={styles.MoreText}>View More</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+            <View style={styles.MoreButton}>
+              <TouchableOpacity style={styles.MoreButtonTouchable}>
+                <Text style={styles.MoreText}>View More</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     </View>
   );
 }
@@ -451,7 +527,63 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     fontSize: 14,
   },
-   tabs: {
+  divider: {
+    height: 1,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    marginVertical: 15,
+    width: "100%",
+  },
+  utilityContainer: {
+    width: "100%",
+    marginTop: 10,
+  },
+  themeToggleContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 10,
+    right: 10,
+  },
+  themeToggle: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+  },
+  themeToggleSwitch: {
+    width: 50,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    paddingHorizontal: 2,
+    marginHorizontal: 10,
+    flexDirection: "row",
+  },
+  themeToggleSwitchActive: {
+    backgroundColor: "#4a9eff",
+    justifyContent: "flex-end",
+  },
+  themeToggleKnob: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: "#09364D",
+    alignSelf: "center",
+  },
+  themeToggleKnobActive: {
+    backgroundColor: "#fff",
+  },
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  backButton: {
+    padding: 8,
+    marginRight: 8,
+  },
+  tabs: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 20,

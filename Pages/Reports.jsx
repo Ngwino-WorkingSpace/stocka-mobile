@@ -6,6 +6,9 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import {
   useFonts,
@@ -33,6 +36,7 @@ const getRouteName = (itemName) => {
 export default function ReportsScreen({ navigation }) {
   // Sidebar states: "press" (minimal), "collapsed" (icons only), "expanded" (full)
   const [sidebarState, setSidebarState] = useState("press");
+  const [darkMode, setDarkMode] = useState(false);
   const [selectedItem, setSelectedItem] = useState("Reports");
   const [selectedTab, setSelectedTab] = useState("Daily");
 
@@ -204,30 +208,95 @@ export default function ReportsScreen({ navigation }) {
                 {isExpanded && <Text style={styles.navText}>Profile</Text>}
               </TouchableOpacity>
             </View>
+
+            {/* Divider */}
+            {isExpanded && <View style={styles.divider} />}
+
+            {/* Utility Items */}
+            <View style={styles.utilityContainer}>
+              <TouchableOpacity 
+                style={[styles.navItem, isExpanded && styles.navItemExpanded]}
+                onPress={() => handleNavItemPress("Help")}
+              >
+                <Ionicons name="help-circle-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Help</Text>}
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={[styles.navItem, isExpanded && styles.navItemExpanded]}
+                onPress={() => handleNavItemPress("Logout")}
+              >
+                <Ionicons name="log-out-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Logout</Text>}
+              </TouchableOpacity>
+            </View>
+
+            {/* Theme Toggle - At the bottom, only when expanded */}
+            {isExpanded && (
+              <View style={styles.themeToggleContainer}>
+                <View style={styles.themeToggle}>
+                  <Ionicons
+                    name="sunny"
+                    size={20}
+                    color={!darkMode ? MAIN : "#999"}
+                  />
+                  <TouchableOpacity
+                    style={[
+                      styles.themeToggleSwitch,
+                      darkMode && styles.themeToggleSwitchActive
+                    ]}
+                    onPress={() => setDarkMode(!darkMode)}
+                  >
+                    <View style={[
+                      styles.themeToggleKnob,
+                      darkMode && styles.themeToggleKnobActive
+                    ]} />
+                  </TouchableOpacity>
+                  <Ionicons
+                    name="moon"
+                    size={20}
+                    color={darkMode ? "#fff" : "#999"}
+                  />
+                </View>
+              </View>
+            )}
           </>
         )}
       </View>
 
       {/* CONTENT */}
-      <View style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 58 : 0 }}>
-        <ScrollView
-          contentContainerStyle={{
-            flexGrow: 1,
-            padding: 20,
-            paddingBottom: 20,
-            backgroundColor: "#fff",
-          }}
+      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 58 : 0 }}>
+        <KeyboardAvoidingView 
+          style={{ flex: 1 }}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-          {/* HEADER */}
-          <View style={styles.header}>
-            <View style={styles.logoContainerHeader}>
-              <Image
-                source={require("../assets/images/stock.png")}
-                style={{ width: 36, height: 36 }}
-              />
-              <Text style={styles.stockaText}>Stocka</Text>
+          <ScrollView
+            contentContainerStyle={{
+              flexGrow: 1,
+              padding: 20,
+              paddingBottom: 20,
+              backgroundColor: "#fff",
+            }}
+            showsVerticalScrollIndicator={false}
+          >
+            {/* HEADER */}
+            <View style={styles.header}>
+              {navigation?.canGoBack() && (
+                <TouchableOpacity 
+                  onPress={() => navigation.goBack()}
+                  style={styles.backButton}
+                >
+                  <Ionicons name="arrow-back" size={24} color="#000" />
+                </TouchableOpacity>
+              )}
+              <View style={styles.logoContainerHeader}>
+                <Image
+                  source={require("../assets/images/stock.png")}
+                  style={{ width: 36, height: 36 }}
+                />
+                <Text style={styles.stockaText}>Stocka</Text>
+              </View>
             </View>
-          </View>
 
           {/* TABS */}
           <View style={styles.tabs}>
@@ -350,8 +419,9 @@ export default function ReportsScreen({ navigation }) {
               </Text>
             </View>
           </View>
-        </ScrollView>
-      </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     </View>
   );
 }
@@ -448,11 +518,62 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     fontSize: 14,
   },
+  divider: {
+    height: 1,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    marginVertical: 15,
+    width: "100%",
+  },
+  utilityContainer: {
+    width: "100%",
+    marginTop: 10,
+  },
+  themeToggleContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 10,
+    right: 10,
+  },
+  themeToggle: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+  },
+  themeToggleSwitch: {
+    width: 50,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    paddingHorizontal: 2,
+    marginHorizontal: 10,
+    flexDirection: "row",
+  },
+  themeToggleSwitchActive: {
+    backgroundColor: "#4a9eff",
+    justifyContent: "flex-end",
+  },
+  themeToggleKnob: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: "#09364D",
+    alignSelf: "center",
+  },
+  themeToggleKnobActive: {
+    backgroundColor: "#fff",
+  },
   header: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     alignItems: "center",
     marginBottom: 15,
+  },
+  backButton: {
+    padding: 8,
+    marginRight: 8,
   },
   logoContainerHeader: {
     flexDirection: "row",

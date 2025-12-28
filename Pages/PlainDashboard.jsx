@@ -7,7 +7,10 @@ import {
   TouchableOpacity,
   Image,
   Modal,
-  TextInput
+  TextInput,
+  SafeAreaView,
+  KeyboardAvoidingView,
+  Platform
 } from "react-native";
 import {
   useFonts,
@@ -303,17 +306,30 @@ const handleSaleChange = (field, value) => {
       </View>
 
       {/* CONTENT */}
-      <View style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 58 : 0 }}>
-        <ScrollView
-          contentContainerStyle={{
-            flexGrow: 1,
-            padding: 20,
-            paddingBottom: 20,
-          }}
-          style={darkMode && styles.darkScrollView}
+      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 58 : 0 }}>
+        <KeyboardAvoidingView 
+          style={{ flex: 1 }}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
+          <ScrollView
+            contentContainerStyle={{
+              flexGrow: 1,
+              padding: 20,
+              paddingBottom: 20,
+            }}
+            style={darkMode && styles.darkScrollView}
+            showsVerticalScrollIndicator={false}
+          >
           {/* HEADER */}
           <View style={styles.header}>
+            {navigation?.canGoBack() && (
+              <TouchableOpacity 
+                onPress={() => navigation.goBack()}
+                style={styles.backButton}
+              >
+                <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
+              </TouchableOpacity>
+            )}
             <View style={styles.logoContainer}>
               <Image
                 source={require("../assets/images/stock.png")}
@@ -423,11 +439,28 @@ const handleSaleChange = (field, value) => {
             </TouchableOpacity>
           </View>
         </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
 
          {/* ================= ADD STOCK MODAL ================= */}
-        <Modal visible={addStockVisible} transparent animationType="fade">
-          <View style={formStyles.overlay}>
-            <View style={formStyles.card}>
+        <Modal visible={addStockVisible} transparent animationType="slide">
+          <KeyboardAvoidingView 
+            style={formStyles.overlay}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+          >
+            <TouchableOpacity 
+              style={formStyles.overlay}
+              activeOpacity={1}
+              onPress={() => setAddStockVisible(false)}
+            >
+              <TouchableOpacity activeOpacity={1} onPress={(e) => e.stopPropagation()}>
+                <ScrollView 
+                  style={formStyles.scrollView}
+                  contentContainerStyle={formStyles.scrollContent}
+                  showsVerticalScrollIndicator={false}
+                  keyboardShouldPersistTaps="handled"
+                >
+                  <View style={formStyles.card}>
         
               {/* Header */}
               <View style={formStyles.header}>
@@ -512,14 +545,32 @@ const handleSaleChange = (field, value) => {
                 <Text style={formStyles.addText}>ADD</Text>
               </TouchableOpacity>
         
-            </View>
-          </View>
+                  </View>
+                </ScrollView>
+              </TouchableOpacity>
+            </TouchableOpacity>
+          </KeyboardAvoidingView>
         </Modal>
         
         {/* ================= SALES RECORD MODAL ================= */}
-        <Modal visible={recordSaleVisible} transparent animationType="fade">
-          <View style={saleStyles.overlay}>
-            <View style={saleStyles.card}>
+        <Modal visible={recordSaleVisible} transparent animationType="slide">
+          <KeyboardAvoidingView 
+            style={saleStyles.overlay}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+          >
+            <TouchableOpacity 
+              style={saleStyles.overlay}
+              activeOpacity={1}
+              onPress={() => setRecordSaleVisible(false)}
+            >
+              <TouchableOpacity activeOpacity={1} onPress={(e) => e.stopPropagation()}>
+                <ScrollView 
+                  style={saleStyles.scrollView}
+                  contentContainerStyle={saleStyles.scrollContent}
+                  showsVerticalScrollIndicator={false}
+                  keyboardShouldPersistTaps="handled"
+                >
+                  <View style={saleStyles.card}>
         
               {/* Header */}
               <View style={saleStyles.header}>
@@ -602,11 +653,13 @@ const handleSaleChange = (field, value) => {
                 <Text style={saleStyles.recordText}>RECORD</Text>
               </TouchableOpacity>
         
-            </View>
-          </View>
+                  </View>
+                </ScrollView>
+              </TouchableOpacity>
+            </TouchableOpacity>
+          </KeyboardAvoidingView>
         </Modal>
       </View>
-    </View>
   );
 }
 
@@ -777,6 +830,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginBottom: 15,
+  },
+  backButton: {
+    padding: 8,
+    marginRight: 8,
   },
  tabs: {
     flexDirection: "row",
@@ -888,27 +946,47 @@ const styles = StyleSheet.create({
 const formStyles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(9,54,77,0.35)",
+    backgroundColor: "rgba(9,54,77,0.5)",
     justifyContent: "center",
     alignItems: "center",
   },
-
+  scrollView: {
+    flex: 1,
+    width: "100%",
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 20,
+  },
   card: {
     width: "92%",
+    maxWidth: 500,
     backgroundColor: "#fff",
-    borderRadius: 18,
-    padding: 18,
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 10,
   },
 
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 14,
+    alignItems: "center",
+    marginBottom: 16,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E0E0E0",
   },
 
   title: {
     fontFamily: "Poppins_700Bold",
-    fontSize: 18,
+    fontSize: 20,
+    color: "#09364D",
   },
 
   body: {
@@ -958,13 +1036,14 @@ const formStyles = StyleSheet.create({
   },
 
   input: {
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: "#E0E0E0",
-    borderRadius: 8,
-    padding: 10,
-    fontSize: 13,
+    borderRadius: 10,
+    padding: 12,
+    fontSize: 14,
     fontFamily:"Poppins_400Regular",
-    color:"#555",
+    color:"#333",
+    backgroundColor: "#FAFAFA",
   },
 
   textarea: {
@@ -974,15 +1053,22 @@ const formStyles = StyleSheet.create({
 
   addButton: {
     backgroundColor: "#09364D",
-    padding: 14,
-    borderRadius: 10,
-    marginTop: 14,
+    padding: 16,
+    borderRadius: 12,
+    marginTop: 16,
+    shadowColor: "#09364D",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
 
   addText: {
     color: "#fff",
     textAlign: "center",
     fontFamily: "Poppins_600SemiBold",
+    fontSize: 16,
+    letterSpacing: 1,
   },
   descriptionInput: {
   height: 120,
@@ -997,27 +1083,47 @@ const formStyles = StyleSheet.create({
 const saleStyles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(9,54,77,0.25)",
+    backgroundColor: "rgba(9,54,77,0.5)",
     justifyContent: "center",
     alignItems: "center",
   },
-
+  scrollView: {
+    flex: 1,
+    width: "100%",
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 20,
+  },
   card: {
     width: "92%",
+    maxWidth: 500,
     backgroundColor: "#fff",
-    borderRadius: 18,
+    borderRadius: 20,
     padding: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 10,
   },
 
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 15,
+    alignItems: "center",
+    marginBottom: 16,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E0E0E0",
   },
 
   title: {
     fontFamily: "Poppins_700Bold",
-    fontSize: 18,
+    fontSize: 20,
+    color: "#09364D",
   },
 
   body: {
@@ -1091,18 +1197,27 @@ const saleStyles = StyleSheet.create({
 
   recordButton: {
     backgroundColor: "#09364D",
-    paddingVertical: 12,
-    borderRadius: 10,
-    marginTop: 15,
+    paddingVertical: 16,
+    borderRadius: 12,
+    marginTop: 16,
+    shadowColor: "#09364D",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
 
   recordText: {
     color: "#fff",
     textAlign: "center",
     fontFamily: "Poppins_600SemiBold",
+    fontSize: 16,
+    letterSpacing: 1,
   },
 
 
 
 });
+
+
 

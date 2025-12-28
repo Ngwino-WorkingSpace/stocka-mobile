@@ -9,6 +9,9 @@ import {
   TextInput,
   Modal,
   FlatList,
+  SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import {
   useFonts,
@@ -36,6 +39,7 @@ const getRouteName = (itemName) => {
 export default function StockScreen({ navigation }) {
   // Sidebar states: "press" (minimal), "collapsed" (icons only), "expanded" (full)
   const [sidebarState, setSidebarState] = useState("press");
+  const [darkMode, setDarkMode] = useState(false);
   const [selectedItem, setSelectedItem] = useState("Stock");
 
   const [fontsLoaded] = useFonts({
@@ -243,7 +247,8 @@ const handleSaleChange = (field, value) => {
 
         {/* Menu Items - Not shown in press state */}
         {!isPressState && (
-          <View style={styles.menuContainer}>
+          <>
+            <View style={styles.menuContainer}>
             <TouchableOpacity 
               style={[
                 styles.navItem, 
@@ -304,20 +309,91 @@ const handleSaleChange = (field, value) => {
               {isExpanded && <Text style={styles.navText}>Profile</Text>}
             </TouchableOpacity>
           </View>
+
+            {/* Divider */}
+            {isExpanded && <View style={styles.divider} />}
+
+            {/* Utility Items */}
+            <View style={styles.utilityContainer}>
+              <TouchableOpacity 
+                style={[styles.navItem, isExpanded && styles.navItemExpanded]}
+                onPress={() => handleNavItemPress("Help")}
+              >
+                <Ionicons name="help-circle-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Help</Text>}
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={[styles.navItem, isExpanded && styles.navItemExpanded]}
+                onPress={() => handleNavItemPress("Logout")}
+              >
+                <Ionicons name="log-out-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Logout</Text>}
+              </TouchableOpacity>
+            </View>
+
+            {/* Theme Toggle - At the bottom, only when expanded */}
+            {isExpanded && (
+              <View style={styles.themeToggleContainer}>
+                <View style={styles.themeToggle}>
+                  <Ionicons
+                    name="sunny"
+                    size={20}
+                    color={!darkMode ? MAIN : "#999"}
+                  />
+                  <TouchableOpacity
+                    style={[
+                      styles.themeToggleSwitch,
+                      darkMode && styles.themeToggleSwitchActive
+                    ]}
+                    onPress={() => setDarkMode(!darkMode)}
+                  >
+                    <View style={[
+                      styles.themeToggleKnob,
+                      darkMode && styles.themeToggleKnobActive
+                    ]} />
+                  </TouchableOpacity>
+                  <Ionicons
+                    name="moon"
+                    size={20}
+                    color={darkMode ? "#fff" : "#999"}
+                  />
+                </View>
+              </View>
+            )}
+          </>
         )}
       </View>
 
       {/* CONTENT */}
-      <View style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 58 : 0 }}>
-        <ScrollView contentContainerStyle={{ padding: 20 }}>
-          {/* Logo */}
-          <View style={styles.logoContainer}>
-            <Image
-              source={require("../assets/images/stock.png")}
-              style={{ width: 36, height: 36 }}
-            />
-            <Text style={styles.stockaText}>Stocka</Text>
-          </View>
+      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 58 : 0 }}>
+        <KeyboardAvoidingView 
+          style={{ flex: 1 }}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+          <ScrollView 
+            contentContainerStyle={{ padding: 20 }}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            {/* Header with back button */}
+            <View style={styles.headerRow}>
+              {navigation?.canGoBack() && (
+                <TouchableOpacity 
+                  onPress={() => navigation.goBack()}
+                  style={styles.backButton}
+                >
+                  <Ionicons name="arrow-back" size={24} color="#000" />
+                </TouchableOpacity>
+              )}
+              <View style={styles.logoContainer}>
+                <Image
+                  source={require("../assets/images/stock.png")}
+                  style={{ width: 36, height: 36 }}
+                />
+                <Text style={styles.stockaText}>Stocka</Text>
+              </View>
+            </View>
 
         {/* Search & Category */}
         <View style={styles.searchCategoryContainer}>
@@ -397,7 +473,9 @@ const handleSaleChange = (field, value) => {
   </TouchableOpacity>
 </View>
 
-      </ScrollView>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
 
       {/* ================= PRODUCT DETAILS MODAL ================= */}
       <Modal visible={!!selectedProduct} transparent animationType="fade">
@@ -452,9 +530,24 @@ const handleSaleChange = (field, value) => {
       </Modal>
 
   {/* ================= ADD STOCK MODAL ================= */}
-<Modal visible={addStockVisible} transparent animationType="fade">
-  <View style={formStyles.overlay}>
-    <View style={formStyles.card}>
+<Modal visible={addStockVisible} transparent animationType="slide">
+  <KeyboardAvoidingView 
+    style={formStyles.overlay}
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+  >
+    <TouchableOpacity 
+      style={formStyles.overlay}
+      activeOpacity={1}
+      onPress={() => setAddStockVisible(false)}
+    >
+      <TouchableOpacity activeOpacity={1} onPress={(e) => e.stopPropagation()}>
+        <ScrollView 
+          style={formStyles.scrollView}
+          contentContainerStyle={formStyles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={formStyles.card}>
 
       {/* Header */}
       <View style={formStyles.header}>
@@ -534,19 +627,37 @@ const handleSaleChange = (field, value) => {
 
       </View>
 
-      {/* Button */}
-      <TouchableOpacity style={formStyles.addButton}>
-        <Text style={formStyles.addText}>ADD</Text>
-      </TouchableOpacity>
+          {/* Button */}
+          <TouchableOpacity style={formStyles.addButton}>
+            <Text style={formStyles.addText}>ADD</Text>
+          </TouchableOpacity>
 
-    </View>
-  </View>
+          </View>
+        </ScrollView>
+      </TouchableOpacity>
+    </TouchableOpacity>
+  </KeyboardAvoidingView>
 </Modal>
 
 {/* ================= SALES RECORD MODAL ================= */}
-<Modal visible={recordSaleVisible} transparent animationType="fade">
-  <View style={saleStyles.overlay}>
-    <View style={saleStyles.card}>
+<Modal visible={recordSaleVisible} transparent animationType="slide">
+  <KeyboardAvoidingView 
+    style={saleStyles.overlay}
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+  >
+    <TouchableOpacity 
+      style={saleStyles.overlay}
+      activeOpacity={1}
+      onPress={() => setRecordSaleVisible(false)}
+    >
+      <TouchableOpacity activeOpacity={1} onPress={(e) => e.stopPropagation()}>
+        <ScrollView 
+          style={saleStyles.scrollView}
+          contentContainerStyle={saleStyles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={saleStyles.card}>
 
       {/* Header */}
       <View style={saleStyles.header}>
@@ -624,17 +735,19 @@ const handleSaleChange = (field, value) => {
         onChangeText={(v) => handleSaleChange("totalPrice", v)}
       />
 
-      {/* BUTTON */}
-      <TouchableOpacity style={saleStyles.recordButton}>
-        <Text style={saleStyles.recordText}>RECORD</Text>
-      </TouchableOpacity>
+          {/* BUTTON */}
+          <TouchableOpacity style={saleStyles.recordButton}>
+            <Text style={saleStyles.recordText}>RECORD</Text>
+          </TouchableOpacity>
 
-    </View>
-  </View>
+          </View>
+        </ScrollView>
+      </TouchableOpacity>
+    </TouchableOpacity>
+  </KeyboardAvoidingView>
 </Modal>
 
       </View>
-    </View>
   );
 }
 
@@ -762,7 +875,63 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     fontSize: 14,
   },
-  logoContainer: { flexDirection: "row", justifyContent: "center", marginBottom: 20 },
+  divider: {
+    height: 1,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    marginVertical: 15,
+    width: "100%",
+  },
+  utilityContainer: {
+    width: "100%",
+    marginTop: 10,
+  },
+  themeToggleContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 10,
+    right: 10,
+  },
+  themeToggle: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+  },
+  themeToggleSwitch: {
+    width: 50,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    paddingHorizontal: 2,
+    marginHorizontal: 10,
+    flexDirection: "row",
+  },
+  themeToggleSwitchActive: {
+    backgroundColor: "#4a9eff",
+    justifyContent: "flex-end",
+  },
+  themeToggleKnob: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: "#09364D",
+    alignSelf: "center",
+  },
+  themeToggleKnobActive: {
+    backgroundColor: "#fff",
+  },
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  backButton: {
+    padding: 8,
+    marginRight: 8,
+  },
+  logoContainer: { flexDirection: "row", alignItems: "center" },
   stockaText: { fontFamily: "Poppins_700Bold", fontSize: 22, color: MAIN, marginLeft: 10 },
 
   searchCategoryContainer: { flexDirection: "row", marginBottom: 20 },
@@ -956,27 +1125,47 @@ addText: {
 const formStyles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(9,54,77,0.35)",
+    backgroundColor: "rgba(9,54,77,0.5)",
     justifyContent: "center",
     alignItems: "center",
   },
-
+  scrollView: {
+    flex: 1,
+    width: "100%",
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 20,
+  },
   card: {
     width: "92%",
+    maxWidth: 500,
     backgroundColor: "#fff",
-    borderRadius: 18,
-    padding: 18,
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 10,
   },
 
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 14,
+    alignItems: "center",
+    marginBottom: 16,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E0E0E0",
   },
 
   title: {
     fontFamily: "Poppins_700Bold",
-    fontSize: 18,
+    fontSize: 20,
+    color: "#09364D",
   },
 
   body: {
@@ -1026,13 +1215,14 @@ const formStyles = StyleSheet.create({
   },
 
   input: {
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: "#E0E0E0",
-    borderRadius: 8,
-    padding: 10,
-    fontSize: 13,
+    borderRadius: 10,
+    padding: 12,
+    fontSize: 14,
     fontFamily:"Poppins_400Regular",
-    color:"#555",
+    color:"#333",
+    backgroundColor: "#FAFAFA",
   },
 
   textarea: {
@@ -1042,15 +1232,22 @@ const formStyles = StyleSheet.create({
 
   addButton: {
     backgroundColor: "#09364D",
-    padding: 14,
-    borderRadius: 10,
-    marginTop: 14,
+    padding: 16,
+    borderRadius: 12,
+    marginTop: 16,
+    shadowColor: "#09364D",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
 
   addText: {
     color: "#fff",
     textAlign: "center",
     fontFamily: "Poppins_600SemiBold",
+    fontSize: 16,
+    letterSpacing: 1,
   },
   descriptionInput: {
   height: 120,
@@ -1065,27 +1262,47 @@ const formStyles = StyleSheet.create({
 const saleStyles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(9,54,77,0.25)",
+    backgroundColor: "rgba(9,54,77,0.5)",
     justifyContent: "center",
     alignItems: "center",
   },
-
+  scrollView: {
+    flex: 1,
+    width: "100%",
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 20,
+  },
   card: {
     width: "92%",
+    maxWidth: 500,
     backgroundColor: "#fff",
-    borderRadius: 18,
+    borderRadius: 20,
     padding: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 10,
   },
 
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 15,
+    alignItems: "center",
+    marginBottom: 16,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E0E0E0",
   },
 
   title: {
     fontFamily: "Poppins_700Bold",
-    fontSize: 18,
+    fontSize: 20,
+    color: "#09364D",
   },
 
   body: {
@@ -1159,18 +1376,26 @@ const saleStyles = StyleSheet.create({
 
   recordButton: {
     backgroundColor: "#09364D",
-    paddingVertical: 12,
-    borderRadius: 10,
-    marginTop: 15,
+    paddingVertical: 16,
+    borderRadius: 12,
+    marginTop: 16,
+    shadowColor: "#09364D",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
 
   recordText: {
     color: "#fff",
     textAlign: "center",
     fontFamily: "Poppins_600SemiBold",
+    fontSize: 16,
+    letterSpacing: 1,
   },
 
 
 
 });
+
 
