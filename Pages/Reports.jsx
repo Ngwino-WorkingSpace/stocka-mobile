@@ -594,7 +594,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   tab: {
-    flex: 1,
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 6,

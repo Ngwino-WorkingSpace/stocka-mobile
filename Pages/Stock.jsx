@@ -1126,8 +1126,10 @@ const formStyles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: "rgba(9,54,77,0.5)",
-    justifyContent: "center",
-    alignItems: "center",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   scrollView: {
     flex: 1,
@@ -1140,8 +1142,7 @@ const formStyles = StyleSheet.create({
     paddingVertical: 20,
   },
   card: {
-    width: "92%",
-    maxWidth: 500,
+    width: "100%",
     backgroundColor: "#fff",
     borderRadius: 20,
     padding: 20,
@@ -1263,8 +1264,10 @@ const saleStyles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: "rgba(9,54,77,0.5)",
-    justifyContent: "center",
-    alignItems: "center",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   scrollView: {
     flex: 1,
@@ -1277,8 +1280,7 @@ const saleStyles = StyleSheet.create({
     paddingVertical: 20,
   },
   card: {
-    width: "92%",
-    maxWidth: 500,
+    width: "100%",
     backgroundColor: "#fff",
     borderRadius: 20,
     padding: 20,
@@ -1317,7 +1319,6 @@ const saleStyles = StyleSheet.create({
   right: {
     flex: 1,
     alignItems: "center",
-    paddingLeft: 10,
   },
 
   label: {

@@ -330,6 +330,7 @@ export default function SalesScreen({ navigation }) {
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
+          <ScrollView>
           <View style={{ padding: 15 }}>
             {/* Header with back button */}
             <View style={styles.headerRow}>
@@ -429,6 +430,7 @@ export default function SalesScreen({ navigation }) {
           </TouchableOpacity>
         </View>
       </View>
+      </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
     </View>
@@ -592,7 +594,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   tab: {
-    flex: 1,
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 6,
