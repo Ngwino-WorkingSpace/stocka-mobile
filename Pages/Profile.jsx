@@ -100,9 +100,10 @@ export default function ProfileScreen({navigation}) {
         style={[
           styles.sidebar,
           {
-            width: isPressState ? 40 : isCollapsed ? 58 : 250,
+            width: isPressState ? 40 : isCollapsed ? 70 : 250,
             backgroundColor: MAIN,
             alignItems: isPressState ? "center" : isCollapsed ? "center" : "flex-start",
+            paddingHorizontal: isPressState ? 0 : isCollapsed ? 6 : 10,
           },
         ]}
       >
@@ -113,7 +114,9 @@ export default function ProfileScreen({navigation}) {
             style={styles.pressContainer}
             activeOpacity={0.7}
           >
-            <Text style={styles.pressText}>PRESS</Text>
+            <View style={styles.pressTextWrapper}>
+              <Text style={styles.pressText}>PRESS</Text>
+            </View>
           </TouchableOpacity>
         )}
 
@@ -277,7 +280,7 @@ export default function ProfileScreen({navigation}) {
       </View>
 
       {/* CONTENT */}
-      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 58 : 0 }}>
+      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0 }}>
         <KeyboardAvoidingView 
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -440,22 +443,32 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     paddingTop: 50,
-    paddingHorizontal: 10,
+    paddingHorizontal: 0,
     zIndex: 10,
     justifyContent: "center",
+    overflow: "hidden",
   },
   pressContainer: {
+    width: "100%",
+    height: 150,
     justifyContent: "center",
     alignItems: "center",
-    width: "100%",
-    height: "100%",
+    paddingVertical: 20,
+  },
+  pressTextWrapper: {
+    width: 40,
+    height: 120,
+    justifyContent: "center",
+    alignItems: "center",
+    transform: [{ rotate: "-90deg" }],
   },
   pressText: {
     color: "#fff",
     fontFamily: "Poppins_600SemiBold",
     fontSize: 16,
-    transform: [{ rotate: "-90deg" }],
     letterSpacing: 2,
+    textAlign: "center",
+    includeFontPadding: false,
   },
   arrowButton: {
     marginBottom: 25,
@@ -497,6 +510,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     width: "100%",
     justifyContent: "center",
+    minHeight: 44,
+    overflow: "visible",
   },
   navItemExpanded: {
     justifyContent: "flex-start",
