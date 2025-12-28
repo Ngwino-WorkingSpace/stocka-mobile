@@ -75,6 +75,64 @@ const handleSaleChange = (field, value) => {
   }));
 };
 
+const StockProducts = [
+    {
+      id: 1,
+      Image: require("../assets/images/irishPotatoes.png"),
+      TextHead: "Irish Potatoes",
+      subText: "Vegetables",
+      kilos: "54kg",
+      ViewText: "Expiration in 2 months",
+      PurchaseDate: "12th November 2025",
+      ExpiryDate: "2nd January 2026",
+      description: "Irish potatoes are a high-demand root vegetable with steady market turnover. They should be stored in a cool, dry, well-ventilated area away from direct light.",
+    },
+    {
+      id: 2,
+      Image: require("../assets/images/Maize.png"),
+      TextHead: "Maize",
+      subText: "Grains",
+      kilos: "112kg",
+      ViewText: "Expiration in 2 months",
+      PurchaseDate: "12th November 2025",
+      ExpiryDate: "2nd January 2026",
+      description: "Maize is a versatile grain crop that requires proper storage in dry conditions to prevent mold and spoilage. Keep in well-ventilated containers away from moisture.",
+    },
+    {
+      id: 3,
+      Image: require("../assets/images/Tomato.png"),
+      TextHead: "Tomatoes",
+      subText: "Vegetables",
+      kilos: "23kg",
+      ViewText: "Expiration in 2 months",
+      PurchaseDate: "12th November 2025",
+      ExpiryDate: "2nd January 2026",
+      description: "Tomatoes are perishable vegetables that should be stored at room temperature until ripe, then refrigerated. Handle with care to avoid bruising.",
+    },
+    {
+      id: 4,
+      Image: require("../assets/images/WaterMelon.png"),
+      TextHead: "WaterMelons",
+      subText: "Fruits",
+      kilos: "11kg",
+      ViewText: "Expiration in 2 months",
+      PurchaseDate: "12th November 2025",
+      ExpiryDate: "2nd January 2026",
+      description: "Watermelons are refreshing fruits best stored at room temperature before cutting. Once cut, refrigerate and consume within a few days for best quality.",
+    },
+    {
+      id: 5,
+      Image: require("../assets/images/Digestive.png"),
+      TextHead: "Biscuits(Vegetables)",
+      subText: "Biscuits",
+      kilos: "2 boxes (50 pieces each)",
+      ViewText: "Expiration in 2 months",
+      PurchaseDate: "12th November 2025",
+      ExpiryDate: "2nd January 2026",
+      description: "Biscuits should be stored in a cool, dry place in their original packaging to maintain freshness and prevent them from becoming stale or soft.",
+    },
+  ];
+
   
 
   const [fontsLoaded] = useFonts({
@@ -99,6 +157,8 @@ const handleSaleChange = (field, value) => {
     }
   };
 
+
+  
   const handleArrowPress = () => {
     // Expand sidebar when clicking on arrow (go to full sidebar)
     setSidebarState("expanded");
@@ -946,41 +1006,42 @@ const styles = StyleSheet.create({
 const formStyles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(9,54,77,0.5)",
+    backgroundColor: "rgba(9,54,77,0.6)",
     justifyContent: "center",
     alignItems: "center",
-  },
-  scrollView: {
-    flex: 1,
-    width: "100%",
-  },
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 20,
-  },
-  card: {
-    width: "92%",
-    maxWidth: 500,
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    padding: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 10,
   },
 
+  scrollView: {
+    width: "100%",
+  },
+
+  scrollContent: {
+    paddingVertical: 30,
+    alignItems: "center",
+  },
+
+  card: {
+    width: "92%",
+    maxWidth: 520,
+    backgroundColor: "#fff",
+    borderRadius: 22,
+    padding: 22,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.25,
+    shadowRadius: 18,
+    elevation: 12,
+  },
+
+  /* HEADER */
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 18,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
+    borderBottomColor: "#EAEAEA",
   },
 
   title: {
@@ -989,13 +1050,14 @@ const formStyles = StyleSheet.create({
     color: "#09364D",
   },
 
+  /* BODY */
   body: {
     flexDirection: "row",
+    gap: 14,
   },
 
   left: {
-    flex: 1,
-    paddingRight: 10,
+    flex: 1.2,
   },
 
   right: {
@@ -1004,79 +1066,73 @@ const formStyles = StyleSheet.create({
   },
 
   image: {
-    width: 110,
-    height: 110,
-    borderRadius: 12,
-    marginBottom: 10,
-    borderColor:"#c5c5c5ff",
-    borderWidth:2,
+    width: 120,
+    height: 120,
+    borderRadius: 14,
+    marginBottom: 14,
+    backgroundColor: "#F4F6F8",
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
   },
 
   staticLabel: {
-    fontSize: 12,
-    color: "#777",
+    fontSize: 11,
+    color: "#888",
+    fontFamily: "Poppins_400Regular",
     marginTop: 6,
-    fontFamily:"Poppins_400Regular",
   },
 
   staticValue: {
     fontFamily: "Poppins_600SemiBold",
-    marginBottom: 6,
-  },
-
-  formGroup: {
+    fontSize: 13,
+    color: "#09364D",
     marginBottom: 10,
   },
 
-  label: {
-    fontSize: 12,
-    color: "#333",
-    marginBottom: 4,
-    fontFamily:"Poppins_400Regular",
-  },
-
+  /* INPUTS */
   input: {
-    borderWidth: 1.5,
-    borderColor: "#E0E0E0",
-    borderRadius: 10,
-    padding: 12,
-    fontSize: 14,
-    fontFamily:"Poppins_400Regular",
-    color:"#333",
-    backgroundColor: "#FAFAFA",
-  },
-
-  textarea: {
-    height: 90,
-    textAlignVertical: "top",
-  },
-
-  addButton: {
-    backgroundColor: "#09364D",
-    padding: 16,
+    borderWidth: 1,
+    borderColor: "#E3E3E3",
     borderRadius: 12,
-    marginTop: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    fontSize: 13,
+    backgroundColor: "#FAFAFA",
+    fontFamily: "Poppins_400Regular",
+  },
+
+  descriptionInput: {
+    height: 130,
+    textAlignVertical: "top",
+    borderWidth: 1,
+    borderColor: "#E3E3E3",
+    borderRadius: 14,
+    padding: 14,
+    fontSize: 13,
+    backgroundColor: "#FAFAFA",
+    fontFamily: "Poppins_400Regular",
+  },
+
+  /* BUTTON */
+  addButton: {
+    marginTop: 22,
+    backgroundColor: "#09364D",
+    paddingVertical: 16,
+    borderRadius: 14,
+    alignItems: "center",
     shadowColor: "#09364D",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
+    elevation: 6,
   },
 
   addText: {
     color: "#fff",
-    textAlign: "center",
     fontFamily: "Poppins_600SemiBold",
-    fontSize: 16,
+    fontSize: 15,
     letterSpacing: 1,
   },
-  descriptionInput: {
-  height: 120,
-  textAlignVertical: "top",
-  paddingTop: 12,
-  color:"#555",
-},
-
 });
 
 
@@ -1218,6 +1274,3 @@ const saleStyles = StyleSheet.create({
 
 
 });
-
-
-
