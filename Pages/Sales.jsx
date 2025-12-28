@@ -36,6 +36,7 @@ export default function SalesScreen({ navigation }) {
   // Sidebar states: "press" (minimal), "collapsed" (icons only), "expanded" (full)
   const [sidebarState, setSidebarState] = useState("press");
   const [selectedItem, setSelectedItem] = useState("Sales");
+  const [selectedTab, setSelectedTab] = useState("Daily");
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -267,28 +268,28 @@ export default function SalesScreen({ navigation }) {
 
       {/* CONTENT */}
       <View style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 58 : 0, backgroundColor: "#fff", padding: 15 }}>
-        {/* Tabs */}
-        <View style={styles.tabs}>
-        {tabs.map((tab) => (
-          <TouchableOpacity
-            key={tab}
-            style={[
-              styles.tab,
-              activeTab === tab && styles.activeTab,
-            ]}
-            onPress={() => setActiveTab(tab)}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                activeTab === tab && styles.activeTabText,
-              ]}
-            >
-              {tab}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+         {/* TABS */}
+                  <View style={styles.tabs}>
+                    {["Daily", "Weekly", "Monthly", "Annually"].map((tab) => (
+                      <TouchableOpacity
+                        key={tab}
+                        onPress={() => setSelectedTab(tab)}
+                        style={[
+                          styles.tab,
+                          selectedTab === tab && styles.activeTab,
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            styles.tabText,
+                            selectedTab === tab && styles.activeTabText,
+                          ]}
+                        >
+                          {tab}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
 
         <Text style={styles.headerText}>Sales List</Text>
 
@@ -450,16 +451,20 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     fontSize: 14,
   },
-  tabs: {
+   tabs: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 15,
+    marginBottom: 20,
+    backgroundColor: "#F5F5F5",
+    padding: 4,
+    borderRadius: 8,
   },
   tab: {
+    flex: 1,
     paddingVertical: 8,
-    paddingHorizontal: 18,
-    borderRadius: 5,
-    backgroundColor: "#eee",
+    paddingHorizontal: 12,
+    borderRadius: 6,
+    alignItems: "center",
   },
   activeTab: {
     backgroundColor: MAIN,
@@ -467,11 +472,10 @@ const styles = StyleSheet.create({
   tabText: {
     fontFamily: "Poppins_500Medium",
     fontSize: 14,
-    color: "#555",
+    color: "#666",
   },
   activeTabText: {
     color: "#fff",
-    fontWeight: "bold",
   },
   headerText: {
     fontFamily: "Poppins_600SemiBold",

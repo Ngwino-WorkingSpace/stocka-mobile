@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   Modal,
+  TextInput
 } from "react-native";
 import {
   useFonts,
@@ -36,6 +37,42 @@ export default function PlainDashboardScreen({navigation}) {
   const [sidebarState, setSidebarState] = useState("press");
   const [darkMode, setDarkMode] = useState(false);
   const [selectedItem, setSelectedItem] = useState("Dashboard");
+   const [selectedTab, setSelectedTab] = useState("Daily");
+   const [searchText, setSearchText] = useState("");
+     const [categoryVisible, setCategoryVisible] = useState(false);
+     const [selectedCategory, setSelectedCategory] = useState("Category");
+     const [selectedProduct, setSelectedProduct] = useState(null);
+     const [addStockVisible, setAddStockVisible] = useState(false);
+
+
+const [formData, setFormData] = useState({
+  quantity: "",
+  price: "",
+  purchaseDate: "",
+  expiryDate: "",
+  description: "",
+});
+const handleChange = (key, value) => {
+  setFormData({ ...formData, [key]: value });
+};
+
+
+const [recordSaleVisible, setRecordSaleVisible] = useState(false);
+
+const [saleData, setSaleData] = useState({
+  quantity: "",
+  unitPrice: "",
+  totalPrice: "",
+});
+
+const handleSaleChange = (field, value) => {
+  setSaleData((prev) => ({
+    ...prev,
+    [field]: value,
+  }));
+};
+
+  
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -288,26 +325,27 @@ export default function PlainDashboardScreen({navigation}) {
           </View>
 
           {/* TABS */}
-          <View style={[styles.tabs, darkMode && styles.darkTabs]}>
-            {["Daily", "Weekly", "Monthly", "Annually"].map((t, index) => (
-              <View 
-                key={t} 
-                style={[
-                  styles.tab, 
-                  index === 0 && styles.activeTab,
-                  darkMode && index === 0 && styles.darkActiveTab
-                ]}
-              >
-                <Text style={[
-                  styles.tabText, 
-                  darkMode && styles.darkText,
-                  index === 0 && darkMode && { color: MAIN }
-                ]}>
-                  {t}
-                </Text>
-              </View>
-            ))}
-          </View>
+                    <View style={styles.tabs}>
+                      {["Daily", "Weekly", "Monthly", "Annually"].map((tab) => (
+                        <TouchableOpacity
+                          key={tab}
+                          onPress={() => setSelectedTab(tab)}
+                          style={[
+                            styles.tab,
+                            selectedTab === tab && styles.activeTab,
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.tabText,
+                              selectedTab === tab && styles.activeTabText,
+                            ]}
+                          >
+                            {tab}
+                          </Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
 
           {/* TITLE */}
           <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Your Dashboard</Text>
@@ -323,7 +361,9 @@ export default function PlainDashboardScreen({navigation}) {
                 <Text style={styles.cardLabel}>{c.label}</Text>
                 <Text style={styles.cardValue}>{c.value}</Text>
                 <View style={styles.cardBtn}>
+                 <TouchableOpacity>
                   <Text style={styles.cardBtnText}>{c.btn}</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
             ))}
@@ -370,19 +410,227 @@ export default function PlainDashboardScreen({navigation}) {
 
           {/* BOTTOM BUTTONS */}
           <View style={styles.bottomBtns}>
-            <TouchableOpacity style={styles.actionBtn}>
+            <TouchableOpacity style={styles.actionBtn}
+              onPress={() => setRecordSaleVisible(true)}
+             >
               <Text style={styles.actionText}>Record a sale</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={[styles.actionBtnOutline, darkMode && styles.darkActionBtnOutline]}>
+            <TouchableOpacity style={[styles.actionBtnOutline, darkMode && styles.darkActionBtnOutline]}
+                   onPress={() => setAddStockVisible(true)}
+              >
               <Text style={[styles.actionTextOutline, darkMode && styles.darkActionTextOutline]}>Add a product</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
+
+         {/* ================= ADD STOCK MODAL ================= */}
+        <Modal visible={addStockVisible} transparent animationType="fade">
+          <View style={formStyles.overlay}>
+            <View style={formStyles.card}>
+        
+              {/* Header */}
+              <View style={formStyles.header}>
+                <Text style={formStyles.title}>Add to Stock</Text>
+                <TouchableOpacity onPress={() => setAddStockVisible(false)}>
+                  <Ionicons name="close" size={22} color="#333" />
+                </TouchableOpacity>
+              </View>
+        
+              {/* Body */}
+              <View style={formStyles.body}>
+        
+                {/* LEFT SIDE */}
+                <View style={formStyles.left}>
+        
+                  <Text style={formStyles.staticLabel}>Product Name</Text>
+                  <Text style={formStyles.staticValue}>
+                    {selectedProduct?.TextHead}
+                  </Text>
+        
+                  <Text style={formStyles.staticLabel}>Category</Text>
+                  <Text style={formStyles.staticValue}>
+                    {selectedProduct?.subText}
+                  </Text>
+        
+                  <FormInput
+                    label="Quantity purchased"
+                    placeholder="Ex: 54kg"
+                    value={formData.quantity}
+                    onChangeText={(v) => handleChange("quantity", v)}
+                     inputStyle={formStyles.input}
+                  />
+        
+                  <FormInput
+                    label="Purchase price per unit"
+                    placeholder="Ex: 200 RWF"
+                    value={formData.price}
+                    onChangeText={(v) => handleChange("price", v)}
+                    inputStyle={formStyles.input}
+                  />
+        
+                  <FormInput
+                    label="Purchase Date"
+                    placeholder="Ex: 15 June 2025"
+                    value={formData.purchaseDate}
+                    onChangeText={(v) => handleChange("purchaseDate", v)}
+                     inputStyle={formStyles.input}
+                  />
+        
+                  <FormInput
+                    label="Expiry Date"
+                    placeholder="Ex: 15 September 2025"
+                    value={formData.expiryDate}
+                    onChangeText={(v) => handleChange("expiryDate", v)}
+                     inputStyle={formStyles.input}
+                  />
+        
+                </View>
+        
+                {/* RIGHT SIDE */}
+                <View style={formStyles.right}>
+                  <Image
+                    source={selectedProduct?.Image}
+                    style={formStyles.image}
+                  />
+        
+                  <FormInput
+          label="Description (Optional)"
+          placeholder="Key notes about the product..."
+          multiline
+          value={formData.description}
+          onChangeText={(v) => handleChange("description", v)}
+          inputStyle={formStyles.descriptionInput}
+        />
+        
+                </View>
+        
+              </View>
+        
+              {/* Button */}
+              <TouchableOpacity style={formStyles.addButton}>
+                <Text style={formStyles.addText}>ADD</Text>
+              </TouchableOpacity>
+        
+            </View>
+          </View>
+        </Modal>
+        
+        {/* ================= SALES RECORD MODAL ================= */}
+        <Modal visible={recordSaleVisible} transparent animationType="fade">
+          <View style={saleStyles.overlay}>
+            <View style={saleStyles.card}>
+        
+              {/* Header */}
+              <View style={saleStyles.header}>
+                <Text style={saleStyles.title}>Product Details</Text>
+                <TouchableOpacity onPress={() => setRecordSaleVisible(false)}>
+                  <Ionicons name="close" size={22} color="#333" />
+                </TouchableOpacity>
+              </View>
+        
+              {/* Body */}
+              <View style={saleStyles.body}>
+        
+                {/* LEFT */}
+                <View style={saleStyles.left}>
+                  <Text style={saleStyles.label}>Product Name</Text>
+                  <Text style={saleStyles.value}>{selectedProduct?.TextHead}</Text>
+        
+                  <Text style={saleStyles.label}>Category</Text>
+                  <Text style={saleStyles.value}>{selectedProduct?.subText}</Text>
+        
+                  <Text style={saleStyles.label}>Remaining stock</Text>
+                  <Text style={saleStyles.value}>{selectedProduct?.kilos}</Text>
+        
+                  <Text style={saleStyles.label}>Purchase date</Text>
+                  <Text style={saleStyles.value}>{selectedProduct?.PurchaseDate}</Text>
+        
+                  <Text style={saleStyles.label}>Expiry date</Text>
+                  <Text style={saleStyles.value}>{selectedProduct?.ExpiryDate}</Text>
+                </View>
+        
+                {/* RIGHT */}
+                <View style={saleStyles.right}>
+                  <Image
+                    source={selectedProduct?.Image}
+                    style={saleStyles.image}
+                  />
+        
+                  <Text style={saleStyles.descTitle}>Description</Text>
+                  <Text style={saleStyles.description}>
+                    {selectedProduct?.description || "No description available."}
+                  </Text>
+                </View>
+        
+              </View>
+        
+              {/* SALE FORM */}
+              <Text style={saleStyles.sectionTitle}>Record a sale</Text>
+        
+              <View style={saleStyles.formRow}>
+                <View style={saleStyles.formInputWrapper}>
+                  <FormInput
+                    label="Quantity sold"
+                    placeholder="Ex: 54kg"
+                    value={saleData.quantity}
+                    onChangeText={(v) => handleSaleChange("quantity", v)}
+                    containerStyle={saleStyles.halfWidthContainer}
+                  />
+                </View>
+        
+                <View style={saleStyles.formInputWrapper}>
+                  <FormInput
+                    label="Unit Selling Price"
+                    placeholder="Ex: 200 RWF"
+                    value={saleData.unitPrice}
+                    onChangeText={(v) => handleSaleChange("unitPrice", v)}
+                    containerStyle={saleStyles.halfWidthContainer}
+                  />
+                </View>
+              </View>
+        
+              <FormInput
+                label="Total Price"
+                placeholder="0 RWF"
+                value={saleData.totalPrice}
+                onChangeText={(v) => handleSaleChange("totalPrice", v)}
+              />
+        
+              {/* BUTTON */}
+              <TouchableOpacity style={saleStyles.recordButton}>
+                <Text style={saleStyles.recordText}>RECORD</Text>
+              </TouchableOpacity>
+        
+            </View>
+          </View>
+        </Modal>
       </View>
     </View>
   );
 }
+
+const FormInput = ({
+  label,
+  multiline,
+  inputStyle,
+  containerStyle,
+  ...props
+}) => (
+  <View style={[styles.formGroup, containerStyle]}>
+    <Text style={styles.formLabel}>{label}</Text>
+    <TextInput
+      style={[
+        styles.formInput,
+        multiline && styles.formTextarea,
+        inputStyle,
+      ]}
+      multiline={multiline}
+      {...props}
+    />
+  </View>
+);
+
 
 const styles = StyleSheet.create({
   container: { flex: 1, flexDirection: "row" },
@@ -530,24 +778,36 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  tabs: {
+ tabs: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginVertical: 15,
-    backgroundColor: "#E6EEF2",
-    padding: 12,
-    borderRadius: 5,
+    marginBottom: 20,
+    backgroundColor: "#F5F5F5",
+    padding: 4,
+    borderRadius: 8,
   },
-  darkTabs: {
-    backgroundColor: "#2a2a3e",
+  tab: {
+    flex: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 6,
+    alignItems: "center",
+  },
+  activeTab: {
+    backgroundColor: MAIN,
+  },
+  tabText: {
+    fontFamily: "Poppins_500Medium",
+    fontSize: 14,
+    color: "#666",
+  },
+  activeTabText: {
+    color: "#fff",
   },
   tab: { 
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 5,
-  },
-  activeTab: {
-    backgroundColor: "#E6EEF2",
   },
   darkActiveTab: {
     backgroundColor: "#4a9eff",
@@ -623,3 +883,226 @@ const styles = StyleSheet.create({
     color: "#4a9eff",
   },
 });
+
+
+const formStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(9,54,77,0.35)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  card: {
+    width: "92%",
+    backgroundColor: "#fff",
+    borderRadius: 18,
+    padding: 18,
+  },
+
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 14,
+  },
+
+  title: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 18,
+  },
+
+  body: {
+    flexDirection: "row",
+  },
+
+  left: {
+    flex: 1,
+    paddingRight: 10,
+  },
+
+  right: {
+    flex: 1,
+    alignItems: "center",
+  },
+
+  image: {
+    width: 110,
+    height: 110,
+    borderRadius: 12,
+    marginBottom: 10,
+    borderColor:"#c5c5c5ff",
+    borderWidth:2,
+  },
+
+  staticLabel: {
+    fontSize: 12,
+    color: "#777",
+    marginTop: 6,
+    fontFamily:"Poppins_400Regular",
+  },
+
+  staticValue: {
+    fontFamily: "Poppins_600SemiBold",
+    marginBottom: 6,
+  },
+
+  formGroup: {
+    marginBottom: 10,
+  },
+
+  label: {
+    fontSize: 12,
+    color: "#333",
+    marginBottom: 4,
+    fontFamily:"Poppins_400Regular",
+  },
+
+  input: {
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    borderRadius: 8,
+    padding: 10,
+    fontSize: 13,
+    fontFamily:"Poppins_400Regular",
+    color:"#555",
+  },
+
+  textarea: {
+    height: 90,
+    textAlignVertical: "top",
+  },
+
+  addButton: {
+    backgroundColor: "#09364D",
+    padding: 14,
+    borderRadius: 10,
+    marginTop: 14,
+  },
+
+  addText: {
+    color: "#fff",
+    textAlign: "center",
+    fontFamily: "Poppins_600SemiBold",
+  },
+  descriptionInput: {
+  height: 120,
+  textAlignVertical: "top",
+  paddingTop: 12,
+  color:"#555",
+},
+
+});
+
+
+const saleStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(9,54,77,0.25)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  card: {
+    width: "92%",
+    backgroundColor: "#fff",
+    borderRadius: 18,
+    padding: 20,
+  },
+
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 15,
+  },
+
+  title: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 18,
+  },
+
+  body: {
+    flexDirection: "row",
+    marginBottom: 15,
+  },
+
+  left: {
+    flex: 1,
+  },
+
+  right: {
+    flex: 1,
+    alignItems: "center",
+    paddingLeft: 10,
+  },
+
+  label: {
+    fontSize: 11,
+    color: "#777",
+    fontFamily: "Poppins_400Regular",
+  },
+
+  value: {
+    fontSize: 13,
+    fontFamily: "Poppins_500Medium",
+    marginBottom: 8,
+  },
+
+  image: {
+    width: 110,
+    height: 110,
+    borderRadius: 10,
+    marginBottom: 8,
+    borderColor:"#dededeff",
+    borderWidth:2,
+  },
+
+  descTitle: {
+    fontSize: 12,
+    fontFamily: "Poppins_600SemiBold",
+    marginBottom: 4,
+  },
+
+  description: {
+    fontSize: 11,
+    color: "#555",
+    fontFamily: "Poppins_400Regular",
+  },
+
+  sectionTitle: {
+    fontFamily: "Poppins_600SemiBold",
+    fontSize: 14,
+    marginVertical: 10,
+  },
+
+  formRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 10,
+  },
+
+  formInputWrapper: {
+    flex: 1,
+  },
+
+  halfWidthContainer: {
+    flex: 1,
+    marginBottom: 12,
+  },
+
+  recordButton: {
+    backgroundColor: "#09364D",
+    paddingVertical: 12,
+    borderRadius: 10,
+    marginTop: 15,
+  },
+
+  recordText: {
+    color: "#fff",
+    textAlign: "center",
+    fontFamily: "Poppins_600SemiBold",
+  },
+
+
+
+});
+
