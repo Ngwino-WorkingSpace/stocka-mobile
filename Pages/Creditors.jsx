@@ -37,7 +37,7 @@ const DATA = [
   },
 ];
 
-export default function DebtorsScreen() {
+export default function CreditorsScreen() {
   const [activeTab, setActiveTab] = useState("debtors");
   const [sortOpen, setSortOpen] = useState(false);
   const [sortBy, setSortBy] = useState("Phone");
