@@ -31,6 +31,7 @@ const getRouteName = (itemName) => {
     "Sales": "Sales",
     "Reports": "Reports",
     "Profile": "Profile",
+    "debtors": "debtors",
   };
   return routeMap[itemName] || itemName;
 };
@@ -210,6 +211,20 @@ export default function ProfileScreen({navigation}) {
                 <Ionicons name="document-text-outline" size={22} color="#fff" />
                 {isExpanded && <Text style={styles.navText}>Reports</Text>}
               </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={[
+                  styles.navItem, 
+                  isExpanded && styles.navItemExpanded,
+                  selectedItem === "debtors" && isExpanded && styles.navItemSelected
+                ]}
+                onPress={() => handleNavItemPress("debtors")}
+              >
+                <Ionicons name="document-text-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Debtors</Text>}
+              </TouchableOpacity>
+
+
 
               <TouchableOpacity 
                 style={[

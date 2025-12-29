@@ -31,6 +31,7 @@ const getRouteName = (itemName) => {
     "Sales": "Sales",
     "Reports": "Reports",
     "Profile": "Profile",
+    "Debtors":"Debtors",
   };
   return routeMap[itemName] || itemName;
 };
@@ -175,6 +176,26 @@ const StockProducts = [
 
   return (
     <View style={[styles.container, { backgroundColor: darkMode ? "#1a1a2e" : "#fff" }]}>
+
+        {/* FLOATING PRESS HANDLE */}
+{isPressState && (
+  <TouchableOpacity
+    onPress={handlePressTextClick}
+    activeOpacity={0.8}
+    style={styles.floatingPress}
+  >
+    <View style={styles.pressTextWrapper}>
+      <Text style={styles.pressText}>S</Text>
+      <Text style={styles.pressText}>S</Text>
+      <Text style={styles.pressText}>E</Text>
+      <Text style={styles.pressText}>R</Text>
+      <Text style={styles.pressText}>P</Text>
+    </View>
+  </TouchableOpacity>
+)}
+
+
+
       {/* OVERLAY - Shows when sidebar is expanded */}
       {isExpanded && (
         <TouchableOpacity
@@ -196,20 +217,7 @@ const StockProducts = [
           },
         ]}
       >
-        {/* PRESS State - Show only "PRESS" text vertically */}
-        {isPressState && (
-          <TouchableOpacity
-            onPress={handlePressTextClick}
-            style={styles.pressContainer}
-            activeOpacity={0.7}
-          >
-            <View style={styles.pressTextWrapper}>
-              <Text style={styles.pressText}>PRESS</Text>
-            </View>
-          </TouchableOpacity>
-        )}
-
-
+       
         {/* Toggle Arrow - Only visible when collapsed (icons only) */}
         {isCollapsed && (
           <TouchableOpacity
@@ -301,6 +309,18 @@ const StockProducts = [
                 {isExpanded && <Text style={styles.navText}>Reports</Text>}
               </TouchableOpacity>
 
+                <TouchableOpacity 
+                style={[
+                  styles.navItem, 
+                  isExpanded && styles.navItemExpanded,
+                  selectedItem === "debtors" && isExpanded && styles.navItemSelected
+                ]}
+                onPress={() => handleNavItemPress("debtors")}
+              >
+                <Ionicons name="wallet-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Debtors</Text>}
+              </TouchableOpacity>
+
               <TouchableOpacity 
                 style={[
                   styles.navItem, 
@@ -319,13 +339,13 @@ const StockProducts = [
 
             {/* Utility Items */}
             <View style={styles.utilityContainer}>
-              <TouchableOpacity 
+              {/* <TouchableOpacity 
                 style={[styles.navItem, isExpanded && styles.navItemExpanded]}
                 onPress={() => handleNavItemPress("Help")}
               >
                 <Ionicons name="help-circle-outline" size={22} color="#fff" />
                 {isExpanded && <Text style={styles.navText}>Help</Text>}
-              </TouchableOpacity>
+              </TouchableOpacity> */}
 
               <TouchableOpacity 
                 style={[styles.navItem, isExpanded && styles.navItemExpanded]}
@@ -750,7 +770,38 @@ const FormInput = ({
 
 
 const styles = StyleSheet.create({
-  container: { flex: 1, flexDirection: "row" },
+  container: { flex: 1, flexDirection: "row", position:"relative" },
+
+ floatingPress: {
+  position: "absolute",
+  left: 0,
+  top: "45%",
+  width: 34,
+  height: 60,              // ✅ small height
+  backgroundColor: MAIN,
+  borderTopRightRadius: 10,
+  borderBottomRightRadius: 10,
+  justifyContent: "center",
+  alignItems: "center",
+  zIndex: 100,
+  elevation: 6,
+},
+
+
+pressTextWrapper: {
+  justifyContent: "center",
+  alignItems: "center",
+},
+
+pressText: {
+  color: "#fff",
+  fontSize: 11,
+  fontFamily: "Poppins_600SemiBold",
+  lineHeight: 12,
+},
+
+
+    
   overlay: {
     position: "absolute",
     top: 0,
@@ -771,20 +822,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     overflow: "hidden",
   },
-  pressContainer: {
-    width: "100%",
-    height: 150,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 20,
+  pressTab: {
+    position: "absolute",
+    left: 0,
+    top: "40%",
+    backgroundColor: "#0B3A53",
+    paddingVertical: 10,
+    paddingHorizontal: 6,
+    borderTopRightRadius: 6,
+    borderBottomRightRadius: 6,
+    zIndex: 10,
   },
-  pressTextWrapper: {
-    width: 40,
-    height: 120,
-    justifyContent: "center",
-    alignItems: "center",
-    transform: [{ rotate: "-90deg" }],
-  },
+
   pressText: {
     color: "#fff",
     fontFamily: "Poppins_600SemiBold",
@@ -792,6 +841,7 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
     textAlign: "center",
     includeFontPadding: false,
+     transform: [{ rotate: "-90deg" }],
   },
   arrowButton: {
     marginBottom: 25,
@@ -828,7 +878,7 @@ const styles = StyleSheet.create({
   },
   menuContainer: {
     width: "100%",
-    marginTop: 5,
+    marginTop: 2,
   },
   navItem: {
     flexDirection: "row",
@@ -863,7 +913,7 @@ const styles = StyleSheet.create({
   },
   utilityContainer: {
     width: "100%",
-    marginTop: 10,
+    marginTop: 2,
   },
   themeToggleContainer: {
     position: "absolute",
