@@ -32,6 +32,7 @@ const getRouteName = (itemName) => {
     "Sales": "Sales",
     "Reports": "Reports",
     "Profile": "Profile",
+    "Debtors": "debtors",
   };
   return routeMap[itemName] || itemName;
 };
@@ -41,6 +42,7 @@ export default function StockScreen({ navigation }) {
   const [sidebarState, setSidebarState] = useState("press");
   const [darkMode, setDarkMode] = useState(false);
   const [selectedItem, setSelectedItem] = useState("Stock");
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -309,6 +311,18 @@ const handleSaleChange = (field, value) => {
               style={[
                 styles.navItem, 
                 isExpanded && styles.navItemExpanded,
+                selectedItem === "Debtors" && isExpanded && styles.navItemSelected
+              ]}
+              onPress={() => handleNavItemPress("Debtors")}
+            >
+              <Ionicons name="wallet-outline" size={22} color="#fff" />
+              {isExpanded && <Text style={styles.navText}>Debtors</Text>}
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={[
+                styles.navItem, 
+                isExpanded && styles.navItemExpanded,
                 selectedItem === "Profile" && isExpanded && styles.navItemSelected
               ]}
               onPress={() => handleNavItemPress("Profile")}
@@ -333,7 +347,7 @@ const handleSaleChange = (field, value) => {
 
               <TouchableOpacity 
                 style={[styles.navItem, isExpanded && styles.navItemExpanded]}
-                onPress={() => handleNavItemPress("Logout")}
+                onPress={() => setShowLogoutModal(true)}
               >
                 <Ionicons name="log-out-outline" size={22} color="#fff" />
                 {isExpanded && <Text style={styles.navText}>Logout</Text>}
@@ -755,6 +769,50 @@ const handleSaleChange = (field, value) => {
   </KeyboardAvoidingView>
 </Modal>
 
+      {/* LOGOUT MODAL */}
+      <Modal
+        transparent
+        animationType="fade"
+        visible={showLogoutModal}
+        onRequestClose={() => setShowLogoutModal(false)}
+      >
+        <View style={styles.logoutOverlay}>
+          <View style={styles.logoutModalCard}>
+            <Ionicons
+              name="warning-outline"
+              size={38}
+              color="#0A2A3F"
+              style={{ marginBottom: 10 }}
+            />
+
+            <Text style={styles.logoutModalText}>
+              Are you sure about logging out?
+            </Text>
+
+            <View style={styles.logoutModalButtons}>
+              <TouchableOpacity
+                style={styles.logoutYesButton}
+                onPress={() => {
+                  setShowLogoutModal(false);
+                  if (navigation) {
+                    navigation.navigate("Login");
+                  }
+                }}
+              >
+                <Text style={styles.logoutYesText}>YES</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.logoutNoButton}
+                onPress={() => setShowLogoutModal(false)}
+              >
+                <Text style={styles.logoutNoText}>NO</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
       </View>
   );
 }
@@ -1137,8 +1195,54 @@ addText: {
   fontSize: 16,
   fontFamily: "Poppins_600SemiBold",
 },
-
-
+logoutOverlay: {
+  flex: 1,
+  backgroundColor: "rgba(0,0,0,0.45)",
+  justifyContent: "center",
+  alignItems: "center",
+},
+logoutModalCard: {
+  width: "80%",
+  maxWidth: 350,
+  backgroundColor: "#fff",
+  borderRadius: 14,
+  padding: 20,
+  alignItems: "center",
+},
+logoutModalText: {
+  fontFamily: "Poppins_500Medium",
+  fontSize: 13,
+  marginVertical: 10,
+  textAlign: "center",
+},
+logoutModalButtons: {
+  flexDirection: "row",
+  marginTop: 14,
+},
+logoutYesButton: {
+  backgroundColor: "#0A2A3F",
+  paddingVertical: 10,
+  paddingHorizontal: 30,
+  borderRadius: 8,
+  marginRight: 10,
+},
+logoutYesText: {
+  color: "#fff",
+  fontFamily: "Poppins_500Medium",
+  fontSize: 12,
+},
+logoutNoButton: {
+  borderWidth: 1,
+  borderColor: "#0A2A3F",
+  paddingVertical: 10,
+  paddingHorizontal: 30,
+  borderRadius: 8,
+},
+logoutNoText: {
+  fontFamily: "Poppins_500Medium",
+  fontSize: 12,
+  color: "#0A2A3F",
+},
 
 });
 

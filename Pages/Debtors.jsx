@@ -9,6 +9,10 @@ import {
   SafeAreaView,
   Dimensions,
   Modal,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -16,9 +20,24 @@ import {
   Poppins_400Regular,
   Poppins_500Medium,
   Poppins_600SemiBold,
+  Poppins_700Bold,
 } from "@expo-google-fonts/poppins";
 
 const { width } = Dimensions.get("window");
+const MAIN = "#09364D";
+
+// Helper function to map display names to route names
+const getRouteName = (itemName) => {
+  const routeMap = {
+    "Dashboard": "dashboard",
+    "Stock": "Stock",
+    "Sales": "Sales",
+    "Reports": "Reports",
+    "Profile": "Profile",
+    "Debtors": "debtors",
+  };
+  return routeMap[itemName] || itemName;
+};
 
 const DEBTORS_DATA = [
   { id: "1", name: "NDAYAMBAJE Jean Bosco", phone: "+250 780 602 022", amount: "25,000 FRW" },
@@ -30,40 +49,73 @@ const CREDITORS_DATA = [
   { id: "2", name: "HABIMANA Eric", phone: "+250 722 333 444", amount: "15,000 FRW" },
 ];
 
-export default function DebtorsScreen() {
+export default function DebtorsScreen({ navigation }) {
+  // Sidebar states: "press" (minimal), "collapsed" (icons only), "expanded" (full)
+  const [sidebarState, setSidebarState] = useState("press");
+  const [darkMode, setDarkMode] = useState(false);
+  const [selectedItem, setSelectedItem] = useState("Debtors");
+  
   const [activeTab, setActiveTab] = useState("debtors");
   const [sortOpen, setSortOpen] = useState(false);
   const [sortBy, setSortBy] = useState("Phone");
 
-const [modalVisible, setModalVisible] = useState(false);
-const [selectedType, setSelectedType] = useState("debtor"); // debtor | creditor
-const [formName, setFormName] = useState("");
-const [formAmount, setFormAmount] = useState("");
-const [paymentModalVisible, setPaymentModalVisible] = useState(false);
-const [paymentAmount, setPaymentAmount] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedType, setSelectedType] = useState("debtor"); // debtor | creditor
+  const [formName, setFormName] = useState("");
+  const [formAmount, setFormAmount] = useState("");
+  const [paymentModalVisible, setPaymentModalVisible] = useState(false);
+  const [paymentAmount, setPaymentAmount] = useState("");
 
-const [DebtModalVisible, setDebtModalVisible] = useState(false);
-const [DebtAmount, setDebtAmount] = useState("");
+  const [DebtModalVisible, setDebtModalVisible] = useState(false);
+  const [DebtAmount, setDebtAmount] = useState("");
 
-const [infoModalVisible, setInfoModalVisible] = useState(false);
+  const [infoModalVisible, setInfoModalVisible] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-const [entryInfo, setEntryInfo] = useState({
-  name: "",
-  phone: "",
-  amount: "",
-  date: "",
-  type: "",
-});
-
-
+  const [entryInfo, setEntryInfo] = useState({
+    name: "",
+    phone: "",
+    amount: "",
+    date: "",
+    type: "",
+  });
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
     Poppins_500Medium,
     Poppins_600SemiBold,
+    Poppins_700Bold,
   });
 
   if (!fontsLoaded) return null;
+
+  const handlePressTextClick = () => {
+    setSidebarState("collapsed");
+  };
+
+  const handleNavItemPress = (itemName) => {
+    setSelectedItem(itemName);
+    setSidebarState("press");
+    if (navigation) {
+      navigation.navigate(getRouteName(itemName));
+    }
+  };
+
+  const handleArrowPress = () => {
+    setSidebarState("expanded");
+  };
+
+  const handleCloseSidebar = () => {
+    setSidebarState("press");
+  };
+
+  const handleLogout = () => {
+    setShowLogoutModal(true);
+  };
+
+  const isPressState = sidebarState === "press";
+  const isCollapsed = sidebarState === "collapsed";
+  const isExpanded = sidebarState === "expanded";
 
   const renderItem = ({ item }) => (
     <View style={styles.card}>
@@ -86,11 +138,220 @@ const [entryInfo, setEntryInfo] = useState({
     activeTab === "debtors" ? DEBTORS_DATA : CREDITORS_DATA;
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <View style={styles.container}>
+    <View style={[styles.mainContainer, { backgroundColor: darkMode ? "#1a1a2e" : "#fff" }]}>
+      {/* FLOATING PRESS HANDLE */}
+      {isPressState && (
+        <TouchableOpacity
+          onPress={handlePressTextClick}
+          activeOpacity={0.8}
+          style={styles.floatingPress}
+        >
+          <View style={styles.pressTextWrapper}>
+            <Text style={styles.pressText}>S</Text>
+            <Text style={styles.pressText}>S</Text>
+            <Text style={styles.pressText}>E</Text>
+            <Text style={styles.pressText}>R</Text>
+            <Text style={styles.pressText}>P</Text>
+          </View>
+        </TouchableOpacity>
+      )}
 
-        {/* HEADER */}
-        <Text style={styles.header}>Stocka</Text>
+      {/* OVERLAY - Shows when sidebar is expanded */}
+      {isExpanded && (
+        <TouchableOpacity
+          style={styles.overlay}
+          activeOpacity={1}
+          onPress={handleCloseSidebar}
+        />
+      )}
+
+      {/* SIDEBAR */}
+      <View
+        style={[
+          styles.sidebar,
+          {
+            width: isPressState ? 40 : isCollapsed ? 70 : 250,
+            backgroundColor: MAIN,
+            alignItems: isPressState ? "center" : isCollapsed ? "center" : "flex-start",
+            paddingHorizontal: isPressState ? 0 : isCollapsed ? 6 : 10,
+          },
+        ]}
+      >
+        {/* Toggle Arrow - Only visible when collapsed (icons only) */}
+        {isCollapsed && (
+          <TouchableOpacity
+            onPress={handleArrowPress}
+            style={styles.arrowButton}
+          >
+            <Ionicons
+              name="chevron-forward"
+              size={22}
+              color="#fff"
+            />
+          </TouchableOpacity>
+        )}
+
+        {/* Close Arrow - Only visible when expanded */}
+        {isExpanded && (
+          <TouchableOpacity
+            onPress={handleCloseSidebar}
+            style={styles.closeButton}
+          >
+            <Ionicons
+              name="chevron-back"
+              size={22}
+              color="#fff"
+            />
+          </TouchableOpacity>
+        )}
+
+        {/* Stocka Logo - Not shown in press state */}
+        {!isPressState && (
+          <View style={[styles.logoContainer, isExpanded && styles.logoContainerExpanded]}>
+            <Image
+              source={require("../assets/images/stock.png")}
+              style={{ width: 36, height: 36 }}
+            />
+            {isExpanded && <Text style={styles.stockText}>Stocka</Text>}
+          </View>
+        )}
+
+        {/* Menu Items - Not shown in press state */}
+        {!isPressState && (
+          <>
+            <View style={styles.menuContainer}>
+              <TouchableOpacity 
+                style={[
+                  styles.navItem, 
+                  isExpanded && styles.navItemExpanded,
+                  selectedItem === "Dashboard" && isExpanded && styles.navItemSelected
+                ]}
+                onPress={() => handleNavItemPress("Dashboard")}
+              >
+                <Ionicons name="battery-charging-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Dashboard</Text>}
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={[
+                  styles.navItem, 
+                  isExpanded && styles.navItemExpanded,
+                  selectedItem === "Stock" && isExpanded && styles.navItemSelected
+                ]}
+                onPress={() => handleNavItemPress("Stock")}
+              >
+                <Ionicons name="cube-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Stock</Text>}
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={[
+                  styles.navItem, 
+                  isExpanded && styles.navItemExpanded,
+                  selectedItem === "Sales" && isExpanded && styles.navItemSelected
+                ]}
+                onPress={() => handleNavItemPress("Sales")}
+              >
+                <Ionicons name="flash-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Sales</Text>}
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={[
+                  styles.navItem, 
+                  isExpanded && styles.navItemExpanded,
+                  selectedItem === "Reports" && isExpanded && styles.navItemSelected
+                ]}
+                onPress={() => handleNavItemPress("Reports")}
+              >
+                <Ionicons name="document-text-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Reports</Text>}
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={[
+                  styles.navItem, 
+                  isExpanded && styles.navItemExpanded,
+                  selectedItem === "Debtors" && isExpanded && styles.navItemSelected
+                ]}
+                onPress={() => handleNavItemPress("Debtors")}
+              >
+                <Ionicons name="wallet-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Debtors</Text>}
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={[
+                  styles.navItem, 
+                  isExpanded && styles.navItemExpanded,
+                  selectedItem === "Profile" && isExpanded && styles.navItemSelected
+                ]}
+                onPress={() => handleNavItemPress("Profile")}
+              >
+                <Ionicons name="person-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Profile</Text>}
+              </TouchableOpacity>
+            </View>
+
+            {/* Divider */}
+            {isExpanded && <View style={styles.divider} />}
+
+            {/* Utility Items */}
+            <View style={styles.utilityContainer}>
+              <TouchableOpacity 
+                style={[styles.navItem, isExpanded && styles.navItemExpanded]}
+                onPress={handleLogout}
+              >
+                <Ionicons name="log-out-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Logout</Text>}
+              </TouchableOpacity>
+            </View>
+
+            {/* Theme Toggle - At the bottom, only when expanded */}
+            {isExpanded && (
+              <View style={styles.themeToggleContainer}>
+                <View style={styles.themeToggle}>
+                  <Ionicons
+                    name="sunny"
+                    size={20}
+                    color={!darkMode ? MAIN : "#999"}
+                  />
+                  <TouchableOpacity
+                    style={[
+                      styles.themeToggleSwitch,
+                      darkMode && styles.themeToggleSwitchActive
+                    ]}
+                    onPress={() => setDarkMode(!darkMode)}
+                  >
+                    <View style={[
+                      styles.themeToggleKnob,
+                      darkMode && styles.themeToggleKnobActive
+                    ]} />
+                  </TouchableOpacity>
+                  <Ionicons
+                    name="moon"
+                    size={20}
+                    color={darkMode ? "#fff" : "#999"}
+                  />
+                </View>
+              </View>
+            )}
+          </>
+        )}
+      </View>
+
+      {/* CONTENT */}
+      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0 }}>
+        <KeyboardAvoidingView 
+          style={{ flex: 1 }}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 16 }}
+            showsVerticalScrollIndicator={false}
+          >
+            {/* HEADER */}
+            <Text style={[styles.header, darkMode && styles.darkText]}>Stocka</Text>
 
         {/* TABS */}
         <View style={styles.tabs}>
@@ -129,26 +390,28 @@ const [entryInfo, setEntryInfo] = useState({
           </TouchableOpacity>
         </View>
 
-        {/* LIST */}
-        <FlatList
-          data={currentData}
-          keyExtractor={(item) => item.id}
-          renderItem={renderItem}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 140 }}
-        />
+            {/* LIST */}
+            <FlatList
+              data={currentData}
+              keyExtractor={(item) => item.id}
+              renderItem={renderItem}
+              showsVerticalScrollIndicator={false}
+              scrollEnabled={false}
+              contentContainerStyle={{ paddingBottom: 100 }}
+            />
 
-        {/* ADD BUTTON */}
-        <TouchableOpacity style={styles.addBtn}
-          onPress={() => setModalVisible(true)}
-         >
-          <Ionicons name="add" size={18} color="#fff" />
-          <Text style={styles.addText}>
-            {activeTab === "debtors" ? "Add Debtor" : "Add Creditor"}
-          </Text>
-        </TouchableOpacity>
-
-      </View>
+            {/* ADD BUTTON */}
+            <TouchableOpacity style={styles.addBtn}
+              onPress={() => setModalVisible(true)}
+            >
+              <Ionicons name="add" size={18} color="#fff" />
+              <Text style={styles.addText}>
+                {activeTab === "debtors" ? "Add Debtor" : "Add Creditor"}
+              </Text>
+            </TouchableOpacity>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
 
       <Modal
          visible={modalVisible}
@@ -418,19 +681,210 @@ const [entryInfo, setEntryInfo] = useState({
       </View>
     </Modal>
 
+    {/* LOGOUT MODAL */}
+    <Modal
+      transparent
+      animationType="fade"
+      visible={showLogoutModal}
+      onRequestClose={() => setShowLogoutModal(false)}
+    >
+      <View style={paymentStyles.logoutOverlay}>
+        <View style={paymentStyles.logoutModalCard}>
+          <Ionicons
+            name="warning-outline"
+            size={38}
+            color="#0A2A3F"
+            style={{ marginBottom: 10 }}
+          />
 
+          <Text style={paymentStyles.logoutModalText}>
+            Are you sure about logging out?
+          </Text>
 
+          <View style={paymentStyles.logoutModalButtons}>
+            <TouchableOpacity
+              style={paymentStyles.logoutYesButton}
+              onPress={() => {
+                setShowLogoutModal(false);
+                if (navigation) {
+                  navigation.navigate("Login");
+                }
+              }}
+            >
+              <Text style={paymentStyles.logoutYesText}>YES</Text>
+            </TouchableOpacity>
 
-    </SafeAreaView>
+            <TouchableOpacity
+              style={paymentStyles.logoutNoButton}
+              onPress={() => setShowLogoutModal(false)}
+            >
+              <Text style={paymentStyles.logoutNoText}>NO</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
+
+    </View>
   );
 }
 
-const MAIN = "#0B3A53";
-
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: "#fff" },
-
-  container: { flex: 1, paddingHorizontal: 16 },
+  mainContainer: {
+    flex: 1,
+    flexDirection: "row",
+    position: "relative",
+  },
+  floatingPress: {
+    position: "absolute",
+    left: 0,
+    top: "45%",
+    width: 34,
+    height: 60,
+    backgroundColor: MAIN,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 100,
+    elevation: 6,
+  },
+  pressTextWrapper: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  pressText: {
+    color: "#fff",
+    fontSize: 11,
+    fontFamily: "Poppins_600SemiBold",
+    lineHeight: 12,
+  },
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(9, 54, 77, 0.3)",
+    zIndex: 5,
+  },
+  sidebar: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    paddingTop: 50,
+    paddingHorizontal: 0,
+    zIndex: 10,
+    justifyContent: "center",
+    overflow: "hidden",
+  },
+  arrowButton: {
+    marginBottom: 25,
+    padding: 5,
+  },
+  closeButton: {
+    alignSelf: "flex-end",
+    marginBottom: 25,
+    padding: 2,
+    marginRight: 10,
+  },
+  logoContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 5,
+    width: "100%",
+  },
+  logoContainerExpanded: {
+    paddingLeft: 10,
+    justifyContent: "flex-start",
+  },
+  stockText: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 18,
+    color: "#fff",
+    marginLeft: 10,
+  },
+  menuContainer: {
+    width: "100%",
+    marginTop: 2,
+  },
+  navItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    width: "100%",
+    justifyContent: "center",
+    minHeight: 44,
+    overflow: "visible",
+  },
+  navItemExpanded: {
+    justifyContent: "flex-start",
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+  },
+  navItemSelected: {
+    backgroundColor: "#4a9eff",
+  },
+  navText: {
+    color: "#fff",
+    fontFamily: "Poppins_500Medium",
+    marginLeft: 15,
+    fontSize: 14,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    marginVertical: 15,
+    width: "100%",
+  },
+  utilityContainer: {
+    width: "100%",
+    marginTop: 2,
+  },
+  themeToggleContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 10,
+    right: 10,
+  },
+  themeToggle: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+  },
+  themeToggleSwitch: {
+    width: 50,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    paddingHorizontal: 2,
+    marginHorizontal: 10,
+    flexDirection: "row",
+  },
+  themeToggleSwitchActive: {
+    backgroundColor: "#4a9eff",
+    justifyContent: "flex-end",
+  },
+  themeToggleKnob: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: "#09364D",
+    alignSelf: "center",
+  },
+  themeToggleKnobActive: {
+    backgroundColor: "#fff",
+  },
+  darkText: {
+    color: "#fff",
+  },
 
   header: {
     textAlign: "center",
@@ -438,6 +892,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: "Poppins_600SemiBold",
     color: MAIN,
+    marginBottom: 20,
   },
 
   tabs: {
@@ -533,9 +988,11 @@ const styles = StyleSheet.create({
 
 modalBox: {
   width: "90%",
+  maxWidth: 400,
   backgroundColor: "#fff",
   borderRadius: 16,
   padding: 20,
+  marginHorizontal: 10,
 },
 
 modalTitle: {
@@ -593,9 +1050,11 @@ infoOverlay: {
 
 infoModal: {
   width: "92%",
+  maxWidth: 400,
   backgroundColor: "#FFFFFF",
   borderRadius: 10,
   padding: 20,
+  marginHorizontal: 10,
 },
 
 infoTitle: {
@@ -706,10 +1165,12 @@ const paymentStyles = StyleSheet.create({
   },
   paymentModalBox: {
     width: "93%",
+    maxWidth: 400,
     backgroundColor: "#fff",
     borderRadius: 5,
     padding: 20,
     position: "relative",
+    marginHorizontal: 10,
   },
   closeIcon: {
     position: "absolute",
@@ -781,5 +1242,53 @@ const paymentStyles = StyleSheet.create({
     color: "#fff",
     fontWeight: "600",
     fontSize: 16,
+  },
+  logoutOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  logoutModalCard: {
+    width: "80%",
+    maxWidth: 350,
+    backgroundColor: "#fff",
+    borderRadius: 14,
+    padding: 20,
+    alignItems: "center",
+  },
+  logoutModalText: {
+    fontFamily: "Poppins_500Medium",
+    fontSize: 13,
+    marginVertical: 10,
+    textAlign: "center",
+  },
+  logoutModalButtons: {
+    flexDirection: "row",
+    marginTop: 14,
+  },
+  logoutYesButton: {
+    backgroundColor: "#0A2A3F",
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+    marginRight: 10,
+  },
+  logoutYesText: {
+    color: "#fff",
+    fontFamily: "Poppins_500Medium",
+    fontSize: 12,
+  },
+  logoutNoButton: {
+    borderWidth: 1,
+    borderColor: "#0A2A3F",
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+  },
+  logoutNoText: {
+    fontFamily: "Poppins_500Medium",
+    fontSize: 12,
+    color: "#0A2A3F",
   },
 });
