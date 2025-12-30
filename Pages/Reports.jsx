@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
+  Modal
 } from "react-native";
 import {
   useFonts,
@@ -498,35 +499,34 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     backgroundColor: "#fff",
+    position: "relative",
+  },
+  floatingPress: {
+    position: "absolute",
+    left: 0,
+    top: "45%",
+    width: 34,
+    height: 60,
+    backgroundColor: MAIN,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 100,
+    elevation: 6,
   },
 
-  loatingPress: {
-  position: "absolute",
-  left: 0,
-  top: "45%",
-  width: 34,
-  height: 60,              // ✅ small height
-  backgroundColor: MAIN,
-  borderTopRightRadius: 10,
-  borderBottomRightRadius: 10,
-  justifyContent: "center",
-  alignItems: "center",
-  zIndex: 100,
-  elevation: 6,
-},
 
-
-pressTextWrapper: {
-  justifyContent: "center",
-  alignItems: "center",
-},
-
-pressText: {
-  color: "#fff",
-  fontSize: 11,
-  fontFamily: "Poppins_600SemiBold",
-  lineHeight: 12,
-},
+  pressTextWrapper: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  pressText: {
+    color: "#fff",
+    fontSize: 11,
+    fontFamily: "Poppins_600SemiBold",
+    lineHeight: 12,
+  },
 
 
   overlay: {

@@ -209,7 +209,7 @@ const handleSaleChange = (field, value) => {
         style={[
           styles.sidebar,
           {
-            width: isPressState ? 40 : isCollapsed ? 70 : 250,
+            width: isPressState ? 40 : isCollapsed ? 70 : 220,
             backgroundColor: MAIN,
             alignItems: isPressState ? "center" : isCollapsed ? "center" : "flex-start",
             paddingHorizontal: isPressState ? 0 : isCollapsed ? 6 : 10,
@@ -854,6 +854,21 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     backgroundColor: "#fff",
+    position: "relative",
+  },
+  floatingPress: {
+    position: "absolute",
+    left: 0,
+    top: "45%",
+    width: 34,
+    height: 60,
+    backgroundColor: MAIN,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 100,
+    elevation: 6,
   },
   overlay: {
     position: "absolute",
@@ -883,19 +898,14 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   pressTextWrapper: {
-    width: 40,
-    height: 120,
     justifyContent: "center",
     alignItems: "center",
-    transform: [{ rotate: "-90deg" }],
   },
   pressText: {
     color: "#fff",
+    fontSize: 11,
     fontFamily: "Poppins_600SemiBold",
-    fontSize: 16,
-    letterSpacing: 2,
-    textAlign: "center",
-    includeFontPadding: false,
+    lineHeight: 12,
   },
   arrowButton: {
     marginBottom: 25,

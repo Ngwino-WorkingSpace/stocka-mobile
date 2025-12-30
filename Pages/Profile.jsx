@@ -447,35 +447,32 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     flexDirection: "row",
+    position: "relative",
   },
-
-    loatingPress: {
-  position: "absolute",
-  left: 0,
-  top: "45%",
-  width: 34,
-  height: 60,              // ✅ small height
-  backgroundColor: MAIN,
-  borderTopRightRadius: 10,
-  borderBottomRightRadius: 10,
-  justifyContent: "center",
-  alignItems: "center",
-  zIndex: 100,
-  elevation: 6,
-},
-
-
-pressTextWrapper: {
-  justifyContent: "center",
-  alignItems: "center",
-},
-
-pressText: {
-  color: "#fff",
-  fontSize: 11,
-  fontFamily: "Poppins_600SemiBold",
-  lineHeight: 12,
-},
+  floatingPress: {
+    position: "absolute",
+    left: 0,
+    top: "45%",
+    width: 34,
+    height: 60,
+    backgroundColor: MAIN,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 100,
+    elevation: 6,
+  },
+  pressTextWrapper: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  pressText: {
+    color: "#fff",
+    fontSize: 11,
+    fontFamily: "Poppins_600SemiBold",
+    lineHeight: 12,
+  },
 
   overlay: {
     position: "absolute",
@@ -496,28 +493,6 @@ pressText: {
     zIndex: 10,
     justifyContent: "center",
     overflow: "hidden",
-  },
-  pressContainer: {
-    width: "100%",
-    height: 150,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 20,
-  },
-  pressTextWrapper: {
-    width: 40,
-    height: 120,
-    justifyContent: "center",
-    alignItems: "center",
-    transform: [{ rotate: "-90deg" }],
-  },
-  pressText: {
-    color: "#fff",
-    fontFamily: "Poppins_600SemiBold",
-    fontSize: 16,
-    letterSpacing: 2,
-    textAlign: "center",
-    includeFontPadding: false,
   },
   arrowButton: {
     marginBottom: 25,
