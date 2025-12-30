@@ -19,7 +19,7 @@ import {
   Poppins_600SemiBold,
 } from "@expo-google-fonts/poppins";
 
-export default function ForgotPasswordScreen({ navigation }) {
+export default function OTPScreen({ navigation }) {
   const [Email, setEmail] = useState("");
   const [Phonenumber, setPhonenumber] = useState("");
 
@@ -50,30 +50,27 @@ export default function ForgotPasswordScreen({ navigation }) {
             />
 
             <Text style={styles.welcometext}>
-                 Please input your email to reset your password.
+                 An OTP Code has been sent to your email please 
+                    check your email and input the code below.
             </Text>
 
+                <View style={styles.otpContainer}>
+          {[1, 2, 3, 4,5].map((item, index) => (
             <TextInput
-              style={styles.input}
-              placeholder="Phone number"
-              placeholderTextColor="#107EBA"
-              value={Phonenumber}
-              onChangeText={setPhonenumber}
+              key={index}
+              style={styles.otpInput}
+              keyboardType="numeric"
+              maxLength={1}
+              // You can manage state for OTP here
             />
+          ))}
+        </View>
 
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              placeholderTextColor="#107EBA"
-              secureTextEntry
-              value={Email}
-              onChangeText={setEmail}
-            />
             <TouchableOpacity
               style={styles.button}
               onPress={() => navigation.navigate("OTP")}
             >
-              <Text style={styles.buttonText}>GET OTP CODE </Text>
+              <Text style={styles.buttonText}>RESET PASSWORD</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -146,7 +143,7 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     borderRadius: 10,
     alignItems: "center",
-    marginTop: 10,
+    marginTop: 5,
 
     shadowColor: "#0A5E8C",
     shadowOffset: { width: 0, height: 4 },
@@ -182,6 +179,39 @@ const styles = StyleSheet.create({
   fontWeight: "500",       // medium weight
   marginTop: 10,           // spacing from input fields above
  fontFamily:"Poppins_400Regular",
-}
+},
+otpContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+    gap: 10,
+  },
+  otpInput: {
+    width: 50,
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    textAlign: 'center',
+    fontSize: 22,
+    fontWeight: 'bold',
+    width: "100%",
+    backgroundColor: "#09364D",
+    paddingVertical: 16,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    color: "#107EBA",
+    marginBottom: 5,
+    borderWidth: 1,
+    borderColor: "#0F4461",
+    fontSize: 16, // was 17
+    fontFamily: "Poppins_400Regular",
+
+    shadowColor: "#0A5E8C",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+    elevation: 5,
+  },
 
 });

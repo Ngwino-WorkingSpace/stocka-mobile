@@ -17,6 +17,7 @@ import ReportScreen from "../../Pages/Reports.jsx";
 import ProfileScreen from "../../Pages/Profile.jsx";
 import DebtorsScreen from "../../Pages/Debtors.jsx";
 import ForgotPasswordScreen from "../../Pages/forgot-PassWord.jsx";
+import OTPScreen from "../../Pages/OTP.jsx";
 
 const Stack = createNativeStackNavigator();
 
@@ -60,7 +61,9 @@ export default function MainScreen() {
             <Stack.Screen name="Sales" component={SalesScreen} />
             <Stack.Screen name="Reports" component={ReportScreen} />
             <Stack.Screen name="Profile" component={ProfileScreen} />
-             <Stack.Screen name="debtors" component={DebtorsScreen} />
+            <Stack.Screen name="debtors" component={DebtorsScreen} />
+            <Stack.Screen name="forgot-password" component={ForgotPasswordScreen} />
+            <Stack.Screen name="OTP" component={OTPScreen} />
 
           </Stack.Navigator>
       </SafeAreaProvider>
