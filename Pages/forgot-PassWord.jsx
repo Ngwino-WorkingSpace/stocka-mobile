@@ -19,7 +19,7 @@ import {
   Poppins_600SemiBold,
 } from "@expo-google-fonts/poppins";
 
-export default function SignInScreen({ navigation }) {
+export default function ForgotPasswordScreen({ navigation }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -69,17 +69,6 @@ export default function SignInScreen({ navigation }) {
               value={password}
               onChangeText={setPassword}
             />
-
-            <Text style={styles.signinText}>
-              Don't have an account?{" "}
-              <Text
-                style={styles.highlighted}
-                onPress={() => navigation.navigate("signup")}
-              >
-                Sign up
-              </Text>
-            </Text>
-
             <TouchableOpacity
               style={styles.button}
               onPress={() => navigation.navigate("dashboard")}
@@ -88,9 +77,6 @@ export default function SignInScreen({ navigation }) {
             </TouchableOpacity>
 
             <Text style={styles.forgot}
-                onPress={()=>{
-                navigation.navigate("forgot-password");
-              }}
              >Forgot Password?</Text>
           </View>
         </ScrollView>
@@ -193,9 +179,9 @@ const styles = StyleSheet.create({
   },
 
   forgot: {
-  fontSize: 16,            // slightly smaller than regular text
-  color: "#1FA5ED",        // bright blue for clickable feel
-  textAlign: "right",      // align to the right if needed
+  fontSize: 16,           
+  color: "#1FA5ED",        
+  textAlign: "right",      
   fontWeight: "500",       // medium weight
   marginTop: 10,           // spacing from input fields above
  fontFamily:"Poppins_400Regular",

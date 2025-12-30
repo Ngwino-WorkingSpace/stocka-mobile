@@ -16,6 +16,7 @@ import SalesScreen from "../../Pages/Sales.jsx";
 import ReportScreen from "../../Pages/Reports.jsx";
 import ProfileScreen from "../../Pages/Profile.jsx";
 import DebtorsScreen from "../../Pages/Debtors.jsx";
+import ForgotPasswordScreen from "../../Pages/forgot-PassWord.jsx";
 
 const Stack = createNativeStackNavigator();
 
