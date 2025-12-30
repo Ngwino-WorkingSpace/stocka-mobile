@@ -6,6 +6,9 @@ import {
   TouchableOpacity,
   TextInput,
   FlatList,
+  SafeAreaView,
+  Dimensions,
+  Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -15,26 +18,16 @@ import {
   Poppins_600SemiBold,
 } from "@expo-google-fonts/poppins";
 
+const { width } = Dimensions.get("window");
 
-const DATA = [
-  {
-    id: "1",
-    name: "NDAYAMBAJE Jean Bosco",
-    phone: "+250 780 602 022",
-    amount: "25,000 FRW",
-  },
-  {
-    id: "2",
-    name: "NDAYAMBAJE Jean Bosco",
-    phone: "+250 780 602 022",
-    amount: "25,000 FRW",
-  },
-  {
-    id: "3",
-    name: "NDAYAMBAJE Jean Bosco",
-    phone: "+250 780 602 022",
-    amount: "25,000 FRW",
-  },
+const DEBTORS_DATA = [
+  { id: "1", name: "NDAYAMBAJE Jean Bosco", phone: "+250 780 602 022", amount: "25,000 FRW" },
+  { id: "2", name: "NDAYAMBAJE Jean Bosco", phone: "+250 780 602 022", amount: "25,000 FRW" },
+];
+
+const CREDITORS_DATA = [
+  { id: "1", name: "MUKAMANA Alice", phone: "+250 788 111 222", amount: "40,000 FRW" },
+  { id: "2", name: "HABIMANA Eric", phone: "+250 722 333 444", amount: "15,000 FRW" },
 ];
 
 export default function DebtorsScreen() {
@@ -42,9 +35,11 @@ export default function DebtorsScreen() {
   const [sortOpen, setSortOpen] = useState(false);
   const [sortBy, setSortBy] = useState("Phone");
 
-  const handleCreditorspage =()=>{
-    Navigation.navigate("creditors");
-  }
+const [modalVisible, setModalVisible] = useState(false);
+const [selectedType, setSelectedType] = useState("debtor"); // debtor | creditor
+const [formName, setFormName] = useState("");
+const [formAmount, setFormAmount] = useState("");
+
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -52,9 +47,7 @@ export default function DebtorsScreen() {
     Poppins_600SemiBold,
   });
 
-  if (!fontsLoaded) {
-    return null;
-  }
+  if (!fontsLoaded) return null;
 
   const renderItem = ({ item }) => (
     <View style={styles.card}>
@@ -63,7 +56,9 @@ export default function DebtorsScreen() {
       </View>
 
       <View style={styles.cardText}>
-        <Text style={styles.name}>{item.name}</Text>
+        <Text style={styles.name} numberOfLines={1}>
+          {item.name}
+        </Text>
         <Text style={styles.phone}>{item.phone}</Text>
       </View>
 
@@ -71,149 +66,144 @@ export default function DebtorsScreen() {
     </View>
   );
 
+  const currentData =
+    activeTab === "debtors" ? DEBTORS_DATA : CREDITORS_DATA;
+
   return (
-    <View style={styles.container}>
-      {/* <View style={styles.pressTab}>
-        {["S", "S", "E", "R", "P"].map((l, i) => (
-          <Text key={i} style={styles.pressText}>
-            {l}
-          </Text>
-        ))}
-      </View> */}
+    <SafeAreaView style={styles.safe}>
+      <View style={styles.container}>
 
-      {/* HEADER */}
-      <Text style={styles.header}>Stocka</Text>
+        {/* HEADER */}
+        <Text style={styles.header}>Stocka</Text>
 
-      {/* TABS */}
-      <View style={styles.tabs}>
-        {["debtors", "creditors"].map((tab) => (
-          <TouchableOpacity
-            key={tab}
-            style={[
-              styles.tab,
-              activeTab === tab && styles.activeTab,
-            ]}
-            onPress={() => setActiveTab(tab)}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                activeTab === tab && styles.activeTabText,
-              ]}
+        {/* TABS */}
+        <View style={styles.tabs}>
+          {["debtors", "creditors"].map((tab) => (
+            <TouchableOpacity
+              key={tab}
+              style={[styles.tab, activeTab === tab && styles.activeTab]}
+              onPress={() => setActiveTab(tab)}
             >
-              {tab === "debtors" ? "Debtors" : "Creditors"}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+              <Text style={[styles.tabText, activeTab === tab && styles.activeTabText]}>
+                {tab === "debtors" ? "Debtors" : "Creditors"}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-      {activeTab === "debtors" && (
-  <View>
-      <DebtorsScreen/>
-     </View>
-    )}
+        {/* TITLE */}
+        <Text style={styles.sectionTitle}>
+          {activeTab === "debtors" ? "Current Debtors" : "Current Creditors"}
+        </Text>
 
-   {activeTab === "creditors" && (
-      <View>
-        <Text>Creditors content goes here</Text>
-           <CreditorsScreen/>
-  </View>
-)}
+        {/* SEARCH & SORT */}
+        <View style={styles.searchRow}>
+          <TextInput
+            placeholder="Search..."
+            placeholderTextColor="#777"
+            style={styles.searchInput}
+          />
 
-
-      {/* TITLE */}
-      <Text style={styles.sectionTitle}>Current Debtors</Text>
-
-      {/* SEARCH & SORT */}
-      <View style={styles.searchRow}>
-        <TextInput
-          placeholder="Search..."
-          placeholderTextColor="#777"
-          style={styles.searchInput}
-        />
-
-        <View style={styles.sortWrapper}>
           <TouchableOpacity
             style={styles.sortBtn}
             onPress={() => setSortOpen(!sortOpen)}
           >
-            <Text style={styles.sortText}>Sort</Text>
-            <Ionicons name="chevron-down" size={14} color="#fff" />
             <Text style={styles.sortText}>{sortBy}</Text>
+            <Ionicons name="chevron-down" size={14} color="#fff" />
           </TouchableOpacity>
-
-          {sortOpen && (
-            <View style={styles.dropdown}>
-              {["Phone", "Name", "Amount"].map((item) => (
-                <TouchableOpacity
-                  key={item}
-                  style={styles.dropdownItem}
-                  onPress={() => {
-                    setSortBy(item);
-                    setSortOpen(false);
-                  }}
-                >
-                  <Text style={styles.dropdownText}>{item}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
         </View>
+
+        {/* LIST */}
+        <FlatList
+          data={currentData}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 140 }}
+        />
+
+        {/* ADD BUTTON */}
+        <TouchableOpacity style={styles.addBtn}
+          onPress={() => setModalVisible(true)}
+         >
+          <Ionicons name="add" size={18} color="#fff" />
+          <Text style={styles.addText}>
+            {activeTab === "debtors" ? "Add Debtor" : "Add Creditor"}
+          </Text>
+        </TouchableOpacity>
+
       </View>
 
-      {/* LIST */}
-      <FlatList
-        data={DATA}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 120 }}
+      <Modal
+         visible={modalVisible}
+          transparent
+          animationType="fade"
+             onRequestClose={() => setModalVisible(false)}
+>
+  <View style={styles.modalOverlay}>
+    <View style={styles.modalBox}>
+
+      <Text style={styles.modalTitle}>
+        Add {activeTab === "debtors" ? " a new debtor" : " a new creditor"}
+      </Text>
+
+      <TextInput
+        placeholder="Full name"
+        value={formName}
+        onChangeText={setFormName}
+        style={styles.modalInput}
       />
 
-      {/* ADD BUTTON */}
-      <TouchableOpacity style={styles.addBtn}>
-        <View style={styles.addIcon}>
-          <Ionicons name="add" size={20} color="#fff" />
-        </View>
-        <Text style={styles.addText}>Add a debtor</Text>
-      </TouchableOpacity>
+      <TextInput
+        placeholder="Phone number"
+        value={formAmount}
+        onChangeText={setFormAmount}
+        style={styles.modalInput}
+      />
+
+      <View style={styles.modalActions}>
+        <TouchableOpacity
+          style={styles.cancelBtn}
+          onPress={() => {
+            setModalVisible(false);
+            setFormName("");
+            setFormAmount("");
+          }}
+        >
+          <Text style={styles.cancelText}>Cancel</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.saveBtn}
+          onPress={() => {
+            console.log(activeTab, formName, formAmount);
+            setModalVisible(false);
+            setFormName("");
+            setFormAmount("");
+          }}
+        >
+          <Text style={styles.saveText}>Save</Text>
+        </TouchableOpacity>
+      </View>
+
     </View>
+  </View>
+</Modal>
+
+    </SafeAreaView>
   );
 }
 
 const MAIN = "#0B3A53";
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    paddingHorizontal: 16,
-  },
+  safe: { flex: 1, backgroundColor: "#fff" },
 
-  pressTab: {
-    position: "absolute",
-    left: 0,
-    top: "42%",
-    width: 32,
-    height: 58,
-    backgroundColor: MAIN,
-    borderTopRightRadius: 10,
-    borderBottomRightRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 20,
-  },
-
-  pressText: {
-    color: "#fff",
-    fontSize: 10,
-    fontFamily: "Poppins_600SemiBold",
-    lineHeight: 12,
-  },
+  container: { flex: 1, paddingHorizontal: 16 },
 
   header: {
     textAlign: "center",
-    marginTop: 24,
+    marginTop: 12,
     fontSize: 20,
     fontFamily: "Poppins_600SemiBold",
     color: MAIN,
@@ -226,37 +216,22 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 
-  tab: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: "center",
-    borderRadius: 12,
-  },
+  tab: { flex: 1, paddingVertical: 12, alignItems: "center" },
+  activeTab: { backgroundColor: MAIN, borderRadius: 12 },
 
-  activeTab: {
-    backgroundColor: MAIN,
-  },
-
-  tabText: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: "#333",
-  },
-
-  activeTabText: {
-    color: "#fff",
-  },
+  tabText: { fontFamily: "Poppins_500Medium", fontSize: 14, color: "#333" },
+  activeTabText: { color: "#fff" },
 
   sectionTitle: {
-    marginTop: 22,
+    marginTop: 20,
     fontSize: 16,
     fontFamily: "Poppins_600SemiBold",
   },
 
   searchRow: {
     flexDirection: "row",
-    marginVertical: 14,
     gap: 10,
+    marginVertical: 12,
   },
 
   searchInput: {
@@ -265,49 +240,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 12,
     height: 42,
-    fontFamily: "Poppins_400Regular",
-  },
-
-  sortWrapper: {
-    position: "relative",
+    fontFamily:"Poppins_400Regular",
   },
 
   sortBtn: {
+    backgroundColor: MAIN,
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: MAIN,
     paddingHorizontal: 12,
-    height: 42,
     borderRadius: 10,
   },
 
-  sortText: {
-    color: "#fff",
-    fontFamily: "Poppins_500Medium",
-    fontSize: 12,
-  },
-
-  dropdown: {
-    position: "absolute",
-    top: 46,
-    right: 0,
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    elevation: 5,
-    width: 120,
-    zIndex: 30,
-  },
-
-  dropdownItem: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-  },
-
-  dropdownText: {
-    fontFamily: "Poppins_400Regular",
-    fontSize: 12,
-  },
+  sortText: { color: "#fff", fontSize: 12,fontFamily:"Poppins_400Regular", },
 
   card: {
     flexDirection: "row",
@@ -323,53 +268,87 @@ const styles = StyleSheet.create({
     height: 42,
     borderRadius: 21,
     backgroundColor: "#fff",
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
   },
 
-  cardText: {
-    flex: 1,
-    marginLeft: 12,
-  },
+  cardText: { flex: 1, marginLeft: 12 },
 
-  name: {
-    fontFamily: "Poppins_600SemiBold",
-    fontSize: 13,
-  },
-
-  phone: {
-    fontFamily: "Poppins_400Regular",
-    fontSize: 11,
-    color: "#666",
-  },
-
-  amount: {
-    fontFamily: "Poppins_600SemiBold",
-    fontSize: 12,
-  },
+  name: { fontSize: 13, fontFamily: "Poppins_600SemiBold" },
+  phone: { fontSize: 11, color: "#666" },
+  amount: { fontSize: 12, fontFamily: "Poppins_600SemiBold" },
 
   addBtn: {
     position: "absolute",
-    bottom: 20,
+    bottom: 24,
     alignSelf: "center",
+    backgroundColor: MAIN,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: MAIN,
-    borderRadius: 14,
-    padding: 12,
-    gap: 8,
+    gap: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 5,
   },
 
-  addIcon: {
-    backgroundColor: MAIN,
-    borderRadius: 6,
-    padding: 4,
-  },
+  addText: { color: "#fff", fontSize: 12, fontFamily:"Poppins_400Regular" },
 
-  addText: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 12,
-  },
+  modalOverlay: {
+  flex: 1,
+  backgroundColor: "rgba(9,54,77,0.5)",
+  justifyContent: "center",
+  alignItems: "center",
+},
+
+modalBox: {
+  width: "90%",
+  backgroundColor: "#fff",
+  borderRadius: 16,
+  padding: 20,
+},
+
+modalTitle: {
+  fontFamily: "Poppins_600SemiBold",
+  fontSize: 16,
+  marginBottom: 16,
+  textAlign: "center",
+},
+
+modalInput: {
+  backgroundColor: "#F1F4F6",
+  borderRadius: 10,
+  paddingHorizontal: 14,
+  height: 44,
+  marginBottom: 12,
+  fontFamily: "Poppins_400Regular",
+},
+
+modalActions: {
+  flexDirection: "row",
+  justifyContent: "space-between",
+  marginTop: 10,
+},
+
+cancelBtn: {
+  paddingVertical: 10,
+  paddingHorizontal: 20,
+},
+
+cancelText: {
+  color: "#777",
+  fontFamily: "Poppins_500Medium",
+},
+
+saveBtn: {
+  backgroundColor: MAIN,
+  borderRadius: 10,
+  paddingVertical: 10,
+  paddingHorizontal: 24,
+},
+
+saveText: {
+  color: "#fff",
+  fontFamily: "Poppins_500Medium",
+},
+
 });

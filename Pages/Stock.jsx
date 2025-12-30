@@ -1157,7 +1157,7 @@ const formStyles = StyleSheet.create({
     paddingVertical: 20,
   },
   card: {
-    width: "100%",
+    width: "90%",
     backgroundColor: "#fff",
     borderRadius: 20,
     padding: 20,
@@ -1295,7 +1295,7 @@ const saleStyles = StyleSheet.create({
     paddingVertical: 20,
   },
   card: {
-    width: "100%",
+    width: "90%",
     backgroundColor: "#fff",
     borderRadius: 20,
     padding: 20,
