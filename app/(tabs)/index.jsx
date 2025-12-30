@@ -18,6 +18,8 @@ import ProfileScreen from "../../Pages/Profile.jsx";
 import DebtorsScreen from "../../Pages/Debtors.jsx";
 import ForgotPasswordScreen from "../../Pages/forgot-PassWord.jsx";
 import OTPScreen from "../../Pages/OTP.jsx";
+import ResetPasswordScreen from "../../Pages/reset-Password.jsx";
+import LastOTPScreen from "../../Pages/lastOTP.jsx";
 
 const Stack = createNativeStackNavigator();
 
@@ -64,6 +66,8 @@ export default function MainScreen() {
             <Stack.Screen name="debtors" component={DebtorsScreen} />
             <Stack.Screen name="forgot-password" component={ForgotPasswordScreen} />
             <Stack.Screen name="OTP" component={OTPScreen} />
+            <Stack.Screen name="reset-Password" component={ResetPasswordScreen} />
+            <Stack.Screen name="lastOTP" component={LastOTPScreen} />
 
           </Stack.Navigator>
       </SafeAreaProvider>

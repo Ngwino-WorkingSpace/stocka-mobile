@@ -19,7 +19,7 @@ import {
   Poppins_600SemiBold,
 } from "@expo-google-fonts/poppins";
 
-export default function OTPScreen({ navigation }) {
+export default function LastOTPScreen({ navigation }) {
   const [Email, setEmail] = useState("");
   const [Phonenumber, setPhonenumber] = useState("");
 
@@ -44,33 +44,19 @@ export default function OTPScreen({ navigation }) {
           keyboardShouldPersistTaps="handled"
         >
           <View style={styles.content}>
-            <Image
-              source={require("../assets/images/stocka.png")}
-              style={styles.logo}
-            />
+            <View style={styles.congzIcon}>
+                <Text style={styles.summaryEmoji}>🥳</Text>
+            </View>
 
             <Text style={styles.welcometext}>
-                 An OTP Code has been sent to your email please 
-                    check your email and input the code below.
+                 Hello dear user,Your password has been successfully been resetYou will be using the new password when logging in.
             </Text>
-
-                <View style={styles.otpContainer}>
-          {[1, 2, 3, 4,5].map((item, index) => (
-            <TextInput
-              key={index}
-              style={styles.otpInput}
-              keyboardType="numeric"
-              maxLength={1}
-              // You can manage state for OTP here
-            />
-          ))}
-        </View>
 
             <TouchableOpacity
               style={styles.button}
-              onPress={() => navigation.navigate("reset-Password")}
+              onPress={() => navigation.navigate("Login")}
             >
-              <Text style={styles.buttonText}>RESET PASSWORD</Text>
+              <Text style={styles.buttonText}>CONTINUE</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -213,5 +199,20 @@ otpContainer: {
     shadowRadius: 5,
     elevation: 5,
   },
+
+  congzIcon: {
+  justifyContent: "center",   // centers vertically
+  alignItems: "center",       // centers horizontally
+  marginBottom: 40,         // spacing above and below
+  width: 100,                 // make the container square
+  height: 100,
+  borderRadius: 50,           // make it circular
+},
+
+summaryEmoji: {
+  fontSize: 90,               // big emoji
+  textAlign: "center",
+}
+
 
 });
