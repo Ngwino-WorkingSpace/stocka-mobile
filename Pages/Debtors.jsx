@@ -42,6 +42,8 @@ const [formAmount, setFormAmount] = useState("");
 const [paymentModalVisible, setPaymentModalVisible] = useState(false);
 const [paymentAmount, setPaymentAmount] = useState("");
 
+const [DebtModalVisible, setDebtModalVisible] = useState(false);
+const [DebtAmount, setDebtAmount] = useState("");
 
 const [infoModalVisible, setInfoModalVisible] = useState(false);
 
@@ -263,7 +265,11 @@ const [entryInfo, setEntryInfo] = useState({
       </View>
 
       <View style={styles.infoActions}>
-        <TouchableOpacity style={styles.secondaryBtn}>
+        <TouchableOpacity style={styles.secondaryBtn}
+           onPress={()=>{
+            setDebtModalVisible(true);
+           }}
+          >
           <Text style={styles.secondaryText}>Record debt</Text>
         </TouchableOpacity>
 
@@ -351,8 +357,8 @@ const [entryInfo, setEntryInfo] = useState({
  <Modal
       transparent
       animationType="fade"
-      visible={paymentModalVisible}
-      onRequestClose={() => setPaymentModalVisible(false)}
+      visible={DebtModalVisible}
+      onRequestClose={() => setDebtModalVisible(false)}
     >
       <View style={paymentStyles.overlay}>
         <View style={paymentStyles.paymentModalBox}>
@@ -361,8 +367,8 @@ const [entryInfo, setEntryInfo] = useState({
           <TouchableOpacity
             style={paymentStyles.closeIcon}
             onPress={() => {
-              setPaymentModalVisible(false);
-              setPaymentAmount("");
+              setDebtModalVisible(false);
+              setDebtAmount("");
             }}
           >
             <Ionicons name="close" size={20} color="#555" />
@@ -716,6 +722,7 @@ const paymentStyles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 20,
     textAlign: "center",
+    fontFamily:"Poppins_400Regular",
   },
   infoRow: {
     flexDirection: "row",
@@ -730,6 +737,7 @@ const paymentStyles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "500",
     color: "#555",
+    fontFamily:"Poppins_400Regular",
   },
   value: {
     fontSize: 16,
@@ -753,6 +761,7 @@ const paymentStyles = StyleSheet.create({
     fontWeight: "500",
     color: "#555",
     marginBottom: 5,
+    fontFamily:"Poppins_400Regular",
   },
   input: {
     borderWidth: 1,
@@ -760,6 +769,7 @@ const paymentStyles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     fontSize: 16,
+    fontFamily:"Poppins_400Regular",
   },
   updateButton: {
     backgroundColor: "#09364D",
