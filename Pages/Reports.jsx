@@ -74,6 +74,24 @@ export default function ReportsScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+
+            {/* FLOATING PRESS HANDLE */}
+           {isPressState && (
+             <TouchableOpacity
+               onPress={handlePressTextClick}
+               activeOpacity={0.8}
+               style={styles.floatingPress}
+             >
+               <View style={styles.pressTextWrapper}>
+                 <Text style={styles.pressText}>S</Text>
+                 <Text style={styles.pressText}>S</Text>
+                 <Text style={styles.pressText}>E</Text>
+                 <Text style={styles.pressText}>R</Text>
+                 <Text style={styles.pressText}>P</Text>
+               </View>
+             </TouchableOpacity>
+           )}
+
       {/* OVERLAY - Shows when sidebar is expanded */}
       {isExpanded && (
         <TouchableOpacity
@@ -95,19 +113,7 @@ export default function ReportsScreen({ navigation }) {
           },
         ]}
       >
-        {/* PRESS State - Show only "PRESS" text vertically */}
-        {isPressState && (
-          <TouchableOpacity
-            onPress={handlePressTextClick}
-            style={styles.pressContainer}
-            activeOpacity={0.7}
-          >
-            <View style={styles.pressTextWrapper}>
-              <Text style={styles.pressText}>PRESS</Text>
-            </View>
-          </TouchableOpacity>
-        )}
-
+        
         {/* Toggle Arrow - Only visible when collapsed */}
         {isCollapsed && (
           <TouchableOpacity
@@ -435,6 +441,36 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: "#fff",
   },
+
+  loatingPress: {
+  position: "absolute",
+  left: 0,
+  top: "45%",
+  width: 34,
+  height: 60,              // ✅ small height
+  backgroundColor: MAIN,
+  borderTopRightRadius: 10,
+  borderBottomRightRadius: 10,
+  justifyContent: "center",
+  alignItems: "center",
+  zIndex: 100,
+  elevation: 6,
+},
+
+
+pressTextWrapper: {
+  justifyContent: "center",
+  alignItems: "center",
+},
+
+pressText: {
+  color: "#fff",
+  fontSize: 11,
+  fontFamily: "Poppins_600SemiBold",
+  lineHeight: 12,
+},
+
+
   overlay: {
     position: "absolute",
     top: 0,

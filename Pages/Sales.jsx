@@ -134,6 +134,24 @@ export default function SalesScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+
+          {/* FLOATING PRESS HANDLE */}
+         {isPressState && (
+           <TouchableOpacity
+             onPress={handlePressTextClick}
+             activeOpacity={0.8}
+             style={styles.floatingPress}
+           >
+             <View style={styles.pressTextWrapper}>
+               <Text style={styles.pressText}>S</Text>
+               <Text style={styles.pressText}>S</Text>
+               <Text style={styles.pressText}>E</Text>
+               <Text style={styles.pressText}>R</Text>
+               <Text style={styles.pressText}>P</Text>
+             </View>
+           </TouchableOpacity>
+         )}
+         
       {/* OVERLAY - Shows when sidebar is expanded */}
       {isExpanded && (
         <TouchableOpacity
@@ -155,19 +173,6 @@ export default function SalesScreen({ navigation }) {
           },
         ]}
       >
-        {/* PRESS State - Show only "PRESS" text vertically */}
-        {isPressState && (
-          <TouchableOpacity
-            onPress={handlePressTextClick}
-            style={styles.pressContainer}
-            activeOpacity={0.7}
-          >
-            <View style={styles.pressTextWrapper}>
-              <Text style={styles.pressText}>PRESS</Text>
-            </View>
-          </TouchableOpacity>
-        )}
-
         {/* Toggle Arrow - Only visible when collapsed */}
         {isCollapsed && (
           <TouchableOpacity
