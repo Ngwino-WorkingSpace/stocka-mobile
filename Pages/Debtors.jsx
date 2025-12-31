@@ -393,11 +393,11 @@ export default function DebtorsScreen({ navigation }) {
         {/* SEARCH & SORT */}
         <View style={styles.searchRow}>
           <TextInput
-  placeholder="Search by name or phone..."
-  placeholderTextColor="#777"
-  value={searchText}
-  onChangeText={setSearchText}
-  style={styles.searchInput}
+             placeholder="Search by name or phone..."
+                 placeholderTextColor="#777"
+               value={searchText}
+                 onChangeText={setSearchText}
+               style={styles.searchInput}
 />
 
 

@@ -554,29 +554,28 @@ const handleSaleChange = (field, value) => {
 
   {/* ================= ADD STOCK MODAL ================= */}
 <Modal visible={addStockVisible} transparent animationType="slide">
-  <KeyboardAvoidingView 
-    style={formStyles.overlay}
-    behavior={Platform.OS === "ios" ? "padding" : "height"}
-  >
+  <View style={formStyles.overlay}>
     <TouchableOpacity 
-      style={formStyles.overlay}
+      style={StyleSheet.absoluteFill}
       activeOpacity={1}
       onPress={() => setAddStockVisible(false)}
+    />
+    <KeyboardAvoidingView 
+      style={formStyles.modalContainer}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <TouchableOpacity activeOpacity={1} onPress={(e) => e.stopPropagation()}>
-        <ScrollView 
-          style={formStyles.scrollView}
-          contentContainerStyle={formStyles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
-          <View style={formStyles.card}>
+      <ScrollView 
+        contentContainerStyle={formStyles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={[formStyles.card, darkMode && formStyles.darkCard]}>
 
       {/* Header */}
-      <View style={formStyles.header}>
-        <Text style={formStyles.title}>Add to Stock</Text>
+      <View style={[formStyles.header, darkMode && { borderBottomColor: "#444" }]}>
+        <Text style={[formStyles.title, darkMode && styles.darkText]}>Add to Stock</Text>
         <TouchableOpacity onPress={() => setAddStockVisible(false)}>
-          <Ionicons name="close" size={22} color="#333" />
+          <Ionicons name="close" size={22} color={darkMode ? "#fff" : "#333"} />
         </TouchableOpacity>
       </View>
 
@@ -586,13 +585,13 @@ const handleSaleChange = (field, value) => {
         {/* LEFT SIDE */}
         <View style={formStyles.left}>
 
-          <Text style={formStyles.staticLabel}>Product Name</Text>
-          <Text style={formStyles.staticValue}>
+          <Text style={[formStyles.staticLabel, darkMode && { color: "#aaa" }]}>Product Name</Text>
+          <Text style={[formStyles.staticValue, darkMode && styles.darkText]}>
             {selectedProduct?.TextHead}
           </Text>
 
-          <Text style={formStyles.staticLabel}>Category</Text>
-          <Text style={formStyles.staticValue}>
+          <Text style={[formStyles.staticLabel, darkMode && { color: "#aaa" }]}>Category</Text>
+          <Text style={[formStyles.staticValue, darkMode && styles.darkText]}>
             {selectedProduct?.subText}
           </Text>
 
@@ -601,7 +600,8 @@ const handleSaleChange = (field, value) => {
             placeholder="Ex: 54kg"
             value={formData.quantity}
             onChangeText={(v) => handleChange("quantity", v)}
-             inputStyle={formStyles.input}
+            inputStyle={formStyles.input}
+            darkMode={darkMode}
           />
 
           <FormInput
@@ -610,6 +610,7 @@ const handleSaleChange = (field, value) => {
             value={formData.price}
             onChangeText={(v) => handleChange("price", v)}
             inputStyle={formStyles.input}
+            darkMode={darkMode}
           />
 
           <FormInput
@@ -617,7 +618,8 @@ const handleSaleChange = (field, value) => {
             placeholder="Ex: 15 June 2025"
             value={formData.purchaseDate}
             onChangeText={(v) => handleChange("purchaseDate", v)}
-             inputStyle={formStyles.input}
+            inputStyle={formStyles.input}
+            darkMode={darkMode}
           />
 
           <FormInput
@@ -625,7 +627,8 @@ const handleSaleChange = (field, value) => {
             placeholder="Ex: 15 September 2025"
             value={formData.expiryDate}
             onChangeText={(v) => handleChange("expiryDate", v)}
-             inputStyle={formStyles.input}
+            inputStyle={formStyles.input}
+            darkMode={darkMode}
           />
 
         </View>
@@ -638,13 +641,14 @@ const handleSaleChange = (field, value) => {
           />
 
           <FormInput
-  label="Description (Optional)"
-  placeholder="Key notes about the product..."
-  multiline
-  value={formData.description}
-  onChangeText={(v) => handleChange("description", v)}
-  inputStyle={formStyles.descriptionInput}
-/>
+            label="Description (Optional)"
+            placeholder="Key notes about the product..."
+            multiline
+            value={formData.description}
+            onChangeText={(v) => handleChange("description", v)}
+            inputStyle={formStyles.descriptionInput}
+            darkMode={darkMode}
+          />
 
         </View>
 
@@ -655,38 +659,36 @@ const handleSaleChange = (field, value) => {
             <Text style={formStyles.addText}>ADD</Text>
           </TouchableOpacity>
 
-          </View>
-        </ScrollView>
-      </TouchableOpacity>
-    </TouchableOpacity>
-  </KeyboardAvoidingView>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  </View>
 </Modal>
 
 {/* ================= SALES RECORD MODAL ================= */}
 <Modal visible={recordSaleVisible} transparent animationType="slide">
-  <KeyboardAvoidingView 
-    style={saleStyles.overlay}
-    behavior={Platform.OS === "ios" ? "padding" : "height"}
-  >
+  <View style={saleStyles.overlay}>
     <TouchableOpacity 
-      style={saleStyles.overlay}
+      style={StyleSheet.absoluteFill}
       activeOpacity={1}
       onPress={() => setRecordSaleVisible(false)}
+    />
+    <KeyboardAvoidingView 
+      style={saleStyles.modalContainer}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <TouchableOpacity activeOpacity={1} onPress={(e) => e.stopPropagation()}>
-        <ScrollView 
-          style={saleStyles.scrollView}
-          contentContainerStyle={saleStyles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
-          <View style={saleStyles.card}>
+      <ScrollView 
+        contentContainerStyle={saleStyles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={[saleStyles.card, darkMode && saleStyles.darkCard]}>
 
       {/* Header */}
-      <View style={saleStyles.header}>
-        <Text style={saleStyles.title}>Product Details</Text>
+      <View style={[saleStyles.header, darkMode && { borderBottomColor: "#444" }]}>
+        <Text style={[saleStyles.title, darkMode && styles.darkText]}>Product Details</Text>
         <TouchableOpacity onPress={() => setRecordSaleVisible(false)}>
-          <Ionicons name="close" size={22} color="#333" />
+          <Ionicons name="close" size={22} color={darkMode ? "#fff" : "#333"} />
         </TouchableOpacity>
       </View>
 
@@ -695,20 +697,20 @@ const handleSaleChange = (field, value) => {
 
         {/* LEFT */}
         <View style={saleStyles.left}>
-          <Text style={saleStyles.label}>Product Name</Text>
-          <Text style={saleStyles.value}>{selectedProduct?.TextHead}</Text>
+          <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Product Name</Text>
+          <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.TextHead}</Text>
 
-          <Text style={saleStyles.label}>Category</Text>
-          <Text style={saleStyles.value}>{selectedProduct?.subText}</Text>
+          <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Category</Text>
+          <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.subText}</Text>
 
-          <Text style={saleStyles.label}>Remaining stock</Text>
-          <Text style={saleStyles.value}>{selectedProduct?.kilos}</Text>
+          <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Remaining stock</Text>
+          <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.kilos}</Text>
 
-          <Text style={saleStyles.label}>Purchase date</Text>
-          <Text style={saleStyles.value}>{selectedProduct?.PurchaseDate}</Text>
+          <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Purchase date</Text>
+          <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.PurchaseDate}</Text>
 
-          <Text style={saleStyles.label}>Expiry date</Text>
-          <Text style={saleStyles.value}>{selectedProduct?.ExpiryDate}</Text>
+          <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Expiry date</Text>
+          <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.ExpiryDate}</Text>
         </View>
 
         {/* RIGHT */}
@@ -718,8 +720,8 @@ const handleSaleChange = (field, value) => {
             style={saleStyles.image}
           />
 
-          <Text style={saleStyles.descTitle}>Description</Text>
-          <Text style={saleStyles.description}>
+          <Text style={[saleStyles.descTitle, darkMode && styles.darkText]}>Description</Text>
+          <Text style={[saleStyles.description, darkMode && { color: "#aaa" }]}>
             {selectedProduct?.description || "No description available."}
           </Text>
         </View>
@@ -727,7 +729,7 @@ const handleSaleChange = (field, value) => {
       </View>
 
       {/* SALE FORM */}
-      <Text style={saleStyles.sectionTitle}>Record a sale</Text>
+      <Text style={[saleStyles.sectionTitle, darkMode && styles.darkText]}>Record a sale</Text>
 
       <View style={saleStyles.formRow}>
         <View style={saleStyles.formInputWrapper}>
@@ -737,6 +739,7 @@ const handleSaleChange = (field, value) => {
             value={saleData.quantity}
             onChangeText={(v) => handleSaleChange("quantity", v)}
             containerStyle={saleStyles.halfWidthContainer}
+            darkMode={darkMode}
           />
         </View>
 
@@ -747,6 +750,7 @@ const handleSaleChange = (field, value) => {
             value={saleData.unitPrice}
             onChangeText={(v) => handleSaleChange("unitPrice", v)}
             containerStyle={saleStyles.halfWidthContainer}
+            darkMode={darkMode}
           />
         </View>
       </View>
@@ -756,6 +760,7 @@ const handleSaleChange = (field, value) => {
         placeholder="0 RWF"
         value={saleData.totalPrice}
         onChangeText={(v) => handleSaleChange("totalPrice", v)}
+        darkMode={darkMode}
       />
 
           {/* BUTTON */}
@@ -763,11 +768,10 @@ const handleSaleChange = (field, value) => {
             <Text style={saleStyles.recordText}>RECORD</Text>
           </TouchableOpacity>
 
-          </View>
-        </ScrollView>
-      </TouchableOpacity>
-    </TouchableOpacity>
-  </KeyboardAvoidingView>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  </View>
 </Modal>
 
       {/* LOGOUT MODAL */}
@@ -831,16 +835,19 @@ const FormInput = ({
   multiline,
   inputStyle,
   containerStyle,
+  darkMode,
   ...props
 }) => (
   <View style={[styles.formGroup, containerStyle]}>
-    <Text style={styles.formLabel}>{label}</Text>
+    <Text style={[styles.formLabel, darkMode && styles.darkText]}>{label}</Text>
     <TextInput
       style={[
         styles.formInput,
         multiline && styles.formTextarea,
         inputStyle,
+        darkMode && { backgroundColor: "#1a1a2e", color: "#fff", borderColor: "#444" },
       ]}
+      placeholderTextColor={darkMode ? "#aaa" : "#999"}
       multiline={multiline}
       {...props}
     />
@@ -1281,23 +1288,18 @@ const formStyles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: "rgba(9,54,77,0.5)",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  scrollView: {
-    flex: 1,
-    width: "100%",
-  },
-  scrollContent: {
-    flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  modalContainer: {
+    width: "93%",
+    maxHeight: "90%",
+  },
+  scrollContent: {
     paddingVertical: 20,
   },
   card: {
-    width: "90%",
+    width: "100%",
     backgroundColor: "#fff",
     borderRadius: 20,
     padding: 20,
@@ -1306,6 +1308,9 @@ const formStyles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 20,
     elevation: 10,
+  },
+  darkCard: {
+    backgroundColor: "#2a2a3e",
   },
 
   header: {
@@ -1419,23 +1424,18 @@ const saleStyles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: "rgba(9,54,77,0.5)",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  scrollView: {
-    flex: 1,
-    width: "100%",
-  },
-  scrollContent: {
-    flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  modalContainer: {
+    width: "93%",
+    maxHeight: "90%",
+  },
+  scrollContent: {
     paddingVertical: 20,
   },
   card: {
-    width: "90%",
+    width: "100%",
     backgroundColor: "#fff",
     borderRadius: 20,
     padding: 20,
@@ -1444,6 +1444,9 @@ const saleStyles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 20,
     elevation: 10,
+  },
+  darkCard: {
+    backgroundColor: "#2a2a3e",
   },
 
   header: {

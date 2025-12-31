@@ -529,29 +529,28 @@ const StockProducts = [
 
          {/* ================= ADD STOCK MODAL ================= */}
         <Modal visible={addStockVisible} transparent animationType="slide">
-          <KeyboardAvoidingView 
-            style={formStyles.overlay}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-          >
+          <View style={formStyles.overlay}>
             <TouchableOpacity 
-              style={formStyles.overlay}
+              style={StyleSheet.absoluteFill}
               activeOpacity={1}
               onPress={() => setAddStockVisible(false)}
+            />
+            <KeyboardAvoidingView 
+              style={formStyles.modalContainer}
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
             >
-              <TouchableOpacity activeOpacity={1} onPress={(e) => e.stopPropagation()}>
-                <ScrollView 
-                  style={formStyles.scrollView}
-                  contentContainerStyle={formStyles.scrollContent}
-                  showsVerticalScrollIndicator={false}
-                  keyboardShouldPersistTaps="handled"
-                >
-                  <View style={formStyles.card}>
+              <ScrollView 
+                contentContainerStyle={formStyles.scrollContent}
+                showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
+              >
+                <View style={[formStyles.card, darkMode && formStyles.darkCard]}>
         
               {/* Header */}
-              <View style={formStyles.header}>
-                <Text style={formStyles.title}>Add to Stock</Text>
+              <View style={[formStyles.header, darkMode && { borderBottomColor: "#444" }]}>
+                <Text style={[formStyles.title, darkMode && styles.darkText]}>Add to Stock</Text>
                 <TouchableOpacity onPress={() => setAddStockVisible(false)}>
-                  <Ionicons name="close" size={22} color="#333" />
+                  <Ionicons name="close" size={22} color={darkMode ? "#fff" : "#333"} />
                 </TouchableOpacity>
               </View>
         
@@ -561,13 +560,13 @@ const StockProducts = [
                 {/* LEFT SIDE */}
                 <View style={formStyles.left}>
         
-                  <Text style={formStyles.staticLabel}>Product Name</Text>
-                  <Text style={formStyles.staticValue}>
+                  <Text style={[formStyles.staticLabel, darkMode && { color: "#aaa" }]}>Product Name</Text>
+                  <Text style={[formStyles.staticValue, darkMode && styles.darkText]}>
                     {selectedProduct?.TextHead}
                   </Text>
         
-                  <Text style={formStyles.staticLabel}>Category</Text>
-                  <Text style={formStyles.staticValue}>
+                  <Text style={[formStyles.staticLabel, darkMode && { color: "#aaa" }]}>Category</Text>
+                  <Text style={[formStyles.staticValue, darkMode && styles.darkText]}>
                     {selectedProduct?.subText}
                   </Text>
         
@@ -576,7 +575,8 @@ const StockProducts = [
                     placeholder="Ex: 54kg"
                     value={formData.quantity}
                     onChangeText={(v) => handleChange("quantity", v)}
-                     inputStyle={formStyles.input}
+                    inputStyle={formStyles.input}
+                    darkMode={darkMode}
                   />
         
                   <FormInput
@@ -585,6 +585,7 @@ const StockProducts = [
                     value={formData.price}
                     onChangeText={(v) => handleChange("price", v)}
                     inputStyle={formStyles.input}
+                    darkMode={darkMode}
                   />
         
                   <FormInput
@@ -592,7 +593,8 @@ const StockProducts = [
                     placeholder="Ex: 15 June 2025"
                     value={formData.purchaseDate}
                     onChangeText={(v) => handleChange("purchaseDate", v)}
-                     inputStyle={formStyles.input}
+                    inputStyle={formStyles.input}
+                    darkMode={darkMode}
                   />
         
                   <FormInput
@@ -600,7 +602,8 @@ const StockProducts = [
                     placeholder="Ex: 15 September 2025"
                     value={formData.expiryDate}
                     onChangeText={(v) => handleChange("expiryDate", v)}
-                     inputStyle={formStyles.input}
+                    inputStyle={formStyles.input}
+                    darkMode={darkMode}
                   />
         
                 </View>
@@ -613,13 +616,14 @@ const StockProducts = [
                   />
         
                   <FormInput
-          label="Description (Optional)"
-          placeholder="Key notes about the product..."
-          multiline
-          value={formData.description}
-          onChangeText={(v) => handleChange("description", v)}
-          inputStyle={formStyles.descriptionInput}
-        />
+                    label="Description (Optional)"
+                    placeholder="Key notes about the product..."
+                    multiline
+                    value={formData.description}
+                    onChangeText={(v) => handleChange("description", v)}
+                    inputStyle={formStyles.descriptionInput}
+                    darkMode={darkMode}
+                  />
         
                 </View>
         
@@ -630,38 +634,36 @@ const StockProducts = [
                 <Text style={formStyles.addText}>ADD</Text>
               </TouchableOpacity>
         
-                  </View>
-                </ScrollView>
-              </TouchableOpacity>
-            </TouchableOpacity>
-          </KeyboardAvoidingView>
+                </View>
+              </ScrollView>
+            </KeyboardAvoidingView>
+          </View>
         </Modal>
         
         {/* ================= SALES RECORD MODAL ================= */}
         <Modal visible={recordSaleVisible} transparent animationType="slide">
-          <KeyboardAvoidingView 
-            style={saleStyles.overlay}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-          >
+          <View style={saleStyles.overlay}>
             <TouchableOpacity 
-              style={saleStyles.overlay}
+              style={StyleSheet.absoluteFill}
               activeOpacity={1}
               onPress={() => setRecordSaleVisible(false)}
+            />
+            <KeyboardAvoidingView 
+              style={saleStyles.modalContainer}
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
             >
-              <TouchableOpacity activeOpacity={1} onPress={(e) => e.stopPropagation()}>
-                <ScrollView 
-                  style={saleStyles.scrollView}
-                  contentContainerStyle={saleStyles.scrollContent}
-                  showsVerticalScrollIndicator={false}
-                  keyboardShouldPersistTaps="handled"
-                >
-                  <View style={saleStyles.card}>
+              <ScrollView 
+                contentContainerStyle={saleStyles.scrollContent}
+                showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
+              >
+                <View style={[saleStyles.card, darkMode && saleStyles.darkCard]}>
         
               {/* Header */}
-              <View style={saleStyles.header}>
-                <Text style={saleStyles.title}>Product Details</Text>
+              <View style={[saleStyles.header, darkMode && { borderBottomColor: "#444" }]}>
+                <Text style={[saleStyles.title, darkMode && styles.darkText]}>Product Details</Text>
                 <TouchableOpacity onPress={() => setRecordSaleVisible(false)}>
-                  <Ionicons name="close" size={22} color="#333" />
+                  <Ionicons name="close" size={22} color={darkMode ? "#fff" : "#333"} />
                 </TouchableOpacity>
               </View>
         
@@ -670,20 +672,20 @@ const StockProducts = [
         
                 {/* LEFT */}
                 <View style={saleStyles.left}>
-                  <Text style={saleStyles.label}>Product Name</Text>
-                  <Text style={saleStyles.value}>{selectedProduct?.TextHead}</Text>
+                  <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Product Name</Text>
+                  <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.TextHead}</Text>
         
-                  <Text style={saleStyles.label}>Category</Text>
-                  <Text style={saleStyles.value}>{selectedProduct?.subText}</Text>
+                  <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Category</Text>
+                  <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.subText}</Text>
         
-                  <Text style={saleStyles.label}>Remaining stock</Text>
-                  <Text style={saleStyles.value}>{selectedProduct?.kilos}</Text>
+                  <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Remaining stock</Text>
+                  <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.kilos}</Text>
         
-                  <Text style={saleStyles.label}>Purchase date</Text>
-                  <Text style={saleStyles.value}>{selectedProduct?.PurchaseDate}</Text>
+                  <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Purchase date</Text>
+                  <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.PurchaseDate}</Text>
         
-                  <Text style={saleStyles.label}>Expiry date</Text>
-                  <Text style={saleStyles.value}>{selectedProduct?.ExpiryDate}</Text>
+                  <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Expiry date</Text>
+                  <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.ExpiryDate}</Text>
                 </View>
         
                 {/* RIGHT */}
@@ -693,8 +695,8 @@ const StockProducts = [
                     style={saleStyles.image}
                   />
         
-                  <Text style={saleStyles.descTitle}>Description</Text>
-                  <Text style={saleStyles.description}>
+                  <Text style={[saleStyles.descTitle, darkMode && styles.darkText]}>Description</Text>
+                  <Text style={[saleStyles.description, darkMode && { color: "#aaa" }]}>
                     {selectedProduct?.description || "No description available."}
                   </Text>
                 </View>
@@ -702,7 +704,7 @@ const StockProducts = [
               </View>
         
               {/* SALE FORM */}
-              <Text style={saleStyles.sectionTitle}>Record a sale</Text>
+              <Text style={[saleStyles.sectionTitle, darkMode && styles.darkText]}>Record a sale</Text>
         
               <View style={saleStyles.formRow}>
                 <View style={saleStyles.formInputWrapper}>
@@ -715,8 +717,8 @@ const StockProducts = [
                     labelStyle={{
                       fontFamily:"Poppins_400Regular",
                       color:"#93d81aff"
-
                     }}
+                    darkMode={darkMode}
                   />
                 </View>
         
@@ -727,6 +729,7 @@ const StockProducts = [
                     value={saleData.unitPrice}
                     onChangeText={(v) => handleSaleChange("unitPrice", v)}
                     inputStyle={saleStyles.input}
+                    darkMode={darkMode}
                   />
                 </View>
               </View>
@@ -737,6 +740,7 @@ const StockProducts = [
                 value={saleData.totalPrice}
                 onChangeText={(v) => handleSaleChange("totalPrice", v)}
                 inputStyle={saleStyles.input}
+                darkMode={darkMode}
               />
         
               {/* BUTTON */}
@@ -744,11 +748,10 @@ const StockProducts = [
                 <Text style={saleStyles.recordText}>RECORD</Text>
               </TouchableOpacity>
         
-                  </View>
-                </ScrollView>
-              </TouchableOpacity>
-            </TouchableOpacity>
-          </KeyboardAvoidingView>
+                </View>
+              </ScrollView>
+            </KeyboardAvoidingView>
+          </View>
         </Modal>
 
         {/* LOGOUT MODAL */}
@@ -802,13 +805,14 @@ const FormInput = ({
   label,
   multiline,
   inputStyle,
-  labelStyle,        // 👈 NEW
+  labelStyle,
   containerStyle,
+  darkMode,
   ...props
 }) => (
   <View style={[styles.formGroup, containerStyle]}>
     {label && (
-      <Text style={[styles.formLabel, labelStyle]}>
+      <Text style={[styles.formLabel, labelStyle, darkMode && styles.darkText]}>
         {label}
       </Text>
     )}
@@ -818,7 +822,9 @@ const FormInput = ({
         styles.formInput,
         multiline && styles.formTextarea,
         inputStyle,
+        darkMode && { backgroundColor: "#1a1a2e", color: "#fff", borderColor: "#444" },
       ]}
+      placeholderTextColor={darkMode ? "#aaa" : "#999"}
       multiline={multiline}
       {...props}
     />
@@ -1177,28 +1183,20 @@ pressText: {
 
 const formStyles = StyleSheet.create({
   overlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(9, 54, 77, 0.3)",
-    zIndex: 5,
-    
-  },
-
-  scrollView: {
-    width: "93%",
-    flex:1,
-  },
-
-  scrollContent: {
-    paddingVertical: 30,
+    flex: 1,
+    backgroundColor: "rgba(9, 54, 77, 0.5)",
+    justifyContent: "center",
     alignItems: "center",
   },
-
-  card: {
+  modalContainer: {
     width: "93%",
+    maxHeight: "90%",
+  },
+  scrollContent: {
+    paddingVertical: 20,
+  },
+  card: {
+    width: "100%",
     backgroundColor: "#fff",
     borderRadius: 22,
     padding: 22,
@@ -1207,7 +1205,9 @@ const formStyles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 18,
     elevation: 12,
-    justifyContent:"center"
+  },
+  darkCard: {
+    backgroundColor: "#2a2a3e",
   },
 
   /* HEADER */
@@ -1317,42 +1317,34 @@ const formStyles = StyleSheet.create({
 
 const saleStyles = StyleSheet.create({
   overlay: {
+    flex: 1,
     backgroundColor: "rgba(9,54,77,0.5)",
-    top:0,
-    bottom:0,
-    left:0,
-    right:0,
-    flex:1,
-   
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContainer: {
+    width: "93%",
+    maxHeight: "90%",
   },
   formInputWrapper:{
      fontFamily:"Poppins_400Regular",
   },
-
   input: {
-  height: 48,
-  paddingHorizontal: 14,
-  borderWidth: 1,
-  borderColor: "#DADADA",
-  borderRadius: 10,
-  fontSize: 16,
-  color: "#000",
-  backgroundColor: "#FAFAFA",
-  fontFamily:"Poppins_400Regular",
-},
-
-  scrollView: {
-    flex: 1,
-    width: "93%",
+    height: 48,
+    paddingHorizontal: 14,
+    borderWidth: 1,
+    borderColor: "#DADADA",
+    borderRadius: 10,
+    fontSize: 16,
+    color: "#000",
+    backgroundColor: "#FAFAFA",
+    fontFamily:"Poppins_400Regular",
   },
   scrollContent: {
-    flexGrow: 1,
-    justifyContent: "center",
-    alignItems: "center",
     paddingVertical: 20,
   },
   card: {
-    width: "93%",
+    width: "100%",
     backgroundColor: "#fff",
     borderRadius: 20,
     padding: 20,
@@ -1361,6 +1353,9 @@ const saleStyles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 20,
     elevation: 10,
+  },
+  darkCard: {
+    backgroundColor: "#2a2a3e",
   },
 
   header: {
