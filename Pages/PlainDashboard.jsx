@@ -712,6 +712,11 @@ const StockProducts = [
                     value={saleData.quantity}
                     onChangeText={(v) => handleSaleChange("quantity", v)}
                     inputStyle={saleStyles.input}
+                    labelStyle={{
+                      fontFamily:"Poppins_400Regular",
+                      color:"#93d81aff"
+
+                    }}
                   />
                 </View>
         
@@ -797,11 +802,17 @@ const FormInput = ({
   label,
   multiline,
   inputStyle,
+  labelStyle,        // 👈 NEW
   containerStyle,
   ...props
 }) => (
   <View style={[styles.formGroup, containerStyle]}>
-    <Text style={styles.formLabel}>{label}</Text>
+    {label && (
+      <Text style={[styles.formLabel, labelStyle]}>
+        {label}
+      </Text>
+    )}
+
     <TextInput
       style={[
         styles.formInput,
@@ -813,6 +824,7 @@ const FormInput = ({
     />
   </View>
 );
+
 
 
 const styles = StyleSheet.create({
@@ -1447,6 +1459,8 @@ const saleStyles = StyleSheet.create({
     letterSpacing: 1,
   },
 
-
+formLabel:{
+  color:"#093"
+}
 
 });

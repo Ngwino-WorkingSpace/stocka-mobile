@@ -58,6 +58,7 @@ export default function DebtorsScreen({ navigation }) {
   const [activeTab, setActiveTab] = useState("debtors");
   const [sortOpen, setSortOpen] = useState(false);
   const [sortBy, setSortBy] = useState("Phone");
+  const [searchText, setSearchText] = useState("");
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedType, setSelectedType] = useState("debtor"); // debtor | creditor
@@ -79,6 +80,22 @@ export default function DebtorsScreen({ navigation }) {
     date: "",
     type: "",
   });
+  const currentData =
+    activeTab === "debtors" ? DEBTORS_DATA : CREDITORS_DATA;
+  
+
+  const filteredData = currentData
+  .filter((item) =>
+    item.name.toLowerCase().includes(searchText.toLowerCase()) ||
+    item.phone.includes(searchText)
+  )
+  .sort((a, b) => {
+    if (sortBy === "Phone") {
+      return a.phone.localeCompare(b.phone);
+    }
+    return 0;
+  });
+
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -134,8 +151,7 @@ export default function DebtorsScreen({ navigation }) {
     </View>
   );
 
-  const currentData =
-    activeTab === "debtors" ? DEBTORS_DATA : CREDITORS_DATA;
+  
 
   return (
     <View style={[styles.mainContainer, { backgroundColor: darkMode ? "#1a1a2e" : "#fff" }]}>
@@ -376,10 +392,13 @@ export default function DebtorsScreen({ navigation }) {
         {/* SEARCH & SORT */}
         <View style={styles.searchRow}>
           <TextInput
-            placeholder="Search..."
-            placeholderTextColor="#777"
-            style={styles.searchInput}
-          />
+  placeholder="Search by name or phone..."
+  placeholderTextColor="#777"
+  value={searchText}
+  onChangeText={setSearchText}
+  style={styles.searchInput}
+/>
+
 
           <TouchableOpacity
             style={styles.sortBtn}
@@ -392,7 +411,7 @@ export default function DebtorsScreen({ navigation }) {
 
             {/* LIST */}
             <FlatList
-              data={currentData}
+              data={filteredData}
               keyExtractor={(item) => item.id}
               renderItem={renderItem}
               showsVerticalScrollIndicator={false}
@@ -988,7 +1007,6 @@ const styles = StyleSheet.create({
 
 modalBox: {
   width: "90%",
-  maxWidth: 400,
   backgroundColor: "#fff",
   borderRadius: 16,
   padding: 20,
@@ -1049,8 +1067,7 @@ infoOverlay: {
 },
 
 infoModal: {
-  width: "92%",
-  maxWidth: 400,
+  width: "90%",
   backgroundColor: "#FFFFFF",
   borderRadius: 10,
   padding: 20,
@@ -1165,7 +1182,6 @@ const paymentStyles = StyleSheet.create({
   },
   paymentModalBox: {
     width: "93%",
-    maxWidth: 400,
     backgroundColor: "#fff",
     borderRadius: 5,
     padding: 20,
