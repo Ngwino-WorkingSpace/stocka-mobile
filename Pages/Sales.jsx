@@ -136,7 +136,7 @@ export default function SalesScreen({ navigation }) {
   const tabs = ["Daily", "Weekly", "Monthly", "Annually"];
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: darkMode ? "#1a1a2e" : "#fff" }]}>
 
           {/* FLOATING PRESS HANDLE */}
          {isPressState && (
@@ -348,12 +348,12 @@ export default function SalesScreen({ navigation }) {
       </View>
 
       {/* CONTENT */}
-      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0, backgroundColor: "#fff" }}>
+      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0, backgroundColor: darkMode ? "#1a1a2e" : "#fff" }}>
         <KeyboardAvoidingView 
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-          <ScrollView>
+          <ScrollView style={darkMode && styles.darkScrollView}>
           <View style={{ padding: 15 }}>
             {/* Header with back button */}
             <View style={styles.headerRow}>
@@ -362,10 +362,10 @@ export default function SalesScreen({ navigation }) {
                   onPress={() => navigation.goBack()}
                   style={styles.backButton}
                 >
-                  <Ionicons name="arrow-back" size={24} color="#000" />
+                  <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
                 </TouchableOpacity>
               )}
-              <Text style={styles.headerText}>Sales List</Text>
+              <Text style={[styles.headerText, darkMode && styles.darkText]}>Sales List</Text>
             </View>
 
          {/* TABS */}
@@ -397,7 +397,7 @@ export default function SalesScreen({ navigation }) {
         )}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={styles.productCard}>
+          <View style={[styles.productCard, darkMode && styles.darkProductCard]}>
             {/* Left side: Image */}
             <View style={styles.imageWrapper}>
               <Image source={item.Image} style={styles.productImage} />
@@ -405,33 +405,33 @@ export default function SalesScreen({ navigation }) {
 
             {/* Right side: Details */}
             <View style={styles.productInfo}>
-              <Text style={styles.productName}>{item.TextHead}</Text>
-              <Text style={styles.productCategory}>{item.subText}</Text>
+              <Text style={[styles.productName, darkMode && styles.darkText]}>{item.TextHead}</Text>
+              <Text style={[styles.productCategory, darkMode && { color: "#aaa" }]}>{item.subText}</Text>
 
               <View style={styles.labelsContainer}>
                 <View style={styles.labelColumn}>
                   <View style={styles.labelRow}>
-                    <Text style={styles.label}>{item.label1}</Text>
-                    <Text style={styles.value}>{item.value1}</Text>
+                    <Text style={[styles.label, darkMode && { color: "#aaa" }]}>{item.label1}</Text>
+                    <Text style={[styles.value, darkMode && styles.darkText]}>{item.value1}</Text>
                   </View>
                   <View style={styles.labelRow}>
-                    <Text style={styles.label}>{item.label2}</Text>
-                    <Text style={styles.value}>{item.value2}</Text>
+                    <Text style={[styles.label, darkMode && { color: "#aaa" }]}>{item.label2}</Text>
+                    <Text style={[styles.value, darkMode && styles.darkText]}>{item.value2}</Text>
                   </View>
                   <View style={styles.labelRow}>
-                    <Text style={styles.label}>{item.label3}</Text>
-                    <Text style={styles.value}>{item.value3}</Text>
+                    <Text style={[styles.label, darkMode && { color: "#aaa" }]}>{item.label3}</Text>
+                    <Text style={[styles.value, darkMode && styles.darkText]}>{item.value3}</Text>
                   </View>
                 </View>
 
                 <View style={styles.labelColumn}>
                   <View style={styles.labelRow}>
-                    <Text style={styles.label}>{item.label4}</Text>
-                    <Text style={styles.value}>{item.value4}</Text>
+                    <Text style={[styles.label, darkMode && { color: "#aaa" }]}>{item.label4}</Text>
+                    <Text style={[styles.value, darkMode && styles.darkText]}>{item.value4}</Text>
                   </View>
                   <View style={styles.labelRow}>
-                    <Text style={styles.label}>{item.label5}</Text>
-                    <Text style={styles.value}>{item.value5}</Text>
+                    <Text style={[styles.label, darkMode && { color: "#aaa" }]}>{item.label5}</Text>
+                    <Text style={[styles.value, darkMode && styles.darkText]}>{item.value5}</Text>
                   </View>
                 </View>
               </View>
@@ -511,6 +511,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     position: "relative",
   },
+  darkScrollView: {
+    backgroundColor: "#1a1a2e",
+  },
+  darkText: {
+    color: "#fff",
+  },
+  darkProductCard: {
+    backgroundColor: "#2a2a3e",
+  },
   floatingPress: {
     position: "absolute",
     left: 0,
@@ -561,6 +570,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontFamily: "Poppins_600SemiBold",
     lineHeight: 12,
+    transform: [{ rotate: "-90deg" }],
   },
   arrowButton: {
     marginBottom: 25,

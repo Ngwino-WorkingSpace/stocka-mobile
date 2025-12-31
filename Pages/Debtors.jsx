@@ -135,19 +135,19 @@ export default function DebtorsScreen({ navigation }) {
   const isExpanded = sidebarState === "expanded";
 
   const renderItem = ({ item }) => (
-    <View style={styles.card}>
-      <View style={styles.avatar}>
-        <Ionicons name="person-outline" size={22} color="#0B3A53" />
+    <View style={[styles.card, darkMode && styles.darkCard]}>
+      <View style={[styles.avatar, darkMode && styles.darkAvatar]}>
+        <Ionicons name="person-outline" size={22} color={darkMode ? "#fff" : "#0B3A53"} />
       </View>
 
       <View style={styles.cardText}>
-        <Text style={styles.name} numberOfLines={1}>
+        <Text style={[styles.name, darkMode && styles.darkText]} numberOfLines={1}>
           {item.name}
         </Text>
-        <Text style={styles.phone}>{item.phone}</Text>
+        <Text style={[styles.phone, darkMode && { color: "#aaa" }]}>{item.phone}</Text>
       </View>
 
-      <Text style={styles.amount}>{item.amount}</Text>
+      <Text style={[styles.amount, darkMode && styles.darkText]}>{item.amount}</Text>
     </View>
   );
 
@@ -357,27 +357,28 @@ export default function DebtorsScreen({ navigation }) {
       </View>
 
       {/* CONTENT */}
-      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0 }}>
+      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0, backgroundColor: darkMode ? "#1a1a2e" : "#fff" }}>
         <KeyboardAvoidingView 
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
           <ScrollView
-            contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 16 }}
+            contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 16, backgroundColor: darkMode ? "#1a1a2e" : "#fff" }}
+            style={darkMode && styles.darkScrollView}
             showsVerticalScrollIndicator={false}
           >
             {/* HEADER */}
             <Text style={[styles.header, darkMode && styles.darkText]}>Stocka</Text>
 
         {/* TABS */}
-        <View style={styles.tabs}>
+        <View style={[styles.tabs, darkMode && styles.darkTabs]}>
           {["debtors", "creditors"].map((tab) => (
             <TouchableOpacity
               key={tab}
               style={[styles.tab, activeTab === tab && styles.activeTab]}
               onPress={() => setActiveTab(tab)}
             >
-              <Text style={[styles.tabText, activeTab === tab && styles.activeTabText]}>
+              <Text style={[styles.tabText, activeTab === tab && styles.activeTabText, darkMode && !(activeTab === tab) && styles.darkText]}>
                 {tab === "debtors" ? "Debtors" : "Creditors"}
               </Text>
             </TouchableOpacity>
@@ -385,7 +386,7 @@ export default function DebtorsScreen({ navigation }) {
         </View>
 
         {/* TITLE */}
-        <Text style={styles.sectionTitle}>
+        <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>
           {activeTab === "debtors" ? "Current Debtors" : "Current Creditors"}
         </Text>
 
@@ -439,24 +440,26 @@ export default function DebtorsScreen({ navigation }) {
              onRequestClose={() => setModalVisible(false)}
 >
   <View style={styles.modalOverlay}>
-    <View style={styles.modalBox}>
+    <View style={[styles.modalBox, darkMode && styles.darkModalBox]}>
 
-      <Text style={styles.modalTitle}>
+      <Text style={[styles.modalTitle, darkMode && styles.darkText]}>
         Add {activeTab === "debtors" ? " a new debtor" : " a new creditor"}
       </Text>
 
       <TextInput
         placeholder="Full name"
+        placeholderTextColor={darkMode ? "#aaa" : "#777"}
         value={formName}
         onChangeText={setFormName}
-        style={styles.modalInput}
+        style={[styles.modalInput, darkMode && styles.darkModalInput]}
       />
 
       <TextInput
         placeholder="Phone number"
+        placeholderTextColor={darkMode ? "#aaa" : "#777"}
         value={formAmount}
         onChangeText={setFormAmount}
-        style={styles.modalInput}
+        style={[styles.modalInput, darkMode && styles.darkModalInput]}
       />
 
       <View style={styles.modalActions}>
@@ -506,43 +509,43 @@ export default function DebtorsScreen({ navigation }) {
   onRequestClose={() => setInfoModalVisible(false)}
 >
   <View style={styles.infoOverlay}>
-    <View style={styles.infoModal}>
+    <View style={[styles.infoModal, darkMode && styles.darkInfoModal]}>
              
              <TouchableOpacity
-               style={styles.closeIcon}
+               style={[styles.closeIcon, darkMode && styles.darkCloseIcon]}
     onPress={() => {
       setInfoModalVisible(false);
       setFormName("");
       setFormAmount("");
     }}
   >
-    <Ionicons name="close" size={20} color="#555" />
+    <Ionicons name="close" size={20} color={darkMode ? "#fff" : "#555"} />
   </TouchableOpacity>
 
-      <Text style={styles.infoTitle}>
+      <Text style={[styles.infoTitle, darkMode && styles.darkText]}>
         {activeTab === "debtors" ? "Debtor info" : "Creditor info"}
       </Text>
 
       <View style={styles.infoRow}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.infoLabel}>Full name:</Text>
-          <Text style={styles.infoValue}>{entryInfo.name}</Text>
+          <Text style={[styles.infoLabel, darkMode && { color: "#aaa" }]}>Full name:</Text>
+          <Text style={[styles.infoValue, darkMode && styles.darkText]}>{entryInfo.name}</Text>
 
-          <Text style={styles.infoLabel}>Phone number:</Text>
-          <Text style={styles.infoValue}>{entryInfo.phone}</Text>
+          <Text style={[styles.infoLabel, darkMode && { color: "#aaa" }]}>Phone number:</Text>
+          <Text style={[styles.infoValue, darkMode && styles.darkText]}>{entryInfo.phone}</Text>
 
-          <Text style={styles.infoLabel}>Current balance:</Text>
-          <Text style={styles.infoValue}>{entryInfo.amount} FRW</Text>
+          <Text style={[styles.infoLabel, darkMode && { color: "#aaa" }]}>Current balance:</Text>
+          <Text style={[styles.infoValue, darkMode && styles.darkText]}>{entryInfo.amount} FRW</Text>
 
-          <Text style={styles.infoLabel}>Date:</Text>
-          <Text style={styles.infoValue}>{entryInfo.date}</Text>
+          <Text style={[styles.infoLabel, darkMode && { color: "#aaa" }]}>Date:</Text>
+          <Text style={[styles.infoValue, darkMode && styles.darkText]}>{entryInfo.date}</Text>
 
-          <Text style={styles.infoLabel}>Type:</Text>
-          <Text style={styles.typeBadge}>{entryInfo.type}</Text>
+          <Text style={[styles.infoLabel, darkMode && { color: "#aaa" }]}>Type:</Text>
+          <Text style={[styles.typeBadge, darkMode && styles.darkTypeBadge]}>{entryInfo.type}</Text>
         </View>
 
-        <View style={styles.avatarBox}>
-          <Ionicons name="person" size={40} color="#000" />
+        <View style={[styles.avatarBox, darkMode && styles.darkAvatarBox]}>
+          <Ionicons name="person" size={40} color={darkMode ? "#fff" : "#000"} />
         </View>
       </View>
 
@@ -777,6 +780,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontFamily: "Poppins_600SemiBold",
     lineHeight: 12,
+    transform: [{ rotate: "-90deg" }],
   },
   overlay: {
     position: "absolute",
@@ -904,6 +908,38 @@ const styles = StyleSheet.create({
   darkText: {
     color: "#fff",
   },
+  darkScrollView: {
+    backgroundColor: "#1a1a2e",
+  },
+  darkTabs: {
+    backgroundColor: "#2a2a3e",
+  },
+  darkCard: {
+    backgroundColor: "#2a2a3e",
+  },
+  darkAvatar: {
+    backgroundColor: "#1a1a2e",
+  },
+  darkModalBox: {
+    backgroundColor: "#2a2a3e",
+  },
+  darkModalInput: {
+    backgroundColor: "#1a1a2e",
+    color: "#fff",
+  },
+  darkInfoModal: {
+    backgroundColor: "#2a2a3e",
+  },
+  darkCloseIcon: {
+    backgroundColor: "#1a1a2e",
+  },
+  darkAvatarBox: {
+    backgroundColor: "#1a1a2e",
+  },
+  darkTypeBadge: {
+    backgroundColor: "#1a1a2e",
+    color: "#fff",
+  },
 
   header: {
     textAlign: "center",
@@ -946,6 +982,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     height: 42,
     fontFamily:"Poppins_400Regular",
+    color: "#000",
   },
 
   sortBtn: {
@@ -1027,6 +1064,7 @@ modalInput: {
   height: 44,
   marginBottom: 12,
   fontFamily: "Poppins_400Regular",
+  color: "#000",
 },
 
 modalActions: {
@@ -1247,6 +1285,7 @@ const paymentStyles = StyleSheet.create({
     padding: 10,
     fontSize: 16,
     fontFamily:"Poppins_400Regular",
+    color: "#000",
   },
   updateButton: {
     backgroundColor: "#09364D",

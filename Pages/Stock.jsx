@@ -176,7 +176,7 @@ const handleSaleChange = (field, value) => {
       : StockProducts.filter((p) => p.subText === selectedCategory);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: darkMode ? "#1a1a2e" : "#fff" }]}>
 
            {/* FLOATING PRESS HANDLE */}
           {isPressState && (
@@ -388,13 +388,14 @@ const handleSaleChange = (field, value) => {
       </View>
 
       {/* CONTENT */}
-      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0 }}>
+      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0, backgroundColor: darkMode ? "#1a1a2e" : "#fff" }}>
         <KeyboardAvoidingView 
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
           <ScrollView 
-            contentContainerStyle={{ padding: 20 }}
+            contentContainerStyle={{ padding: 20, backgroundColor: darkMode ? "#1a1a2e" : "#fff" }}
+            style={darkMode && styles.darkScrollView}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
@@ -405,7 +406,7 @@ const handleSaleChange = (field, value) => {
                   onPress={() => navigation.goBack()}
                   style={styles.backButton}
                 >
-                  <Ionicons name="arrow-back" size={24} color="#000" />
+                  <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
                 </TouchableOpacity>
               )}
               <View style={styles.logoContainer}>
@@ -413,7 +414,7 @@ const handleSaleChange = (field, value) => {
                   source={require("../assets/images/stock.png")}
                   style={{ width: 36, height: 36 }}
                 />
-                <Text style={styles.stockaText}>Stocka</Text>
+                <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
               </View>
             </View>
 
@@ -441,23 +442,23 @@ const handleSaleChange = (field, value) => {
             style={styles.modalOverlay}
             onPress={() => setCategoryVisible(false)}
           />
-          <View style={styles.modalContainer}>
+          <View style={[styles.modalContainer, darkMode && styles.darkModalContainer]}>
             {categories.map((cat) => (
               <TouchableOpacity
                 key={cat}
-                style={styles.modalItem}
+                style={[styles.modalItem, darkMode && styles.darkModalItem]}
                 onPress={() => {
                   setSelectedCategory(cat);
                   setCategoryVisible(false);
                 }}
               >
-                <Text style={styles.modalText}>{cat}</Text>
+                <Text style={[styles.modalText, darkMode && styles.darkText]}>{cat}</Text>
               </TouchableOpacity>
             ))}
           </View>
         </Modal>
 
-        <Text style={styles.title}>Products in Stock</Text>
+        <Text style={[styles.title, darkMode && styles.darkText]}>Products in Stock</Text>
 
         {/* Products */}
         <FlatList
@@ -466,16 +467,16 @@ const handleSaleChange = (field, value) => {
           )}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <View style={styles.productCard}>
+            <View style={[styles.productCard, darkMode && styles.darkProductCard]}>
               <Image source={item.Image} style={styles.productImage} />
               <View style={{ flex: 1, marginLeft: 12 }}>
-                <Text style={styles.productName}>{item.TextHead}</Text>
-                <Text style={styles.productCategory}>{item.subText}</Text>
-                <Text style={styles.productKilos}>{item.kilos}</Text>
+                <Text style={[styles.productName, darkMode && styles.darkText]}>{item.TextHead}</Text>
+                <Text style={[styles.productCategory, darkMode && { color: "#aaa" }]}>{item.subText}</Text>
+                <Text style={[styles.productKilos, darkMode && { color: "#aaa" }]}>{item.kilos}</Text>
 
                 <View style={styles.warningWrapper}>
                   <Ionicons name="warning" size={18} color={MAIN} />
-                  <Text style={styles.productExpiry}>{item.ViewText}</Text>
+                  <Text style={[styles.productExpiry, darkMode && { color: "#ff6b6b" }]}>{item.ViewText}</Text>
                 </View>
 
                 <TouchableOpacity
@@ -502,12 +503,12 @@ const handleSaleChange = (field, value) => {
       {/* ================= PRODUCT DETAILS MODAL ================= */}
       <Modal visible={!!selectedProduct} transparent animationType="fade">
         <View style={styles.overlay}>
-          <View style={styles.detailsCard}>
+          <View style={[styles.detailsCard, darkMode && styles.darkDetailsCard]}>
             {/* Header */}
             <View style={styles.detailsHeader}>
-              <Text style={styles.detailsTitle}>Product Details</Text>
+              <Text style={[styles.detailsTitle, darkMode && styles.darkText]}>Product Details</Text>
               <TouchableOpacity onPress={() => setSelectedProduct(null)}>
-                <Ionicons name="close" size={22} color="#333" />
+                <Ionicons name="close" size={22} color={darkMode ? "#fff" : "#333"} />
               </TouchableOpacity>
             </View>
 
@@ -515,11 +516,11 @@ const handleSaleChange = (field, value) => {
             <View style={styles.detailsContent}>
               {/* Left */}
               <View style={styles.detailsLeft}>
-                <Detail label="Product" value={selectedProduct?.TextHead} />
-                <Detail label="Category" value={selectedProduct?.subText} />
-                <Detail label="Remaining Stock" value={selectedProduct?.kilos} />
-                <Detail label="Purchase Date" value={selectedProduct?.PurchaseDate} />
-                <Detail label="Expiry Date" value={selectedProduct?.ExpiryDate} />
+                <Detail label="Product" value={selectedProduct?.TextHead} darkMode={darkMode} />
+                <Detail label="Category" value={selectedProduct?.subText} darkMode={darkMode} />
+                <Detail label="Remaining Stock" value={selectedProduct?.kilos} darkMode={darkMode} />
+                <Detail label="Purchase Date" value={selectedProduct?.PurchaseDate} darkMode={darkMode} />
+                <Detail label="Expiry Date" value={selectedProduct?.ExpiryDate} darkMode={darkMode} />
               </View>
 
               {/* Right */}
@@ -528,7 +529,7 @@ const handleSaleChange = (field, value) => {
                   source={selectedProduct?.Image}
                   style={styles.detailsImage}
                 />
-                <Text style={styles.descriptionText}>
+                <Text style={[styles.descriptionText, darkMode && { color: "#aaa" }]}>
                   {selectedProduct?.description || "No description available."}
                 </Text>
               </View>
@@ -818,10 +819,10 @@ const handleSaleChange = (field, value) => {
 }
 
 /* Small reusable component */
-const Detail = ({ label, value }) => (
+const Detail = ({ label, value, darkMode }) => (
   <View style={{ marginBottom: 10 }}>
-    <Text style={styles.detailLabel}>{label}</Text>
-    <Text style={styles.detailValue}>{value}</Text>
+    <Text style={[styles.detailLabel, darkMode && { color: "#aaa" }]}>{label}</Text>
+    <Text style={[styles.detailValue, darkMode && styles.darkText]}>{value}</Text>
   </View>
 );
 
@@ -855,6 +856,24 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: "#fff",
     position: "relative",
+  },
+  darkScrollView: {
+    backgroundColor: "#1a1a2e",
+  },
+  darkText: {
+    color: "#fff",
+  },
+  darkProductCard: {
+    backgroundColor: "#2a2a3e",
+  },
+  darkModalContainer: {
+    backgroundColor: "#2a2a3e",
+  },
+  darkModalItem: {
+    backgroundColor: "#2a2a3e",
+  },
+  darkDetailsCard: {
+    backgroundColor: "#2a2a3e",
   },
   floatingPress: {
     position: "absolute",
@@ -906,6 +925,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontFamily: "Poppins_600SemiBold",
     lineHeight: 12,
+    transform: [{ rotate: "-90deg" }],
   },
   arrowButton: {
     marginBottom: 25,
@@ -1023,7 +1043,7 @@ const styles = StyleSheet.create({
   stockaText: { fontFamily: "Poppins_700Bold", fontSize: 22, color: MAIN, marginLeft: 10 },
 
   searchCategoryContainer: { flexDirection: "row", marginBottom: 20 },
-  searchInput: { flex: 1, backgroundColor: "#F0F0F0", borderRadius: 8, padding: 10, marginRight: 10,fontFamily:"Poppins_400Regular" },
+  searchInput: { flex: 1, backgroundColor: "#F0F0F0", borderRadius: 8, padding: 10, marginRight: 10, fontFamily:"Poppins_400Regular", color: "#000" },
 
   categoryDropdown: { flexDirection: "row", backgroundColor: MAIN, padding: 10, borderRadius: 8 },
   categoryText: { color: "#fff", marginRight: 5 ,fontFamily:"Poppins_400Regular"},
@@ -1138,6 +1158,7 @@ formInput: {
   borderRadius: 8,
   padding: 10,
   fontFamily: "Poppins_400Regular",
+  color: "#000",
 },
 
 formTextarea: {
@@ -1267,6 +1288,7 @@ const formStyles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+    width: "100%",
   },
   scrollContent: {
     flexGrow: 1,
@@ -1387,7 +1409,7 @@ const formStyles = StyleSheet.create({
   height: 120,
   textAlignVertical: "top",
   paddingTop: 12,
-  color:"#555",
+  color:"#000",
 },
 
 });
@@ -1404,6 +1426,7 @@ const saleStyles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+    width: "100%",
   },
   scrollContent: {
     flexGrow: 1,

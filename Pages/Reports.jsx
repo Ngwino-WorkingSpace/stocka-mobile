@@ -76,7 +76,7 @@ export default function ReportsScreen({ navigation }) {
   const isExpanded = sidebarState === "expanded";
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: darkMode ? "#1a1a2e" : "#fff" }]}>
 
             {/* FLOATING PRESS HANDLE */}
            {isPressState && (
@@ -289,7 +289,7 @@ export default function ReportsScreen({ navigation }) {
       </View>
 
       {/* CONTENT */}
-      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0 }}>
+      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0, backgroundColor: darkMode ? "#1a1a2e" : "#fff" }}>
         <KeyboardAvoidingView 
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -299,8 +299,9 @@ export default function ReportsScreen({ navigation }) {
               flexGrow: 1,
               padding: 20,
               paddingBottom: 20,
-              backgroundColor: "#fff",
+              backgroundColor: darkMode ? "#1a1a2e" : "#fff",
             }}
+            style={darkMode && styles.darkScrollView}
             showsVerticalScrollIndicator={false}
           >
             {/* HEADER */}
@@ -310,7 +311,7 @@ export default function ReportsScreen({ navigation }) {
                   onPress={() => navigation.goBack()}
                   style={styles.backButton}
                 >
-                  <Ionicons name="arrow-back" size={24} color="#000" />
+                  <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
                 </TouchableOpacity>
               )}
               <View style={styles.logoContainerHeader}>
@@ -318,7 +319,7 @@ export default function ReportsScreen({ navigation }) {
                   source={require("../assets/images/stock.png")}
                   style={{ width: 36, height: 36 }}
                 />
-                <Text style={styles.stockaText}>Stocka</Text>
+                <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
               </View>
             </View>
 
@@ -346,99 +347,99 @@ export default function ReportsScreen({ navigation }) {
           </View>
 
           {/* SALES REPORT SECTION */}
-          <Text style={styles.sectionTitle}>Sales Report</Text>
+          <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Sales Report</Text>
           <View style={styles.salesReportContainer}>
-            <View style={styles.salesItem}>
+            <View style={[styles.salesItem, darkMode && styles.darkSalesItem]}>
               <View style={styles.salesIconContainer}>
                 <Ionicons name="cube-outline" size={28} color={MAIN} />
               </View>
-              <Text style={styles.salesLabel}>Vegetables</Text>
-              <Text style={styles.salesValue}>23,000 FRW</Text>
+              <Text style={[styles.salesLabel, darkMode && styles.darkText]}>Vegetables</Text>
+              <Text style={[styles.salesValue, darkMode && styles.darkText]}>23,000 FRW</Text>
             </View>
 
-            <View style={styles.salesItem}>
+            <View style={[styles.salesItem, darkMode && styles.darkSalesItem]}>
               <View style={styles.salesIconContainer}>
                 <Ionicons name="basket-outline" size={28} color={MAIN} />
               </View>
-              <Text style={styles.salesLabel}>Fruits</Text>
-              <Text style={styles.salesValue}>30,000 FRW</Text>
+              <Text style={[styles.salesLabel, darkMode && styles.darkText]}>Fruits</Text>
+              <Text style={[styles.salesValue, darkMode && styles.darkText]}>30,000 FRW</Text>
             </View>
 
-            <View style={styles.salesItem}>
+            <View style={[styles.salesItem, darkMode && styles.darkSalesItem]}>
               <View style={styles.salesIconContainer}>
                 <Ionicons name="bag-outline" size={28} color={MAIN} />
               </View>
-              <Text style={styles.salesLabel}>Grains</Text>
-              <Text style={styles.salesValue}>11,000 FRW</Text>
+              <Text style={[styles.salesLabel, darkMode && styles.darkText]}>Grains</Text>
+              <Text style={[styles.salesValue, darkMode && styles.darkText]}>11,000 FRW</Text>
             </View>
 
-            <View style={styles.salesItem}>
+            <View style={[styles.salesItem, darkMode && styles.darkSalesItem]}>
               <View style={styles.salesIconContainer}>
                 <Ionicons name="cart-outline" size={28} color={MAIN} />
               </View>
-              <Text style={styles.salesLabel}>Perishables</Text>
-              <Text style={styles.salesValue}>18,000 FRW</Text>
+              <Text style={[styles.salesLabel, darkMode && styles.darkText]}>Perishables</Text>
+              <Text style={[styles.salesValue, darkMode && styles.darkText]}>18,000 FRW</Text>
             </View>
           </View>
 
           {/* TOP SELLING PRODUCTS SECTION */}
-          <Text style={styles.sectionTitle}>Top Selling products</Text>
+          <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Top Selling products</Text>
           <View style={styles.topProductsContainer}>
-            <View style={[styles.productCard, styles.productCardSecond]}>
+            <View style={[styles.productCard, styles.productCardSecond, darkMode && styles.darkProductCard]}>
               <View style={styles.medalContainer}>
                 <Ionicons name="medal" size={32} color="#C0C0C0" />
               </View>
-              <Text style={styles.productName}>Water Melons</Text>
+              <Text style={[styles.productName, darkMode && styles.darkText]}>Water Melons</Text>
             </View>
 
-            <View style={[styles.productCard, styles.productCardFirst]}>
+            <View style={[styles.productCard, styles.productCardFirst, darkMode && styles.darkProductCard]}>
               <View style={styles.medalContainer}>
                 <Ionicons name="medal" size={32} color="#FFD700" />
               </View>
-              <Text style={styles.productName}>Irish Potatoes</Text>
+              <Text style={[styles.productName, darkMode && styles.darkText]}>Irish Potatoes</Text>
             </View>
 
-            <View style={[styles.productCard, styles.productCardThird]}>
+            <View style={[styles.productCard, styles.productCardThird, darkMode && styles.darkProductCard]}>
               <View style={styles.medalContainer}>
                 <Ionicons name="medal" size={32} color="#CD7F32" />
               </View>
-              <Text style={styles.productName}>Sweet Potatoes</Text>
+              <Text style={[styles.productName, darkMode && styles.darkText]}>Sweet Potatoes</Text>
             </View>
           </View>
 
           {/* STOCK REPORT SECTION */}
-          <Text style={styles.sectionTitle}>Stock report</Text>
+          <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Stock report</Text>
           <View style={styles.stockReportContainer}>
-            <View style={styles.stockItem}>
+            <View style={[styles.stockItem, darkMode && styles.darkStockItem]}>
               <View style={styles.stockIconContainer}>
                 <Ionicons name="bar-chart-outline" size={28} color={MAIN} />
               </View>
-              <Text style={styles.stockLabel}>Total stock</Text>
-              <Text style={styles.stockValue}>427,000 FRW</Text>
+              <Text style={[styles.stockLabel, darkMode && styles.darkText]}>Total stock</Text>
+              <Text style={[styles.stockValue, darkMode && styles.darkText]}>427,000 FRW</Text>
             </View>
 
-            <View style={styles.stockItem}>
+            <View style={[styles.stockItem, darkMode && styles.darkStockItem]}>
               <View style={styles.stockIconContainer}>
                 <Ionicons name="cart-outline" size={28} color={MAIN} />
               </View>
-              <Text style={styles.stockLabel}>Expired products price</Text>
-              <Text style={styles.stockValue}>23,000 FRW</Text>
+              <Text style={[styles.stockLabel, darkMode && styles.darkText]}>Expired products price</Text>
+              <Text style={[styles.stockValue, darkMode && styles.darkText]}>23,000 FRW</Text>
             </View>
           </View>
 
           {/* GAIN / LOSS SUMMARY SECTION */}
-          <Text style={styles.sectionTitle}>Gain / Loss Summary</Text>
+          <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Gain / Loss Summary</Text>
           <View style={styles.summaryContainer}>
-            <View style={styles.summaryCard}>
+            <View style={[styles.summaryCard, darkMode && styles.darkSummaryCard]}>
               <Text style={styles.summaryEmoji}>🥳</Text>
-              <Text style={styles.summaryText}>
+              <Text style={[styles.summaryText, darkMode && styles.darkText]}>
                 Congratulations dear user you made a profit.
               </Text>
             </View>
 
-            <View style={styles.summaryCard}>
+            <View style={[styles.summaryCard, darkMode && styles.darkSummaryCard]}>
               <Text style={styles.summaryEmoji}>😔</Text>
-              <Text style={styles.summaryText}>
+              <Text style={[styles.summaryText, darkMode && styles.darkText]}>
                 Unfortunately you made a loss wonder how this happened let me help you out.
               </Text>
             </View>
@@ -501,6 +502,24 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     position: "relative",
   },
+  darkScrollView: {
+    backgroundColor: "#1a1a2e",
+  },
+  darkText: {
+    color: "#fff",
+  },
+  darkSalesItem: {
+    backgroundColor: "#2a2a3e",
+  },
+  darkProductCard: {
+    backgroundColor: "#2a2a3e",
+  },
+  darkStockItem: {
+    backgroundColor: "#2a2a3e",
+  },
+  darkSummaryCard: {
+    backgroundColor: "#2a2a3e",
+  },
   floatingPress: {
     position: "absolute",
     left: 0,
@@ -526,6 +545,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontFamily: "Poppins_600SemiBold",
     lineHeight: 12,
+    transform: [{ rotate: "-90deg" }],
   },
 
 
@@ -548,28 +568,6 @@ const styles = StyleSheet.create({
     zIndex: 10,
     justifyContent: "center",
     overflow: "hidden",
-  },
-  pressContainer: {
-    width: "100%",
-    height: 150,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 20,
-  },
-  pressTextWrapper: {
-    width: 40,
-    height: 120,
-    justifyContent: "center",
-    alignItems: "center",
-    transform: [{ rotate: "-90deg" }],
-  },
-  pressText: {
-    color: "#fff",
-    fontFamily: "Poppins_600SemiBold",
-    fontSize: 16,
-    letterSpacing: 2,
-    textAlign: "center",
-    includeFontPadding: false,
   },
   arrowButton: {
     marginBottom: 25,

@@ -225,7 +225,7 @@ export default function ProfileScreen({navigation}) {
                 ]}
                 onPress={() => handleNavItemPress("debtors")}
               >
-                <Ionicons name="wallet-outline" size={22} color="#fff" />
+                <Ionicons name="document-text-outline" size={22} color="#fff" />
                 {isExpanded && <Text style={styles.navText}>Debtors</Text>}
               </TouchableOpacity>
 
@@ -300,13 +300,14 @@ export default function ProfileScreen({navigation}) {
       </View>
 
       {/* CONTENT */}
-      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0 }}>
+      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0, backgroundColor: darkMode ? "#1a1a2e" : "#fff" }}>
         <KeyboardAvoidingView 
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
           <ScrollView 
             contentContainerStyle={[styles.container, darkMode && styles.darkContainer]}
+            style={darkMode && styles.darkScrollView}
             showsVerticalScrollIndicator={false}
           >
             {/* Header */}
@@ -326,8 +327,8 @@ export default function ProfileScreen({navigation}) {
 
       {/* Profile Image */}
       <View style={styles.avatarWrapper}>
-        <View style={styles.avatar}>
-          <Ionicons name="person" size={60} color="#000" />
+        <View style={[styles.avatar, darkMode && styles.darkAvatar]}>
+          <Ionicons name="person" size={60} color={darkMode ? "#fff" : "#000"} />
         </View>
 
         <TouchableOpacity
@@ -344,6 +345,7 @@ export default function ProfileScreen({navigation}) {
         value={profile.name}
         editable={editable}
         onChangeText={(v) => setProfile({ ...profile, name: v })}
+        darkMode={darkMode}
       />
 
       <ProfileInput
@@ -351,6 +353,7 @@ export default function ProfileScreen({navigation}) {
         value={profile.phone}
         editable={editable}
         onChangeText={(v) => setProfile({ ...profile, phone: v })}
+        darkMode={darkMode}
       />
 
       <ProfileInput
@@ -358,17 +361,19 @@ export default function ProfileScreen({navigation}) {
         value={profile.password}
         editable={false}
         secureTextEntry
+        darkMode={darkMode}
       />
 
       <ProfileInput
         label="Date of joining"
         value={profile.dob}
         editable={false}
+        darkMode={darkMode}
       />
 
       {/* Buttons */}
-      <TouchableOpacity style={styles.grayButton}>
-        <Text style={styles.grayText}>CHANGE PASSWORD</Text>
+      <TouchableOpacity style={[styles.grayButton, darkMode && styles.darkGrayButton]}>
+        <Text style={[styles.grayText, darkMode && styles.darkGrayText]}>CHANGE PASSWORD</Text>
       </TouchableOpacity>
 
           </ScrollView>
@@ -427,9 +432,10 @@ const ProfileInput = ({
   editable,
   onChangeText,
   secureTextEntry,
+  darkMode,
 }) => (
   <View style={styles.inputWrapper}>
-    <Text style={styles.label}>{label}</Text>
+    <Text style={[styles.label, darkMode && styles.darkText]}>{label}</Text>
     <TextInput
       value={value}
       editable={editable}
@@ -438,6 +444,8 @@ const ProfileInput = ({
       style={[
         styles.input,
         !editable && styles.disabledInput,
+        darkMode && styles.darkInput,
+        darkMode && !editable && { color: "#aaa" },
       ]}
     />
   </View>
@@ -472,6 +480,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontFamily: "Poppins_600SemiBold",
     lineHeight: 12,
+    transform: [{ rotate: "-90deg" }],
   },
 
   overlay: {
@@ -621,6 +630,22 @@ const styles = StyleSheet.create({
   darkText: {
     color: "#fff",
   },
+  darkScrollView: {
+    backgroundColor: "#1a1a2e",
+  },
+  darkAvatar: {
+    backgroundColor: "#2a2a3e",
+  },
+  darkInput: {
+    backgroundColor: "#2a2a3e",
+    color: "#fff",
+  },
+  darkGrayButton: {
+    backgroundColor: "#2a2a3e",
+  },
+  darkGrayText: {
+    color: "#fff",
+  },
   title: {
     fontFamily: "Poppins_500Medium",
     fontSize: 14,
@@ -667,6 +692,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     borderRadius: 10,
     fontFamily: "Poppins_500Medium",
+    color: "#000",
   },
 
   disabledInput: {

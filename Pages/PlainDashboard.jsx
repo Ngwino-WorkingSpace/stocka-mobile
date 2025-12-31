@@ -714,7 +714,7 @@ const StockProducts = [
                     inputStyle={saleStyles.input}
                     labelStyle={{
                       fontFamily:"Poppins_400Regular",
-                      color:"#222"
+                      color:"#93d81aff"
 
                     }}
                   />
@@ -727,11 +727,6 @@ const StockProducts = [
                     value={saleData.unitPrice}
                     onChangeText={(v) => handleSaleChange("unitPrice", v)}
                     inputStyle={saleStyles.input}
-                    labelStyle={{
-                      fontFamily:"Poppins_400Regular",
-                      color:"#222"
-
-                    }}
                   />
                 </View>
               </View>
@@ -742,11 +737,6 @@ const StockProducts = [
                 value={saleData.totalPrice}
                 onChangeText={(v) => handleSaleChange("totalPrice", v)}
                 inputStyle={saleStyles.input}
-                labelStyle={{
-                      fontFamily:"Poppins_400Regular",
-                      color:"#222"
-
-                    }}
               />
         
               {/* BUTTON */}
@@ -1198,6 +1188,7 @@ const formStyles = StyleSheet.create({
   },
 
   scrollView: {
+    width: "93%",
     flex:1,
   },
 
@@ -1285,6 +1276,7 @@ const formStyles = StyleSheet.create({
     fontSize: 13,
     backgroundColor: "#FAFAFA",
     fontFamily: "Poppins_400Regular",
+    color: "#000",
   },
 
   descriptionInput: {
@@ -1297,6 +1289,7 @@ const formStyles = StyleSheet.create({
     fontSize: 13,
     backgroundColor: "#FAFAFA",
     fontFamily: "Poppins_400Regular",
+    color: "#000",
   },
 
   /* BUTTON */
@@ -1343,13 +1336,14 @@ const saleStyles = StyleSheet.create({
   borderColor: "#DADADA",
   borderRadius: 10,
   fontSize: 16,
-  color: "#333",
+  color: "#000",
   backgroundColor: "#FAFAFA",
   fontFamily:"Poppins_400Regular",
 },
 
   scrollView: {
     flex: 1,
+    width: "93%",
   },
   scrollContent: {
     flexGrow: 1,
