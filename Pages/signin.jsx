@@ -20,7 +20,7 @@ import {
 } from "@expo-google-fonts/poppins";
 
 export default function SignInScreen({ navigation }) {
-  const [username, setUsername] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
 
   const [fontsLoaded] = useFonts({
@@ -55,10 +55,10 @@ export default function SignInScreen({ navigation }) {
 
             <TextInput
               style={styles.input}
-              placeholder="Username"
+              placeholder="Phone number"
               placeholderTextColor="#107EBA"
-              value={username}
-              onChangeText={setUsername}
+              value={phoneNumber}
+              onChangeText={setPhoneNumber}
             />
 
             <TextInput

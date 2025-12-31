@@ -20,10 +20,11 @@ import {
 } from "@expo-google-fonts/poppins";
 
 export default function SignupScreen({ navigation }) {
-  const [username, setUsername] = useState("");
+  const [fullname, setFullname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [recoveryPin,setRecoveryPin] = useState("");
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -57,19 +58,36 @@ export default function SignupScreen({ navigation }) {
 
             <TextInput
               style={styles.input}
-              placeholder="Username"
+              placeholder="Fullname"
               placeholderTextColor="#107EBA"
-              value={username}
-              onChangeText={setUsername}
+              value={fullname}
+              onChangeText={setFullname}
             />
 
             <TextInput
               style={styles.input}
-              placeholder="Email"
+              placeholder="Phone number"
+              placeholderTextColor="#107EBA"
+              secureTextEntry
+              value={phoneNumber}
+              onChangeText={setPhoneNumber}
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Email (Optional)"
               placeholderTextColor="#107EBA"
               keyboardType="email-address"
               value={email}
               onChangeText={setEmail}
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Recovery Pin"
+              placeholderTextColor="#107EBA"
+              value={recoveryPin}
+              onChangeText={setRecoveryPin}
             />
 
             <TextInput
@@ -79,15 +97,6 @@ export default function SignupScreen({ navigation }) {
               secureTextEntry
               value={password}
               onChangeText={setPassword}
-            />
-
-            <TextInput
-              style={styles.input}
-              placeholder="Confirm Password"
-              placeholderTextColor="#107EBA"
-              secureTextEntry
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
             />
 
             <Text style={styles.signinText}>

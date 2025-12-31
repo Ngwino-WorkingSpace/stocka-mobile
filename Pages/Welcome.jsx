@@ -34,7 +34,7 @@ export default function LandingScreen({navigation}) {
         <Text style={styles.subtitle}>Welcome to</Text>
         <Text style={styles.title}>Stocka</Text>
         <Text style={styles.paragraph}>
-          TradeWise is the smart way to run a business without the headache.
+          Stocka is the smart way to run a business without the headache.
           It records every transaction automatically, tracks profits and losses
           in real time, and replaces messy ledgers and complex calculations so
           you can focus on growing your business, not chasing numbers.
