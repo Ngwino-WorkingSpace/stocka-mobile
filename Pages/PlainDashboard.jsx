@@ -711,7 +711,7 @@ const StockProducts = [
                     placeholder="Ex: 54kg"
                     value={saleData.quantity}
                     onChangeText={(v) => handleSaleChange("quantity", v)}
-                    containerStyle={saleStyles.halfWidthContainer}
+                    inputStyle={saleStyles.input}
                   />
                 </View>
         
@@ -721,7 +721,7 @@ const StockProducts = [
                     placeholder="Ex: 200 RWF"
                     value={saleData.unitPrice}
                     onChangeText={(v) => handleSaleChange("unitPrice", v)}
-                    containerStyle={saleStyles.halfWidthContainer}
+                    inputStyle={saleStyles.input}
                   />
                 </View>
               </View>
@@ -731,6 +731,7 @@ const StockProducts = [
                 placeholder="0 RWF"
                 value={saleData.totalPrice}
                 onChangeText={(v) => handleSaleChange("totalPrice", v)}
+                inputStyle={saleStyles.input}
               />
         
               {/* BUTTON */}
@@ -1183,7 +1184,7 @@ const formStyles = StyleSheet.create({
   },
 
   card: {
-    width: "100%",
+    width: "93%",
     backgroundColor: "#fff",
     borderRadius: 22,
     padding: 22,
@@ -1307,6 +1308,22 @@ const saleStyles = StyleSheet.create({
     right:0,
    
   },
+  formInputWrapper:{
+     fontFamily:"Poppins_400Regular",
+  },
+
+  input: {
+  height: 48,
+  paddingHorizontal: 14,
+  borderWidth: 1,
+  borderColor: "#DADADA",
+  borderRadius: 10,
+  fontSize: 16,
+  color: "#333",
+  backgroundColor: "#FAFAFA",
+  fontFamily:"Poppins_400Regular",
+},
+
   scrollView: {
     flex: 1,
     width: "100%",
@@ -1318,7 +1335,7 @@ const saleStyles = StyleSheet.create({
     paddingVertical: 20,
   },
   card: {
-    width: "100%",
+    width: "93%",
     backgroundColor: "#fff",
     borderRadius: 20,
     padding: 20,
@@ -1405,14 +1422,10 @@ const saleStyles = StyleSheet.create({
     gap: 10,
   },
 
-  formInputWrapper: {
-    flex: 1,
+  formLabel:{
+      fontFamily:"Poppins_400Regular",
   },
 
-  halfWidthContainer: {
-    flex: 1,
-    marginBottom: 12,
-  },
 
   recordButton: {
     backgroundColor: "#09364D",
