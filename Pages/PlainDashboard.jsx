@@ -714,7 +714,7 @@ const StockProducts = [
                     inputStyle={saleStyles.input}
                     labelStyle={{
                       fontFamily:"Poppins_400Regular",
-                      color:"#93d81aff"
+                      color:"#222"
 
                     }}
                   />
@@ -727,6 +727,11 @@ const StockProducts = [
                     value={saleData.unitPrice}
                     onChangeText={(v) => handleSaleChange("unitPrice", v)}
                     inputStyle={saleStyles.input}
+                    labelStyle={{
+                      fontFamily:"Poppins_400Regular",
+                      color:"#222"
+
+                    }}
                   />
                 </View>
               </View>
@@ -737,6 +742,11 @@ const StockProducts = [
                 value={saleData.totalPrice}
                 onChangeText={(v) => handleSaleChange("totalPrice", v)}
                 inputStyle={saleStyles.input}
+                labelStyle={{
+                      fontFamily:"Poppins_400Regular",
+                      color:"#222"
+
+                    }}
               />
         
               {/* BUTTON */}
@@ -1177,16 +1187,17 @@ pressText: {
 
 const formStyles = StyleSheet.create({
   overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.6)",
-    top:0,
-    bottom:0,
-    left:0,
-    right:0,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(9, 54, 77, 0.3)",
+    zIndex: 5,
+    
   },
 
   scrollView: {
-    width: "100%",
     flex:1,
   },
 
@@ -1205,6 +1216,7 @@ const formStyles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 18,
     elevation: 12,
+    justifyContent:"center"
   },
 
   /* HEADER */
@@ -1312,12 +1324,12 @@ const formStyles = StyleSheet.create({
 
 const saleStyles = StyleSheet.create({
   overlay: {
-    flex: 1,
     backgroundColor: "rgba(9,54,77,0.5)",
     top:0,
     bottom:0,
     left:0,
     right:0,
+    flex:1,
    
   },
   formInputWrapper:{
@@ -1338,7 +1350,6 @@ const saleStyles = StyleSheet.create({
 
   scrollView: {
     flex: 1,
-    width: "100%",
   },
   scrollContent: {
     flexGrow: 1,

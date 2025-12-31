@@ -1267,7 +1267,6 @@ const formStyles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-    width: "100%",
   },
   scrollContent: {
     flexGrow: 1,
@@ -1405,7 +1404,6 @@ const saleStyles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-    width: "100%",
   },
   scrollContent: {
     flexGrow: 1,

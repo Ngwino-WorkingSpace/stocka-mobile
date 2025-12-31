@@ -225,7 +225,7 @@ export default function ProfileScreen({navigation}) {
                 ]}
                 onPress={() => handleNavItemPress("debtors")}
               >
-                <Ionicons name="document-text-outline" size={22} color="#fff" />
+                <Ionicons name="wallet-outline" size={22} color="#fff" />
                 {isExpanded && <Text style={styles.navText}>Debtors</Text>}
               </TouchableOpacity>
 
