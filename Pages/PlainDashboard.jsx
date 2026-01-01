@@ -39,17 +39,23 @@ const getRouteName = (itemName) => {
 
 import { api } from "../src/services/api";
 import { useAuth } from "../src/context/AuthContext";
-import { useFocusEffect } from '@react-navigation/native'; // To refresh on focus
+import { useFocusEffect } from '@react-navigation/native';
+
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTheme } from '../src/context/ThemeContext';
 
 // ... imports
 
 export default function PlainDashboardScreen({ navigation }) {
-  const { logout, user } = useAuth(); // Use auth context
-  // Sidebar states
+  const insets = useSafeAreaInsets();
+  const { logout } = useAuth();
+  // Sidebar states: "press" (minimal), "collapsed" (icons only), "expanded" (full)
   const [sidebarState, setSidebarState] = useState("press");
-  const [darkMode, setDarkMode] = useState(false);
+  const { isDarkMode, toggleTheme } = useTheme();
+  const darkMode = isDarkMode;
   const [selectedItem, setSelectedItem] = useState("Dashboard");
   const [selectedTab, setSelectedTab] = useState("Daily");
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [metrics, setMetrics] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -59,7 +65,7 @@ export default function PlainDashboardScreen({ navigation }) {
   const [selectedCategory, setSelectedCategory] = useState("Category");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [addStockVisible, setAddStockVisible] = useState(false);
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  // duplicate removed
   const [refreshing, setRefreshing] = useState(false);
   const [helpModalVisible, setHelpModalVisible] = useState(false);
 
@@ -374,7 +380,7 @@ export default function PlainDashboardScreen({ navigation }) {
                       styles.themeToggleSwitch,
                       darkMode && styles.themeToggleSwitchActive
                     ]}
-                    onPress={() => setDarkMode(!darkMode)}
+                    onPress={toggleTheme}
                   >
                     <View style={[
                       styles.themeToggleKnob,

@@ -45,6 +45,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import Toast from 'react-native-toast-message';
+import { useTheme } from '../src/context/ThemeContext';
 
 export default function StockScreen({ navigation }) {
   const insets = useSafeAreaInsets();
@@ -56,7 +57,8 @@ export default function StockScreen({ navigation }) {
   const isCollapsed = sidebarState === "collapsed";
   const isExpanded = sidebarState === "expanded";
 
-  const [darkMode, setDarkMode] = useState(false);
+  const { isDarkMode, toggleTheme } = useTheme();
+  const darkMode = isDarkMode;
   const [selectedItem, setSelectedItem] = useState("Stock");
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
@@ -102,45 +104,76 @@ export default function StockScreen({ navigation }) {
   const fetchStockData = async () => {
     try {
       setLoading(true);
-      await fetchCategories();
-      const res = await api.getAllStockBatches();
-      // Group by product
-      const groups = {};
-      const batches = res.stockBatch || [];
+      // Fetch everything in parallel
+      const [catRes, allProdRes, stockRes] = await Promise.all([
+        api.getAllCategories(),
+        api.getAllProducts(),
+        api.getAllStockBatches()
+      ]);
 
-      batches.forEach(b => {
-        if (!groups[b.product_id]) {
-          groups[b.product_id] = {
-            id: b.product_id,
-            TextHead: b.product_name,
-            subText: b.category_name || "General",
-            kilosRaw: 0,
-            minExpiry: null,
-            batches: [],
-            // Placeholder images based on index or random?
-            // Existing logic had specific images. We'll use a default.
-            Image: (b.product_image || b.image) ? { uri: b.product_image || b.image } : require("../assets/images/default-product-image.png"),
-          };
-        }
-        const g = groups[b.product_id];
-        g.kilosRaw += Number(b.quantity_remaining);
-        g.batches.push(b);
-        const exp = new Date(b.expiry_date);
-        if (!g.minExpiry || exp < g.minExpiry) g.minExpiry = exp;
+      if (catRes && catRes.categories) {
+        setCategoriesList(catRes.categories);
+      }
+
+      const allProducts = allProdRes.products || []; // Assuming backend returns { products: [] }
+      const batches = stockRes.stockBatch || [];
+
+      // Create a map for product details (stock agnostic)
+      // and then fill in stock info
+      const productMap = {};
+
+      allProducts.forEach(p => {
+        productMap[p.id] = {
+          id: p.id,
+          TextHead: p.product_name,
+          subText: p.category_name || "General", // api.getAllProducts joins category? If not, we map manually later or rely on p
+          categoryId: p.category_id,
+          kilosRaw: 0,
+          minExpiry: null,
+          batches: [],
+          lowStockThreshold: Number(p.low_stock_threshold || 0),
+          // Use product image if available
+          Image: (p.product_image) ? { uri: p.product_image } : require("../assets/images/default-product-image.png"),
+          description: "No stock available.",
+          PurchaseDate: "N/A",
+          ExpiryDate: "N/A",
+          ViewText: "No Stock",
+          isLowStock: false
+        };
       });
 
-      const processed = Object.values(groups).map(g => ({
-        ...g,
-        kilos: `${g.kilosRaw} kg`, // Assuming unit is consistent or generic
-        ViewText: g.minExpiry ? `Expires ${g.minExpiry.toLocaleDateString()}` : "No expiry",
-        PurchaseDate: "Multiple batches",
-        ExpiryDate: g.minExpiry ? g.minExpiry.toLocaleDateString() : "N/A",
-        description: `Total stock: ${g.kilosRaw}. ${g.batches.length} batches in stock.`
-      }));
+      // Overlay batch data
+      batches.forEach(b => {
+        const prod = productMap[b.product_id];
+        if (prod) {
+          prod.kilosRaw += Number(b.quantity_remaining);
+          prod.batches.push(b);
+          const exp = new Date(b.expiry_date);
+          if (!prod.minExpiry || exp < prod.minExpiry) prod.minExpiry = exp;
+          // Update image if batch has better image? Usually product image is source of truth
+        }
+      });
+
+      // Finalize processing
+      const processed = Object.values(productMap).map(g => {
+        const isLow = g.kilosRaw <= g.lowStockThreshold;
+        return {
+          ...g,
+          kilos: `${g.kilosRaw} kg`,
+          ViewText: g.minExpiry ? `Expires ${g.minExpiry.toLocaleDateString()}` : (g.kilosRaw > 0 ? "No expiry" : "No Stock"),
+          PurchaseDate: g.batches.length > 0 ? "Multiple batches" : "N/A",
+          ExpiryDate: g.minExpiry ? g.minExpiry.toLocaleDateString() : "N/A",
+          description: g.kilosRaw > 0 ? `Total stock: ${g.kilosRaw}. ${g.batches.length} batches.` : "No stock available.",
+          isLowStock: isLow && g.kilosRaw <= g.lowStockThreshold // logic check
+        };
+      });
+      // Sort: Low stock first, then alphabetical?
+      // Or keep random. Let's sort alphabetically for now.
+      processed.sort((a, b) => a.TextHead.localeCompare(b.TextHead));
 
       setProducts(processed);
     } catch (error) {
-      console.log(error);
+      console.log("Error fetching stock data", error);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -261,20 +294,69 @@ export default function StockScreen({ navigation }) {
     }
     setLoading(true);
     try {
-      const res = await api.addProduct({
-        productName: newProductData.productName,
-        categoryId: newProductData.categoryId,
-        lowStockThresHold: newProductData.lowStockThreshold || 10,
-        productImage: newProductData.productImage
-      });
-
-      if (res && (res.message || res.status === 201)) {
-        Toast.show({ type: 'success', text1: 'Success', text2: 'Product created successfully' });
-        setAddNewProductVisible(false);
-        fetchStockData();
-        setNewProductData({ productName: "", categoryId: "", lowStockThreshold: "10", productImage: null });
+      // Check if updating
+      if (newProductData.id) {
+        const res = await api.updateProduct(newProductData.id, {
+          productName: newProductData.productName,
+          categoryId: newProductData.categoryId,
+          lowStockThresHold: newProductData.lowStockThreshold || 10,
+          productImage: newProductData.productImage
+        });
+        if (res && (res.message || res.status === 200)) {
+          Toast.show({ type: 'success', text1: 'Success', text2: 'Product updated successfully' });
+          setAddNewProductVisible(false);
+          fetchStockData();
+          setNewProductData({ productName: "", categoryId: "", lowStockThreshold: "10", productImage: null });
+          setSelectedProduct(null); // Close details modal if open
+        } else {
+          Toast.show({ type: 'error', text1: 'Error', text2: 'Error updating product' });
+        }
       } else {
-        Toast.show({ type: 'error', text1: 'Error', text2: 'Error creating product' });
+        // Creating
+        const res = await api.addProduct({
+          productName: newProductData.productName,
+          categoryId: newProductData.categoryId,
+          lowStockThresHold: newProductData.lowStockThreshold || 10,
+          productImage: newProductData.productImage
+        });
+
+        if (res && (res.message || res.status === 201)) {
+          Toast.show({ type: 'success', text1: 'Success', text2: 'Product created successfully' });
+          setAddNewProductVisible(false);
+          fetchStockData();
+          setNewProductData({ productName: "", categoryId: "", lowStockThreshold: "10", productImage: null });
+        } else {
+          Toast.show({ type: 'error', text1: 'Error', text2: 'Error creating product' });
+        }
+      }
+    } catch (e) {
+      Toast.show({ type: 'error', text1: 'Error', text2: e.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEditProduct = (prod) => {
+    setNewProductData({
+      id: prod.id,
+      productName: prod.TextHead,
+      categoryId: prod.categoryId,
+      lowStockThreshold: String(prod.lowStockThreshold),
+      productImage: prod.Image && prod.Image.uri ? prod.Image.uri : null
+    });
+    setAddNewProductVisible(true);
+  };
+
+  const handleDeleteProduct = async (prodId) => {
+    try {
+      // Confirm? (React Native Alert)
+      // For simplicity directly calling api
+      setLoading(true);
+      const res = await api.deleteProduct(prodId);
+      if (res) {
+        Toast.show({ type: 'success', text1: 'Deleted', text2: 'Product deleted successfully' });
+        setSelectedProduct(null);
+        fetchStockData();
       }
     } catch (e) {
       Toast.show({ type: 'error', text1: 'Error', text2: e.message });
@@ -391,6 +473,35 @@ export default function StockScreen({ navigation }) {
             <View style={styles.utilityContainer}>
               <NavItem icon="log-out-outline" label="Logout" expanded={isExpanded} onPress={() => setShowLogoutModal(true)} />
             </View>
+
+            {isExpanded && (
+              <View style={styles.themeToggleContainer}>
+                <View style={styles.themeToggle}>
+                  <Ionicons
+                    name="sunny"
+                    size={20}
+                    color={!darkMode ? MAIN : "#999"}
+                  />
+                  <TouchableOpacity
+                    style={[
+                      styles.themeToggleSwitch,
+                      darkMode && styles.themeToggleSwitchActive
+                    ]}
+                    onPress={toggleTheme}
+                  >
+                    <View style={[
+                      styles.themeToggleKnob,
+                      darkMode && styles.themeToggleKnobActive
+                    ]} />
+                  </TouchableOpacity>
+                  <Ionicons
+                    name="moon"
+                    size={20}
+                    color={darkMode ? "#fff" : "#999"}
+                  />
+                </View>
+              </View>
+            )}
           </>
         )}
       </View>
@@ -438,8 +549,18 @@ export default function StockScreen({ navigation }) {
                 <Text style={[styles.productKilos, darkMode && { color: "#aaa" }]}>{item.kilos}</Text>
 
                 <View style={styles.warningWrapper}>
-                  <Ionicons name="warning" size={18} color={MAIN} />
-                  <Text style={[styles.productExpiry, darkMode && { color: "#ff6b6b" }]}>{item.ViewText}</Text>
+                  {item.minExpiry && (
+                    <View style={{ flexDirection: 'row', marginRight: 10, alignItems: 'center' }}>
+                      <Ionicons name="time-outline" size={16} color="#aaa" />
+                      <Text style={[styles.productExpiry, darkMode && { color: "#ff6b6b" }]}>{item.ViewText}</Text>
+                    </View>
+                  )}
+                  {item.isLowStock && (
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <Ionicons name="warning" size={18} color="red" />
+                      <Text style={{ fontSize: 12, color: "red", marginLeft: 4, fontFamily: "Poppins_600SemiBold" }}>Low Stock</Text>
+                    </View>
+                  )}
                 </View>
 
                 <TouchableOpacity
@@ -499,8 +620,19 @@ export default function StockScreen({ navigation }) {
                 <Detail label="Product" value={selectedProduct?.TextHead} darkMode={darkMode} />
                 <Detail label="Category" value={selectedProduct?.subText} darkMode={darkMode} />
                 <Detail label="Remaining Stock" value={selectedProduct?.kilos} darkMode={darkMode} />
-                <Detail label="Purchase Date" value={selectedProduct?.PurchaseDate} darkMode={darkMode} />
-                <Detail label="Expiry Date" value={selectedProduct?.ExpiryDate} darkMode={darkMode} />
+
+                {/* Low Stock Warning */}
+                {(selectedProduct?.kilosNumber !== undefined && selectedProduct?.lowStockThreshold !== undefined && selectedProduct.kilosNumber <= selectedProduct.lowStockThreshold) && (
+                  <View style={styles.warningWrapper}>
+                    <Ionicons name="warning" size={16} color="#FF4444" />
+                    <Text style={[styles.productExpiry, { color: "#FF4444", marginLeft: 5 }]}>Low Stock</Text>
+                  </View>
+                )}
+
+                <Detail label="Selling Price" value={selectedProduct?.price} darkMode={darkMode} />
+                <Detail label="Cost Price" value={selectedProduct?.costPrice} darkMode={darkMode} />
+                <Detail label="Expiry" value={selectedProduct?.expiry} darkMode={darkMode} />
+                <Detail label="Low Stock Threshold" value={`${selectedProduct?.lowStockThreshold} kg`} darkMode={darkMode} />
               </View>
 
               {/* Right */}
@@ -509,7 +641,7 @@ export default function StockScreen({ navigation }) {
                   source={selectedProduct?.Image}
                   style={styles.detailsImage}
                 />
-                <Text style={[styles.descriptionText, darkMode && { color: "#aaa" }]}>
+                <Text style={[styles.descriptionText, darkMode && { color: "#fff" }]}>
                   {selectedProduct?.description || "No description available."}
                 </Text>
               </View>
@@ -526,6 +658,19 @@ export default function StockScreen({ navigation }) {
                 onPress={() => setAddStockVisible(true)}
               >
                 <Text style={styles.actionTextOutline}>Add Stock</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Management Buttons */}
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 15, borderTopWidth: 1, borderTopColor: '#eee', paddingTop: 15 }}>
+              <TouchableOpacity onPress={() => handleEditProduct(selectedProduct)} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Ionicons name="create-outline" size={20} color={MAIN} />
+                <Text style={{ marginLeft: 5, color: MAIN, fontFamily: "Poppins_500Medium" }}>Edit Product</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={() => handleDeleteProduct(selectedProduct.id)} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Ionicons name="trash-outline" size={20} color="red" />
+                <Text style={{ marginLeft: 5, color: "red", fontFamily: "Poppins_500Medium" }}>Delete Product</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -547,7 +692,9 @@ export default function StockScreen({ navigation }) {
         <View style={styles.overlay}>
           <View style={[styles.detailsCard, darkMode && styles.darkDetailsCard]}>
             <View style={styles.detailsHeader}>
-              <Text style={[styles.detailsTitle, darkMode && styles.darkText]}>Create New Product</Text>
+              <Text style={[styles.detailsTitle, darkMode && styles.darkText]}>
+                {newProductData.id ? "Edit Product" : "Create New Product"}
+              </Text>
               <TouchableOpacity onPress={() => setAddNewProductVisible(false)}>
                 <Ionicons name="close" size={22} color={darkMode ? "#fff" : "#333"} />
               </TouchableOpacity>
@@ -614,7 +761,7 @@ export default function StockScreen({ navigation }) {
               />
 
               <TouchableOpacity style={[styles.actionButton, { marginTop: 10 }]} onPress={handleCreateProduct}>
-                <Text style={styles.actionText}>Create Product</Text>
+                <Text style={styles.actionText}>{newProductData.id ? "Update Product" : "Create Product"}</Text>
               </TouchableOpacity>
             </ScrollView>
           </View>
@@ -1163,7 +1310,7 @@ const styles = StyleSheet.create({
   descriptionText: { fontSize: 12, color: "#555", textAlign: "left", fontFamily: "Poppins_400Regular" },
 
   detailLabel: { fontSize: 12, color: "#777", fontFamily: "Poppins_400Regular" },
-  detailValue: { fontFamily: "Poppins_500Medium" },
+  detailValue: { fontFamily: "Poppins_500Medium", color: "#000" },
 
   detailsActions: { flexDirection: "row", justifyContent: "space-between", marginTop: 20 },
 
@@ -1421,6 +1568,7 @@ const formStyles = StyleSheet.create({
     marginBottom: 10,
     borderColor: "#c5c5c5ff",
     borderWidth: 2,
+    alignSelf: 'center', // Fix alignment
   },
 
   staticLabel: {
@@ -1568,6 +1716,7 @@ const saleStyles = StyleSheet.create({
     marginBottom: 8,
     borderColor: "#dededeff",
     borderWidth: 2,
+    alignSelf: 'center', // Fix
   },
 
   descTitle: {

@@ -25,6 +25,8 @@ SplashScreen.preventAutoHideAsync();
 import { useRef } from 'react';
 import Toast from 'react-native-toast-message';
 
+import { ThemeProvider } from '../src/context/ThemeContext';
+
 export default function RootLayout() {
   const [appIsReady, setAppIsReady] = useState(false);
   // Animation state
@@ -89,17 +91,19 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: '#fff' },
-            animation: 'default',
-          }}
-        >
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        </Stack>
-      </SafeAreaProvider>
+      <ThemeProvider>
+        <SafeAreaProvider>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: { backgroundColor: '#fff' },
+              animation: 'default',
+            }}
+          >
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          </Stack>
+        </SafeAreaProvider>
+      </ThemeProvider>
       <Toast />
     </GestureHandlerRootView>
   );

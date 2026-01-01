@@ -47,6 +47,7 @@ import { useFocusEffect } from '@react-navigation/native';
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
+import { useTheme } from '../src/context/ThemeContext';
 
 export default function DebtorsScreen({ navigation }) {
   const insets = useSafeAreaInsets();
@@ -57,7 +58,8 @@ export default function DebtorsScreen({ navigation }) {
   const isCollapsed = sidebarState === "collapsed";
   const isExpanded = sidebarState === "expanded";
 
-  const [darkMode, setDarkMode] = useState(false);
+  const { isDarkMode, toggleTheme } = useTheme();
+  const darkMode = isDarkMode;
   const [selectedItem, setSelectedItem] = useState("Debtors");
 
   const [activeTab, setActiveTab] = useState("debtors");
@@ -222,6 +224,25 @@ export default function DebtorsScreen({ navigation }) {
       }
     } catch (e) {
       Toast.show({ type: 'error', text1: 'Error', text2: e.message });
+    }
+  };
+
+  const handleDeleteDebtor = async () => {
+    if (!selectedDebtor) return;
+    try {
+      setLoading(true);
+      const res = await api.deleteDebtor(selectedDebtor.id);
+      if (res && (res.message)) { // Adjust based on api response
+        Toast.show({ type: 'success', text1: 'Deleted', text2: 'Person deleted successfully' });
+        setInfoModalVisible(false);
+        fetchDebtors();
+      } else {
+        Toast.show({ type: 'error', text1: 'Error', text2: 'Error deleting person' });
+      }
+    } catch (e) {
+      Toast.show({ type: 'error', text1: 'Error', text2: e.message });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -465,7 +486,7 @@ export default function DebtorsScreen({ navigation }) {
                       styles.themeToggleSwitch,
                       darkMode && styles.themeToggleSwitchActive
                     ]}
-                    onPress={() => setDarkMode(!darkMode)}
+                    onPress={toggleTheme}
                   >
                     <View style={[
                       styles.themeToggleKnob,
@@ -704,6 +725,13 @@ export default function DebtorsScreen({ navigation }) {
                 <Text style={styles.primaryText}>Record payment</Text>
               </TouchableOpacity>
             </View>
+
+            <TouchableOpacity
+              style={{ marginTop: 15, alignSelf: 'center', padding: 5 }}
+              onPress={handleDeleteDebtor}
+            >
+              <Text style={{ color: "red", fontSize: 13, fontFamily: "Poppins_500Medium" }}>Delete Person</Text>
+            </TouchableOpacity>
 
           </View>
         </View>

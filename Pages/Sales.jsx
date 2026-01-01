@@ -43,13 +43,15 @@ import { useAuth } from "../src/context/AuthContext";
 import { useFocusEffect } from '@react-navigation/native';
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTheme } from '../src/context/ThemeContext';
 
 export default function SalesScreen({ navigation }) {
   const insets = useSafeAreaInsets();
   const { logout } = useAuth();
   // Sidebar states: "press" (minimal), "collapsed" (icons only), "expanded" (full)
   const [sidebarState, setSidebarState] = useState("press");
-  const [darkMode, setDarkMode] = useState(false);
+  const { isDarkMode, toggleTheme } = useTheme();
+  const darkMode = isDarkMode;
   const [selectedItem, setSelectedItem] = useState("Sales");
   const [selectedTab, setSelectedTab] = useState("Daily");
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -347,7 +349,7 @@ export default function SalesScreen({ navigation }) {
                       styles.themeToggleSwitch,
                       darkMode && styles.themeToggleSwitchActive
                     ]}
-                    onPress={() => setDarkMode(!darkMode)}
+                    onPress={toggleTheme}
                   >
                     <View style={[
                       styles.themeToggleKnob,

@@ -278,6 +278,14 @@ export const api = {
         });
         return handleResponse(response);
     },
+    deleteDebtor: async (debtorId) => {
+        const headers = await getHeaders();
+        const response = await fetch(`${BASE_URL}/debtor/delete/${debtorId}`, {
+            method: 'DELETE',
+            headers,
+        });
+        return handleResponse(response);
+    },
     // Categories
     addCategory: async (data) => {
         const headers = await getHeaders();

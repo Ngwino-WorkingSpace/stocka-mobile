@@ -25,6 +25,7 @@ import { api } from "../src/services/api";
 import { useAuth } from "../src/context/AuthContext";
 import { useFocusEffect } from '@react-navigation/native';
 import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../src/context/ThemeContext';
 
 const MAIN = "#09364D";
 
@@ -46,7 +47,8 @@ export default function ProfileScreen({ navigation }) {
   const { logout } = useAuth();
   // Sidebar states: "press" (minimal), "collapsed" (icons only), "expanded" (full)
   const [sidebarState, setSidebarState] = useState("press");
-  const [darkMode, setDarkMode] = useState(false);
+  const { isDarkMode, toggleTheme } = useTheme();
+  const darkMode = isDarkMode; // Alias for easier refactoring
   const [selectedItem, setSelectedItem] = useState("Profile");
   const [editable, setEditable] = useState(false);
 
@@ -318,7 +320,7 @@ export default function ProfileScreen({ navigation }) {
                       styles.themeToggleSwitch,
                       darkMode && styles.themeToggleSwitchActive
                     ]}
-                    onPress={() => setDarkMode(!darkMode)}
+                    onPress={toggleTheme}
                   >
                     <View style={[
                       styles.themeToggleKnob,
