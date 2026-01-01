@@ -1,5 +1,6 @@
 import BackgroundScreen from "../components/Background2.jsx";
 import React, { useState } from "react";
+import { useAuth } from "../src/context/AuthContext";
 import {
   View,
   Text,
@@ -22,6 +23,8 @@ import {
 export default function SignInScreen({ navigation }) {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -31,13 +34,47 @@ export default function SignInScreen({ navigation }) {
 
   if (!fontsLoaded) return null;
 
+  const handleLogin = async () => {
+    if (!phoneNumber || !password) {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    setLoading(true);
+    const result = await login(phoneNumber, password);
+    setLoading(false);
+
+    if (result.success) {
+      // Navigation is handled by AuthContext state change in MainScreen
+      // or explicit navigation if needed, though state change helps.
+      // But explicit navigation is safer for stack handling sometimes.
+      // However, since MainScreen switches based on `user`, it might just work.
+      // But user might need to be redirected manually if stack doesn't unmount/remount.
+      // Let's rely on AuthContext for now, but if it fails, I'll add navigation.replace("dashboard").
+      // Actually, the stack navigator in index.jsx has initialRouteName. That only affects MOUNT.
+      // It DOES NOT change the current screen if the stack is already mounted!
+      // So I MUST navigate manually.
+      // Wait, if I am in "Login" screen, and `user` becomes set, `MainScreen` re-renders.
+      // But `Stack.Navigator` returns the same navigator instance.
+      // React Navigation 6/7 doesn't automatically switch screens when initialRouteName changes.
+      // So I MUST execute navigation.replace("dashboard").
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'dashboard' }],
+      });
+    } else {
+      alert(result.error || "Login failed");
+    }
+  };
+
   return (
     <View style={styles.container}>
       <BackgroundScreen />
 
       <KeyboardAvoidingView
         style={styles.contentWrapper}
-        behavior={Platform.OS === "ios" ? "padding" : null}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
         <ScrollView
           contentContainerStyle={styles.scrollContent}
@@ -59,6 +96,7 @@ export default function SignInScreen({ navigation }) {
               placeholderTextColor="#107EBA"
               value={phoneNumber}
               onChangeText={setPhoneNumber}
+              keyboardType="phone-pad"
             />
 
             <TextInput
@@ -82,16 +120,17 @@ export default function SignInScreen({ navigation }) {
 
             <TouchableOpacity
               style={styles.button}
-              onPress={() => navigation.navigate("dashboard")}
+              onPress={handleLogin}
+              disabled={loading}
             >
-              <Text style={styles.buttonText}>Sign In</Text>
+              <Text style={styles.buttonText}>{loading ? "Signing In..." : "Sign In"}</Text>
             </TouchableOpacity>
 
             <Text style={styles.forgot}
-                onPress={()=>{
+              onPress={() => {
                 navigation.navigate("forgot-password");
               }}
-             >Forgot Password?</Text>
+            >Forgot Password?</Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -111,9 +150,9 @@ const styles = StyleSheet.create({
 
   scrollContent: {
     flexGrow: 1,
-    justifyContent: "flex-end",
+    justifyContent: "center",
     alignItems: "center",
-    paddingBottom: 20,
+    paddingVertical: 40,
     width: "100%",
   },
 
@@ -193,12 +232,12 @@ const styles = StyleSheet.create({
   },
 
   forgot: {
-  fontSize: 16,            // slightly smaller than regular text
-  color: "#1FA5ED",        // bright blue for clickable feel
-  textAlign: "right",      // align to the right if needed
-  fontWeight: "500",       // medium weight
-  marginTop: 10,           // spacing from input fields above
- fontFamily:"Poppins_400Regular",
-}
+    fontSize: 16,            // slightly smaller than regular text
+    color: "#1FA5ED",        // bright blue for clickable feel
+    textAlign: "right",      // align to the right if needed
+    fontWeight: "500",       // medium weight
+    marginTop: 10,           // spacing from input fields above
+    fontFamily: "Poppins_400Regular",
+  }
 
 });

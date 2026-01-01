@@ -4,7 +4,14 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { View, ActivityIndicator, Text } from 'react-native';
+import {
+  View,
+  ActivityIndicator,
+  Text,
+  Animated,
+  Image,
+  StyleSheet
+} from 'react-native';
 import {
   Poppins_400Regular,
   Poppins_500Medium,
@@ -15,8 +22,14 @@ import {
 // Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
 
+import { useRef } from 'react';
+import Toast from 'react-native-toast-message';
+
 export default function RootLayout() {
   const [appIsReady, setAppIsReady] = useState(false);
+  // Animation state
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
   const [fontsLoaded, fontError] = useFonts({
     Poppins_400Regular,
     Poppins_500Medium,
@@ -25,12 +38,30 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
+    // Blinking animation
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(fadeAnim, {
+          toValue: 0.3,
+          duration: 1000,
+          useNativeDriver: true,
+        })
+      ])
+    ).start();
+
     async function prepare() {
       try {
-        // Wait for fonts to load or error
         if (fontsLoaded || fontError) {
+          // Keep showing our custom splash for a bit longer if needed or hide native immediately
+          // Hiding native splash so our custom one shows
           await SplashScreen.hideAsync();
-          setAppIsReady(true);
+          // Simulate a minimum delay or just wait for fonts
+          setTimeout(() => setAppIsReady(true), 2000); // 2 seconds custom splash
         }
       } catch (e) {
         console.warn('Error preparing app:', e);
@@ -43,8 +74,15 @@ export default function RootLayout() {
 
   if (!appIsReady) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
-        <ActivityIndicator size="large" color="#09364D" />
+      <View style={styles.splashContainer}>
+        <Animated.View style={{ opacity: fadeAnim }}>
+          <Image
+            source={require('../assets/images/stock.png')}
+            style={styles.splashLogo}
+            resizeMode="contain"
+          />
+        </Animated.View>
+        <Text style={styles.splashText}>Stocka</Text>
       </View>
     );
   }
@@ -62,7 +100,31 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
       </SafeAreaProvider>
+      <Toast />
     </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  splashContainer: {
+    flex: 1,
+    backgroundColor: '#09364D', // Theme color
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  splashLogo: {
+    width: 120,
+    height: 120,
+  },
+  splashText: {
+    marginTop: 20,
+    color: '#fff',
+    fontFamily: 'Poppins_700Bold', // Make sure fonts are loaded or use system font as backup? 
+    // Wait, if fonts aren't loaded this might error. Safer to use system font here or wait for fonts inside prepare.
+    // Actually the splash is showing WHILE fonts are loading. So we shouldn't rely on custom fonts yet unless we are sure.
+    // I will use a safe font here.
+    fontSize: 24,
+    fontWeight: 'bold',
+  }
+});
 

@@ -11,6 +11,7 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
+  RefreshControl,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -20,6 +21,10 @@ import {
   Poppins_600SemiBold,
   Poppins_700Bold,
 } from "@expo-google-fonts/poppins";
+
+import { api } from "../src/services/api";
+import { useAuth } from "../src/context/AuthContext";
+import { useFocusEffect } from '@react-navigation/native';
 
 const MAIN = "#09364D";
 
@@ -36,7 +41,7 @@ const getRouteName = (itemName) => {
   return routeMap[itemName] || itemName;
 };
 
-export default function ProfileScreen({navigation}) {
+export default function ProfileScreen({ navigation }) {
   // Sidebar states: "press" (minimal), "collapsed" (icons only), "expanded" (full)
   const [sidebarState, setSidebarState] = useState("press");
   const [darkMode, setDarkMode] = useState(false);
@@ -44,11 +49,42 @@ export default function ProfileScreen({navigation}) {
   const [editable, setEditable] = useState(false);
 
   const [profile, setProfile] = useState({
-    name: "NIZIWIHINDA Divin",
-    phone: "+250 780 602 022",
+    name: "",
+    phone: "",
     password: "********",
-    dob: "12th January 2025",
+    dob: "",
   });
+
+  const fetchProfile = async () => {
+    try {
+      const res = await api.getProfile();
+      // Assuming res.user contains name, phone, created_at
+      // Adjust based on actual API response structure
+      if (res && res.user) {
+        const u = res.user;
+        setProfile(p => ({
+          ...p,
+          name: u.full_name || u.fullName || u.name || "User",
+          phone: u.phone_number || u.phoneNumber || u.phone || "",
+          email: u.email || "",
+          dob: u.created_at ? new Date(u.created_at).toDateString() : "Unknown"
+        }));
+      }
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchProfile();
+    }, [])
+  );
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    fetchProfile();
+  }, []);
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -58,6 +94,8 @@ export default function ProfileScreen({navigation}) {
   });
 
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [helpModalVisible, setHelpModalVisible] = useState(false);
 
   if (!fontsLoaded) return null;
 
@@ -88,22 +126,22 @@ export default function ProfileScreen({navigation}) {
   return (
     <View style={[styles.mainContainer, { backgroundColor: darkMode ? "#1a1a2e" : "#fff" }]}>
 
-          {/* FLOATING PRESS HANDLE */}
-         {isPressState && (
-           <TouchableOpacity
-             onPress={handlePressTextClick}
-             activeOpacity={0.8}
-             style={styles.floatingPress}
-           >
-             <View style={styles.pressTextWrapper}>
-               <Text style={styles.pressText}>S</Text>
-               <Text style={styles.pressText}>S</Text>
-               <Text style={styles.pressText}>E</Text>
-               <Text style={styles.pressText}>R</Text>
-               <Text style={styles.pressText}>P</Text>
-             </View>
-           </TouchableOpacity>
-         )}
+      {/* FLOATING PRESS HANDLE */}
+      {isPressState && (
+        <TouchableOpacity
+          onPress={handlePressTextClick}
+          activeOpacity={0.8}
+          style={styles.floatingPress}
+        >
+          <View style={styles.pressTextWrapper}>
+            <Text style={styles.pressText}>S</Text>
+            <Text style={styles.pressText}>S</Text>
+            <Text style={styles.pressText}>E</Text>
+            <Text style={styles.pressText}>R</Text>
+            <Text style={styles.pressText}>P</Text>
+          </View>
+        </TouchableOpacity>
+      )}
       {/* OVERLAY - Shows when sidebar is expanded */}
       {isExpanded && (
         <TouchableOpacity
@@ -169,9 +207,9 @@ export default function ProfileScreen({navigation}) {
         {!isPressState && (
           <>
             <View style={styles.menuContainer}>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[
-                  styles.navItem, 
+                  styles.navItem,
                   isExpanded && styles.navItemExpanded,
                   selectedItem === "Dashboard" && isExpanded && styles.navItemSelected
                 ]}
@@ -181,9 +219,9 @@ export default function ProfileScreen({navigation}) {
                 {isExpanded && <Text style={styles.navText}>Dashboard</Text>}
               </TouchableOpacity>
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[
-                  styles.navItem, 
+                  styles.navItem,
                   isExpanded && styles.navItemExpanded,
                   selectedItem === "Stock" && isExpanded && styles.navItemSelected
                 ]}
@@ -193,9 +231,9 @@ export default function ProfileScreen({navigation}) {
                 {isExpanded && <Text style={styles.navText}>Stock</Text>}
               </TouchableOpacity>
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[
-                  styles.navItem, 
+                  styles.navItem,
                   isExpanded && styles.navItemExpanded,
                   selectedItem === "Sales" && isExpanded && styles.navItemSelected
                 ]}
@@ -205,9 +243,9 @@ export default function ProfileScreen({navigation}) {
                 {isExpanded && <Text style={styles.navText}>Sales</Text>}
               </TouchableOpacity>
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[
-                  styles.navItem, 
+                  styles.navItem,
                   isExpanded && styles.navItemExpanded,
                   selectedItem === "Reports" && isExpanded && styles.navItemSelected
                 ]}
@@ -217,9 +255,9 @@ export default function ProfileScreen({navigation}) {
                 {isExpanded && <Text style={styles.navText}>Reports</Text>}
               </TouchableOpacity>
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[
-                  styles.navItem, 
+                  styles.navItem,
                   isExpanded && styles.navItemExpanded,
                   selectedItem === "debtors" && isExpanded && styles.navItemSelected
                 ]}
@@ -231,9 +269,9 @@ export default function ProfileScreen({navigation}) {
 
 
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[
-                  styles.navItem, 
+                  styles.navItem,
                   isExpanded && styles.navItemExpanded,
                   selectedItem === "Profile" && isExpanded && styles.navItemSelected
                 ]}
@@ -249,15 +287,15 @@ export default function ProfileScreen({navigation}) {
 
             {/* Utility Items */}
             <View style={styles.utilityContainer}>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[styles.navItem, isExpanded && styles.navItemExpanded]}
-                onPress={() => handleNavItemPress("Help")}
+                onPress={() => setHelpModalVisible(true)}
               >
                 <Ionicons name="help-circle-outline" size={22} color="#fff" />
                 {isExpanded && <Text style={styles.navText}>Help</Text>}
               </TouchableOpacity>
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[styles.navItem, isExpanded && styles.navItemExpanded]}
                 onPress={() => setShowLogoutModal(true)}
               >
@@ -301,19 +339,22 @@ export default function ProfileScreen({navigation}) {
 
       {/* CONTENT */}
       <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0, backgroundColor: darkMode ? "#1a1a2e" : "#fff" }}>
-        <KeyboardAvoidingView 
+        <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-          <ScrollView 
+          <ScrollView
             contentContainerStyle={[styles.container, darkMode && styles.darkContainer]}
             style={darkMode && styles.darkScrollView}
             showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[MAIN]} />
+            }
           >
             {/* Header */}
             <View style={styles.header}>
               {navigation?.canGoBack() && (
-                <TouchableOpacity 
+                <TouchableOpacity
                   onPress={() => navigation.goBack()}
                   style={styles.backButton}
                 >
@@ -325,101 +366,102 @@ export default function ProfileScreen({navigation}) {
 
             <Text style={[styles.title, darkMode && styles.darkText]}>Profile info</Text>
 
-      {/* Profile Image */}
-      <View style={styles.avatarWrapper}>
-        <View style={[styles.avatar, darkMode && styles.darkAvatar]}>
-          <Ionicons name="person" size={60} color={darkMode ? "#fff" : "#000"} />
-        </View>
+            {/* Profile Image */}
+            <View style={styles.avatarWrapper}>
+              <View style={[styles.avatar, darkMode && styles.darkAvatar]}>
+                <Ionicons name="person" size={60} color={darkMode ? "#fff" : "#000"} />
+              </View>
 
-        <TouchableOpacity
-          style={styles.editIcon}
-          onPress={() => setEditable(!editable)}
-        >
-          <Ionicons name="pencil" size={16} color="#fff" />
-        </TouchableOpacity>
-      </View>
+              {/* Editing disabled as requested */}
+              {/* <TouchableOpacity
+                style={styles.editIcon}
+                onPress={() => setEditable(!editable)}
+              >
+                <Ionicons name="pencil" size={16} color="#fff" />
+              </TouchableOpacity> */}
+            </View>
 
-      {/* Inputs */}
-      <ProfileInput
-        label="Full name"
-        value={profile.name}
-        editable={editable}
-        onChangeText={(v) => setProfile({ ...profile, name: v })}
-        darkMode={darkMode}
-      />
+            {/* Inputs */}
+            <ProfileInput
+              label="Full name"
+              value={profile.name}
+              editable={editable}
+              onChangeText={(v) => setProfile({ ...profile, name: v })}
+              darkMode={darkMode}
+            />
 
-      <ProfileInput
-        label="Phone number"
-        value={profile.phone}
-        editable={editable}
-        onChangeText={(v) => setProfile({ ...profile, phone: v })}
-        darkMode={darkMode}
-      />
+            <ProfileInput
+              label="Phone number"
+              value={profile.phone}
+              editable={editable}
+              onChangeText={(v) => setProfile({ ...profile, phone: v })}
+              darkMode={darkMode}
+            />
 
-      <ProfileInput
-        label="Password"
-        value={profile.password}
-        editable={false}
-        secureTextEntry
-        darkMode={darkMode}
-      />
+            <ProfileInput
+              label="Password"
+              value={profile.password}
+              editable={false}
+              secureTextEntry
+              darkMode={darkMode}
+            />
 
-      <ProfileInput
-        label="Date of joining"
-        value={profile.dob}
-        editable={false}
-        darkMode={darkMode}
-      />
+            <ProfileInput
+              label="Date of joining"
+              value={profile.dob}
+              editable={false}
+              darkMode={darkMode}
+            />
 
-      {/* Buttons */}
-      <TouchableOpacity style={[styles.grayButton, darkMode && styles.darkGrayButton]}>
-        <Text style={[styles.grayText, darkMode && styles.darkGrayText]}>CHANGE PASSWORD</Text>
-      </TouchableOpacity>
+            {/* Buttons */}
+            {/* Buttons commented out as requested */}
+            {/* <TouchableOpacity style={[styles.grayButton, darkMode && styles.darkGrayButton]}>
+              <Text style={[styles.grayText, darkMode && styles.darkGrayText]}>CHANGE PASSWORD</Text>
+            </TouchableOpacity> */}
 
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
 
-    <Modal
-  transparent
-  animationType="fade"
-  visible={showLogoutModal}
->
-  <View style={styles.overlay}>
-    <View style={styles.modalCard}>
-      <Ionicons
-        name="warning-outline"
-        size={38}
-        color="#0A2A3F"
-        style={{ marginBottom: 10 }}
-      />
+      <Modal
+        transparent
+        animationType="fade"
+        visible={showLogoutModal}
+      >
+        <View style={styles.overlay}>
+          <View style={styles.modalCard}>
+            <Ionicons
+              name="warning-outline"
+              size={38}
+              color="#0A2A3F"
+              style={{ marginBottom: 10 }}
+            />
 
-      <Text style={styles.modalText}>
-        Are you sure about logging out?
-      </Text>
+            <Text style={styles.modalText}>
+              Are you sure about logging out?
+            </Text>
 
-      <View style={styles.modalButtons}>
-        <TouchableOpacity
-          style={styles.yesButton}
-          onPress={() => {
-            setShowLogoutModal(false);
-            navigation.navigate("Login")
-            
-          }}
-        >
-          <Text style={styles.yesText}>YES</Text>
-        </TouchableOpacity>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={styles.yesButton}
+                onPress={() => {
+                  setShowLogoutModal(false);
+                  logout();
+                }}
+              >
+                <Text style={styles.yesText}>YES</Text>
+              </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.noButton}
-          onPress={() => setShowLogoutModal(false)}
-        >
-          <Text style={styles.noText}>NO</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  </View>
-</Modal>
+              <TouchableOpacity
+                style={styles.noButton}
+                onPress={() => setShowLogoutModal(false)}
+              >
+                <Text style={styles.noText}>NO</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
     </View>
   );
@@ -726,58 +768,104 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   overlay: {
-  flex: 1,
-  backgroundColor: "rgba(0,0,0,0.45)",
-  justifyContent: "center",
-  alignItems: "center",
-},
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 
-modalCard: {
-  width: "80%",
-  backgroundColor: "#fff",
-  borderRadius: 14,
-  padding: 20,
-  alignItems: "center",
-},
+  modalCard: {
+    width: "80%",
+    backgroundColor: "#fff",
+    borderRadius: 14,
+    padding: 20,
+    alignItems: "center",
+  },
 
-modalText: {
-  fontFamily: "Poppins_500Medium",
-  fontSize: 13,
-  marginVertical: 10,
-  textAlign: "center",
-},
+  modalText: {
+    fontFamily: "Poppins_500Medium",
+    fontSize: 13,
+    marginVertical: 10,
+    textAlign: "center",
+  },
 
-modalButtons: {
-  flexDirection: "row",
-  marginTop: 14,
-},
+  modalButtons: {
+    flexDirection: "row",
+    marginTop: 14,
+  },
 
-yesButton: {
-  backgroundColor: "#0A2A3F",
-  paddingVertical: 10,
-  paddingHorizontal: 30,
-  borderRadius: 8,
-  marginRight: 10,
-},
+  yesButton: {
+    backgroundColor: "#0A2A3F",
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+    marginRight: 10,
+  },
 
-yesText: {
-  color: "#fff",
-  fontFamily: "Poppins_500Medium",
-  fontSize: 12,
-},
+  yesText: {
+    color: "#fff",
+    fontFamily: "Poppins_500Medium",
+    fontSize: 12,
+  },
 
-noButton: {
-  borderWidth: 1,
-  borderColor: "#0A2A3F",
-  paddingVertical: 10,
-  paddingHorizontal: 30,
-  borderRadius: 8,
-},
+  noButton: {
+    borderWidth: 1,
+    borderColor: "#0A2A3F",
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+  },
 
-noText: {
-  fontFamily: "Poppins_500Medium",
-  fontSize: 12,
-  color: "#0A2A3F",
-},
+  noText: {
+    fontFamily: "Poppins_500Medium",
+    fontSize: 12,
+    color: "#0A2A3F",
+  },
 
+  /* Help Modal Styles */
+  helpModalCard: {
+    width: "80%",
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 25,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  helpModalTitle: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 20,
+    color: "#0A2A3F",
+    marginBottom: 10,
+  },
+  helpModalText: {
+    fontFamily: "Poppins_400Regular",
+    fontSize: 14,
+    color: "#555",
+    textAlign: "center",
+    marginBottom: 20,
+    lineHeight: 22,
+  },
+  helpModalButton: {
+    backgroundColor: "#0A2A3F",
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+    width: '100%',
+  },
+  helpModalButtonText: {
+    color: "#fff",
+    fontFamily: "Poppins_600SemiBold",
+    fontSize: 15,
+    textAlign: "center",
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });

@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "tradewise",
-    "slug": "tradewise",
+    "name": "Stocka",
+    "slug": "Stocka",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/tradewise.png",
-    "scheme": "tradewise",
+    "icon": "./assets/images/stockaLogo.png",
+    "scheme": "stocka",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/tradewise.png",
+      "image": "./assets/images/Stocka.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -18,12 +18,12 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/tradewise.png",
+        "foregroundImage": "./assets/images/stockaLogo.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.Ange.tradewise"
+      "package": "com.Ange.stocka"
     },
     "web": {
       "bundler": "metro",

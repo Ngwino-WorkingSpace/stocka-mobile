@@ -1,5 +1,6 @@
 import BackgroundScreen from "../components/Background2.jsx";
 import React, { useState } from "react";
+import { useAuth } from "../src/context/AuthContext";
 import {
   View,
   Text,
@@ -24,7 +25,9 @@ export default function SignupScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [recoveryPin,setRecoveryPin] = useState("");
+  const [recoveryPin, setRecoveryPin] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { register } = useAuth();
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -34,13 +37,38 @@ export default function SignupScreen({ navigation }) {
 
   if (!fontsLoaded) return null;
 
+  const handleRegister = async () => {
+    if (!fullname || !password || !phoneNumber || !recoveryPin) {
+      alert("Please fill in all required fields");
+      return;
+    }
+
+    setLoading(true);
+    const result = await register({
+      fullName: fullname,
+      email: email || undefined,
+      password,
+      phoneNumber,
+      recoverypin: recoveryPin
+    });
+    setLoading(false);
+
+    if (result.success) {
+      alert("Registration successful! Please login.");
+      navigation.navigate("Login");
+    } else {
+      alert(result.error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <BackgroundScreen />
 
       <KeyboardAvoidingView
         style={styles.contentWrapper}
-        behavior={Platform.OS === "ios" ? "padding" : null}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
         <ScrollView
           contentContainerStyle={styles.scrollContent}
@@ -68,7 +96,7 @@ export default function SignupScreen({ navigation }) {
               style={styles.input}
               placeholder="Phone number"
               placeholderTextColor="#107EBA"
-              secureTextEntry
+              keyboardType="phone-pad"
               value={phoneNumber}
               onChangeText={setPhoneNumber}
             />
@@ -88,6 +116,7 @@ export default function SignupScreen({ navigation }) {
               placeholderTextColor="#107EBA"
               value={recoveryPin}
               onChangeText={setRecoveryPin}
+              keyboardType="numeric"
             />
 
             <TextInput
@@ -111,9 +140,10 @@ export default function SignupScreen({ navigation }) {
 
             <TouchableOpacity
               style={styles.button}
-              onPress={() => navigation.navigate("Login")}
+              onPress={handleRegister}
+              disabled={loading}
             >
-              <Text style={styles.buttonText}>Sign Up</Text>
+              <Text style={styles.buttonText}>{loading ? "Signing Up..." : "Sign Up"}</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -134,9 +164,9 @@ const styles = StyleSheet.create({
 
   scrollContent: {
     flexGrow: 1,
-    justifyContent: "flex-end",
+    justifyContent: "center",
     alignItems: "center",
-    paddingBottom: 10,
+    paddingVertical: 40,
     width: "100%",
   },
 

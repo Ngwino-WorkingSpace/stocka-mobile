@@ -19,9 +19,12 @@ import {
   Poppins_600SemiBold,
 } from "@expo-google-fonts/poppins";
 
+import { api } from "../src/services/api";
+
 export default function ForgotPasswordScreen({ navigation }) {
-  const [Email, setEmail] = useState("");
   const [Phonenumber, setPhonenumber] = useState("");
+  const [recoveryPin, setRecoveryPin] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -30,6 +33,35 @@ export default function ForgotPasswordScreen({ navigation }) {
   });
 
   if (!fontsLoaded) return null;
+
+  const handleVerify = async () => {
+    if (!Phonenumber || !recoveryPin) {
+      alert("Please enter both phone number and recovery code");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const res = await api.verifyRecoveryPin({
+        phoneNumber: Phonenumber,
+        recoveryPin: recoveryPin
+      });
+      setLoading(false);
+
+      if (res && res.token) {
+        // Navigate to reset password with params, passing the recovery token
+        navigation.navigate("reset-Password", {
+          phoneNumber: Phonenumber,
+          recoveryToken: res.token
+        });
+      } else {
+        alert(res.error || res.message || "Verification failed");
+      }
+    } catch (e) {
+      setLoading(false);
+      alert("Error: " + e.message);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -50,7 +82,7 @@ export default function ForgotPasswordScreen({ navigation }) {
             />
 
             <Text style={styles.welcometext}>
-                 Please input your email to reset your password.
+              Please input your phone number and recovery code to reset your password.
             </Text>
 
             <TextInput
@@ -59,21 +91,23 @@ export default function ForgotPasswordScreen({ navigation }) {
               placeholderTextColor="#107EBA"
               value={Phonenumber}
               onChangeText={setPhonenumber}
+              keyboardType="phone-pad"
             />
 
             <TextInput
               style={styles.input}
-              placeholder="Password"
+              placeholder="Recovery Code"
               placeholderTextColor="#107EBA"
-              secureTextEntry
-              value={Email}
-              onChangeText={setEmail}
+              value={recoveryPin}
+              onChangeText={setRecoveryPin}
+              keyboardType="numeric"
             />
+
             <TouchableOpacity
               style={styles.button}
-              onPress={() => navigation.navigate("OTP")}
+              onPress={handleVerify}
             >
-              <Text style={styles.buttonText}>GET OTP CODE </Text>
+              <Text style={styles.buttonText}>{loading ? "VERIFYING..." : "VERIFY CODE"}</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -176,12 +210,12 @@ const styles = StyleSheet.create({
   },
 
   forgot: {
-  fontSize: 16,           
-  color: "#1FA5ED",        
-  textAlign: "right",      
-  fontWeight: "500",       // medium weight
-  marginTop: 10,           // spacing from input fields above
- fontFamily:"Poppins_400Regular",
-}
+    fontSize: 16,
+    color: "#1FA5ED",
+    textAlign: "right",
+    fontWeight: "500",       // medium weight
+    marginTop: 10,           // spacing from input fields above
+    fontFamily: "Poppins_400Regular",
+  }
 
 });

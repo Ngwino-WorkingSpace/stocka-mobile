@@ -12,6 +12,7 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
+  RefreshControl,
 } from "react-native";
 import {
   useFonts,
@@ -37,12 +38,32 @@ const getRouteName = (itemName) => {
   return routeMap[itemName] || itemName;
 };
 
+import { api } from "../src/services/api";
+import { useAuth } from "../src/context/AuthContext";
+import { useFocusEffect } from '@react-navigation/native';
+
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as ImagePicker from 'expo-image-picker';
+import Toast from 'react-native-toast-message';
+
 export default function StockScreen({ navigation }) {
+  const insets = useSafeAreaInsets();
+  const { logout } = useAuth();
   // Sidebar states: "press" (minimal), "collapsed" (icons only), "expanded" (full)
   const [sidebarState, setSidebarState] = useState("press");
+
+  const isPressState = sidebarState === "press";
+  const isCollapsed = sidebarState === "collapsed";
+  const isExpanded = sidebarState === "expanded";
+
   const [darkMode, setDarkMode] = useState(false);
   const [selectedItem, setSelectedItem] = useState("Stock");
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  // New Products state
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -53,154 +74,277 @@ export default function StockScreen({ navigation }) {
 
   const [searchText, setSearchText] = useState("");
   const [categoryVisible, setCategoryVisible] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("Category");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [helpModalVisible, setHelpModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [addStockVisible, setAddStockVisible] = useState(false);
 
-const [formData, setFormData] = useState({
-  quantity: "",
-  price: "",
-  purchaseDate: "",
-  expiryDate: "",
-  description: "",
-});
-const handleChange = (key, value) => {
-  setFormData({ ...formData, [key]: value });
-};
+  // Add Product (New) Modal
+  const [addNewProductVisible, setAddNewProductVisible] = useState(false);
+  const [newProductData, setNewProductData] = useState({
+    productName: "",
+    categoryId: "",
+    lowStockThreshold: "10"
+  });
 
-const [recordSaleVisible, setRecordSaleVisible] = useState(false);
+  const [categoriesList, setCategoriesList] = useState([]);
 
-const [saleData, setSaleData] = useState({
-  quantity: "",
-  unitPrice: "",
-  totalPrice: "",
-});
+  const fetchCategories = async () => {
+    try {
+      const res = await api.getAllCategories();
+      if (res && res.categories) {
+        setCategoriesList(res.categories);
+      }
+    } catch (e) {
+      console.log("Error fetching categories", e);
+    }
+  };
 
-const handleSaleChange = (field, value) => {
-  setSaleData((prev) => ({
-    ...prev,
-    [field]: value,
-  }));
-};
+  const fetchStockData = async () => {
+    try {
+      setLoading(true);
+      await fetchCategories();
+      const res = await api.getAllStockBatches();
+      // Group by product
+      const groups = {};
+      const batches = res.stockBatch || [];
 
+      batches.forEach(b => {
+        if (!groups[b.product_id]) {
+          groups[b.product_id] = {
+            id: b.product_id,
+            TextHead: b.product_name,
+            subText: b.category_name || "General",
+            kilosRaw: 0,
+            minExpiry: null,
+            batches: [],
+            // Placeholder images based on index or random?
+            // Existing logic had specific images. We'll use a default.
+            Image: (b.product_image || b.image) ? { uri: b.product_image || b.image } : require("../assets/images/default-product-image.png"),
+          };
+        }
+        const g = groups[b.product_id];
+        g.kilosRaw += Number(b.quantity_remaining);
+        g.batches.push(b);
+        const exp = new Date(b.expiry_date);
+        if (!g.minExpiry || exp < g.minExpiry) g.minExpiry = exp;
+      });
 
-  const StockProducts = [
-    {
-      id: 1,
-      Image: require("../assets/images/irishPotatoes.png"),
-      TextHead: "Irish Potatoes",
-      subText: "Vegetables",
-      kilos: "54kg",
-      ViewText: "Expiration in 2 months",
-      PurchaseDate: "12th November 2025",
-      ExpiryDate: "2nd January 2026",
-      description: "Irish potatoes are a high-demand root vegetable with steady market turnover. They should be stored in a cool, dry, well-ventilated area away from direct light.",
-    },
-    {
-      id: 2,
-      Image: require("../assets/images/Maize.png"),
-      TextHead: "Maize",
-      subText: "Grains",
-      kilos: "112kg",
-      ViewText: "Expiration in 2 months",
-      PurchaseDate: "12th November 2025",
-      ExpiryDate: "2nd January 2026",
-      description: "Maize is a versatile grain crop that requires proper storage in dry conditions to prevent mold and spoilage. Keep in well-ventilated containers away from moisture.",
-    },
-    {
-      id: 3,
-      Image: require("../assets/images/Tomato.png"),
-      TextHead: "Tomatoes",
-      subText: "Vegetables",
-      kilos: "23kg",
-      ViewText: "Expiration in 2 months",
-      PurchaseDate: "12th November 2025",
-      ExpiryDate: "2nd January 2026",
-      description: "Tomatoes are perishable vegetables that should be stored at room temperature until ripe, then refrigerated. Handle with care to avoid bruising.",
-    },
-    {
-      id: 4,
-      Image: require("../assets/images/WaterMelon.png"),
-      TextHead: "WaterMelons",
-      subText: "Fruits",
-      kilos: "11kg",
-      ViewText: "Expiration in 2 months",
-      PurchaseDate: "12th November 2025",
-      ExpiryDate: "2nd January 2026",
-      description: "Watermelons are refreshing fruits best stored at room temperature before cutting. Once cut, refrigerate and consume within a few days for best quality.",
-    },
-    {
-      id: 5,
-      Image: require("../assets/images/Digestive.png"),
-      TextHead: "Biscuits(Vegetables)",
-      subText: "Biscuits",
-      kilos: "2 boxes (50 pieces each)",
-      ViewText: "Expiration in 2 months",
-      PurchaseDate: "12th November 2025",
-      ExpiryDate: "2nd January 2026",
-      description: "Biscuits should be stored in a cool, dry place in their original packaging to maintain freshness and prevent them from becoming stale or soft.",
-    },
-  ];
+      const processed = Object.values(groups).map(g => ({
+        ...g,
+        kilos: `${g.kilosRaw} kg`, // Assuming unit is consistent or generic
+        ViewText: g.minExpiry ? `Expires ${g.minExpiry.toLocaleDateString()}` : "No expiry",
+        PurchaseDate: "Multiple batches",
+        ExpiryDate: g.minExpiry ? g.minExpiry.toLocaleDateString() : "N/A",
+        description: `Total stock: ${g.kilosRaw}. ${g.batches.length} batches in stock.`
+      }));
 
-  const categories = ["All", "Vegetables", "Fruits", "Grains", "Biscuits"];
+      setProducts(processed);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    fetchStockData();
+  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchStockData();
+    }, [])
+  );
+
+  // Reuse existing state setup mostly
+  const [formData, setFormData] = useState({
+    quantity: "",
+    price: "",
+    purchaseDate: "",
+    expiryDate: "",
+    description: "",
+  });
+  const handleChange = (key, value) => {
+    setFormData({ ...formData, [key]: value });
+  };
+
+  const [recordSaleVisible, setRecordSaleVisible] = useState(false);
+
+  const [saleData, setSaleData] = useState({
+    quantity: "",
+    unitPrice: "",
+    totalPrice: "",
+  });
+
+  const handleSaleChange = (field, value) => {
+    setSaleData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleAddStock = async () => {
+    if (!selectedProduct) return;
+    if (!formData.quantity || !formData.price) {
+      Toast.show({ type: 'error', text1: 'Missing Fields', text2: 'Quantity and Price are required' });
+      return;
+    }
+    try {
+      setLoading(true);
+      const qty = parseFloat(formData.quantity.replace(/[^0-9.]/g, ''));
+      const price = parseFloat(formData.price.replace(/[^0-9.]/g, ''));
+
+      const res = await api.addStockBatch(selectedProduct.id, {
+        quantity: qty,
+        purchasePrice: price,
+        purchaseDate: formData.purchaseDate ? new Date(formData.purchaseDate) : new Date(),
+        expiryDate: formData.expiryDate ? new Date(formData.expiryDate) : undefined
+      });
+
+      if (res && (res.message || res.status === 201)) {
+        Toast.show({ type: 'success', text1: 'Success', text2: 'Stock added successfully' });
+        setAddStockVisible(false);
+        fetchStockData();
+        setFormData({ quantity: "", price: "", purchaseDate: "", expiryDate: "", description: "" });
+      } else {
+        Toast.show({ type: 'error', text1: 'Error', text2: 'Error adding stock' });
+      }
+    } catch (e) {
+      Toast.show({ type: 'error', text1: 'Error', text2: e.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRecordSale = async () => {
+    if (!selectedProduct) return;
+    if (!saleData.quantity || !saleData.unitPrice) {
+      Toast.show({ type: 'error', text1: 'Missing Fields', text2: 'Quantity and Unit Price are required' });
+      return;
+    }
+    try {
+      setLoading(true);
+      const qty = parseFloat(saleData.quantity.replace(/[^0-9.]/g, ''));
+      const price = parseFloat(saleData.unitPrice.replace(/[^0-9.]/g, ''));
+
+      const res = await api.createSale({
+        productId: selectedProduct.id,
+        quantitySold: qty,
+        unitSellingPrice: price,
+      });
+
+      if (res && (res.message || res.status === 201)) {
+        Toast.show({ type: 'success', text1: 'Success', text2: 'Sale recorded successfully' });
+        setRecordSaleVisible(false);
+        fetchStockData();
+        setSaleData({ quantity: "", unitPrice: "", totalPrice: "" });
+      } else {
+        Toast.show({ type: 'error', text1: 'Error', text2: 'Error recording sale' });
+      }
+    } catch (e) {
+      Toast.show({ type: 'error', text1: 'Error', text2: e.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateProduct = async () => {
+    if (!newProductData.productName) {
+      Toast.show({ type: 'error', text1: 'Missing Field', text2: 'Product Name is required' });
+      return;
+    }
+    if (!newProductData.categoryId) {
+      Toast.show({ type: 'error', text1: 'Missing Field', text2: 'Please select a category' });
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await api.addProduct({
+        productName: newProductData.productName,
+        categoryId: newProductData.categoryId,
+        lowStockThresHold: newProductData.lowStockThreshold || 10,
+        productImage: newProductData.productImage
+      });
+
+      if (res && (res.message || res.status === 201)) {
+        Toast.show({ type: 'success', text1: 'Success', text2: 'Product created successfully' });
+        setAddNewProductVisible(false);
+        fetchStockData();
+        setNewProductData({ productName: "", categoryId: "", lowStockThreshold: "10", productImage: null });
+      } else {
+        Toast.show({ type: 'error', text1: 'Error', text2: 'Error creating product' });
+      }
+    } catch (e) {
+      Toast.show({ type: 'error', text1: 'Error', text2: e.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Toast.show({ type: 'error', text1: 'Permission Denied', text2: 'We need access to your gallery to upload images.' });
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.5,
+    });
+
+    if (!result.canceled) {
+      setNewProductData({ ...newProductData, productImage: result.assets[0].uri });
+    }
+  };
+
+  const StockProducts = products;
+  const categories = ["All", ...categoriesList.map(c => c.category_name)];
 
   if (!fontsLoaded) return null;
-
-  const handlePressTextClick = () => {
-    setSidebarState("collapsed");
-  };
 
   const handleNavItemPress = (itemName) => {
     setSelectedItem(itemName);
     setSidebarState("press");
-    if (navigation) {
-      navigation.navigate(getRouteName(itemName));
-    }
+    if (navigation) navigation.navigate(getRouteName(itemName));
   };
 
-  const handleArrowPress = () => {
-    setSidebarState("expanded");
-  };
+  const filteredProducts = selectedCategory === "All"
+    ? StockProducts
+    : StockProducts.filter((p) => p.subText === selectedCategory);
 
-  const handleCloseSidebar = () => {
-    setSidebarState("press");
-  };
 
-  const isPressState = sidebarState === "press";
-  const isCollapsed = sidebarState === "collapsed";
-  const isExpanded = sidebarState === "expanded";
-
-  const filteredProducts =
-    selectedCategory === "All"
-      ? StockProducts
-      : StockProducts.filter((p) => p.subText === selectedCategory);
 
   return (
-    <View style={[styles.container, { backgroundColor: darkMode ? "#1a1a2e" : "#fff" }]}>
+    <View style={[styles.container, { backgroundColor: darkMode ? "#1a1a2e" : "#fff", paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+      {/* FLOATING PRESS HANDLE */}
+      {isPressState && (
+        <TouchableOpacity
+          onPress={() => setSidebarState("collapsed")}
+          activeOpacity={0.8}
+          style={styles.floatingPress}
+        >
+          <View style={styles.pressTextWrapper}>
+            <Text style={styles.pressText}>S</Text>
+            <Text style={styles.pressText}>S</Text>
+            <Text style={styles.pressText}>E</Text>
+            <Text style={styles.pressText}>R</Text>
+            <Text style={styles.pressText}>P</Text>
+          </View>
+        </TouchableOpacity>
+      )}
 
-           {/* FLOATING PRESS HANDLE */}
-          {isPressState && (
-            <TouchableOpacity
-              onPress={handlePressTextClick}
-              activeOpacity={0.8}
-              style={styles.floatingPress}
-            >
-              <View style={styles.pressTextWrapper}>
-                <Text style={styles.pressText}>S</Text>
-                <Text style={styles.pressText}>S</Text>
-                <Text style={styles.pressText}>E</Text>
-                <Text style={styles.pressText}>R</Text>
-                <Text style={styles.pressText}>P</Text>
-              </View>
-            </TouchableOpacity>
-          )}
-          
-      {/* OVERLAY - Shows when sidebar is expanded */}
+      {/* OVERLAY */}
       {isExpanded && (
         <TouchableOpacity
           style={styles.overlay}
           activeOpacity={1}
-          onPress={handleCloseSidebar}
+          onPress={() => setSidebarState("press")}
         />
       )}
 
@@ -216,258 +360,75 @@ const handleSaleChange = (field, value) => {
           },
         ]}
       >
-        {/* Toggle Arrow - Only visible when collapsed */}
         {isCollapsed && (
-          <TouchableOpacity
-            onPress={handleArrowPress}
-            style={styles.arrowButton}
-          >
-            <Ionicons
-              name="chevron-forward"
-              size={22}
-              color="#fff"
-            />
+          <TouchableOpacity onPress={() => setSidebarState("expanded")} style={styles.arrowButton}>
+            <Ionicons name="chevron-forward" size={22} color="#fff" />
           </TouchableOpacity>
         )}
-
-        {/* Close Arrow - Only visible when expanded */}
         {isExpanded && (
-          <TouchableOpacity
-            onPress={handleCloseSidebar}
-            style={styles.closeButton}
-          >
-            <Ionicons
-              name="chevron-back"
-              size={22}
-              color="#fff"
-            />
+          <TouchableOpacity onPress={() => setSidebarState("press")} style={styles.closeButton}>
+            <Ionicons name="chevron-back" size={22} color="#fff" />
           </TouchableOpacity>
         )}
 
-        {/* Stocka Logo - Not shown in press state */}
-        {!isPressState && (
-          <View style={[styles.logoContainerSidebar, isExpanded && styles.logoContainerExpanded]}>
-            <Image
-              source={require("../assets/images/stock.png")}
-              style={{ width: 36, height: 36 }}
-            />
-            {isExpanded && <Text style={styles.stockText}>Stocka</Text>}
-          </View>
-        )}
-
-        {/* Menu Items - Not shown in press state */}
         {!isPressState && (
           <>
-            <View style={styles.menuContainer}>
-            <TouchableOpacity 
-              style={[
-                styles.navItem, 
-                isExpanded && styles.navItemExpanded,
-                selectedItem === "Dashboard" && isExpanded && styles.navItemSelected
-              ]}
-              onPress={() => handleNavItemPress("Dashboard")}
-            >
-              <Ionicons name="battery-charging-outline" size={22} color="#fff" />
-              {isExpanded && <Text style={styles.navText}>Dashboard</Text>}
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-              style={[
-                styles.navItem, 
-                isExpanded && styles.navItemExpanded,
-                selectedItem === "Stock" && isExpanded && styles.navItemSelected
-              ]}
-              onPress={() => handleNavItemPress("Stock")}
-            >
-              <Ionicons name="cube-outline" size={22} color="#fff" />
-              {isExpanded && <Text style={styles.navText}>Stock</Text>}
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-              style={[
-                styles.navItem, 
-                isExpanded && styles.navItemExpanded,
-                selectedItem === "Sales" && isExpanded && styles.navItemSelected
-              ]}
-              onPress={() => handleNavItemPress("Sales")}
-            >
-              <Ionicons name="flash-outline" size={22} color="#fff" />
-              {isExpanded && <Text style={styles.navText}>Sales</Text>}
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-              style={[
-                styles.navItem, 
-                isExpanded && styles.navItemExpanded,
-                selectedItem === "Reports" && isExpanded && styles.navItemSelected
-              ]}
-              onPress={() => handleNavItemPress("Reports")}
-            >
-              <Ionicons name="document-text-outline" size={22} color="#fff" />
-              {isExpanded && <Text style={styles.navText}>Reports</Text>}
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-              style={[
-                styles.navItem, 
-                isExpanded && styles.navItemExpanded,
-                selectedItem === "Debtors" && isExpanded && styles.navItemSelected
-              ]}
-              onPress={() => handleNavItemPress("Debtors")}
-            >
-              <Ionicons name="wallet-outline" size={22} color="#fff" />
-              {isExpanded && <Text style={styles.navText}>Debtors</Text>}
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-              style={[
-                styles.navItem, 
-                isExpanded && styles.navItemExpanded,
-                selectedItem === "Profile" && isExpanded && styles.navItemSelected
-              ]}
-              onPress={() => handleNavItemPress("Profile")}
-            >
-              <Ionicons name="person-outline" size={22} color="#fff" />
-              {isExpanded && <Text style={styles.navText}>Profile</Text>}
-            </TouchableOpacity>
-          </View>
-
-            {/* Divider */}
-            {isExpanded && <View style={styles.divider} />}
-
-            {/* Utility Items */}
-            <View style={styles.utilityContainer}>
-              <TouchableOpacity 
-                style={[styles.navItem, isExpanded && styles.navItemExpanded]}
-                onPress={() => handleNavItemPress("Help")}
-              >
-                <Ionicons name="help-circle-outline" size={22} color="#fff" />
-                {isExpanded && <Text style={styles.navText}>Help</Text>}
-              </TouchableOpacity>
-
-              <TouchableOpacity 
-                style={[styles.navItem, isExpanded && styles.navItemExpanded]}
-                onPress={() => setShowLogoutModal(true)}
-              >
-                <Ionicons name="log-out-outline" size={22} color="#fff" />
-                {isExpanded && <Text style={styles.navText}>Logout</Text>}
-              </TouchableOpacity>
+            <View style={[styles.logoContainerSidebar, isExpanded && styles.logoContainerExpanded]}>
+              <Image source={require("../assets/images/stock.png")} style={{ width: 36, height: 36 }} />
+              {isExpanded && <Text style={styles.stockText}>Stocka</Text>}
             </View>
 
-            {/* Theme Toggle - At the bottom, only when expanded */}
-            {isExpanded && (
-              <View style={styles.themeToggleContainer}>
-                <View style={styles.themeToggle}>
-                  <Ionicons
-                    name="sunny"
-                    size={20}
-                    color={!darkMode ? MAIN : "#999"}
-                  />
-                  <TouchableOpacity
-                    style={[
-                      styles.themeToggleSwitch,
-                      darkMode && styles.themeToggleSwitchActive
-                    ]}
-                    onPress={() => setDarkMode(!darkMode)}
-                  >
-                    <View style={[
-                      styles.themeToggleKnob,
-                      darkMode && styles.themeToggleKnobActive
-                    ]} />
-                  </TouchableOpacity>
-                  <Ionicons
-                    name="moon"
-                    size={20}
-                    color={darkMode ? "#fff" : "#999"}
-                  />
-                </View>
-              </View>
-            )}
+            <View style={styles.menuContainer}>
+              <NavItem icon="battery-charging-outline" label="Dashboard" active={selectedItem === "Dashboard"} expanded={isExpanded} onPress={() => handleNavItemPress("Dashboard")} />
+              <NavItem icon="cube-outline" label="Stock" active={selectedItem === "Stock"} expanded={isExpanded} onPress={() => handleNavItemPress("Stock")} />
+              <NavItem icon="flash-outline" label="Sales" active={selectedItem === "Sales"} expanded={isExpanded} onPress={() => handleNavItemPress("Sales")} />
+              <NavItem icon="document-text-outline" label="Reports" active={selectedItem === "Reports"} expanded={isExpanded} onPress={() => handleNavItemPress("Reports")} />
+              <NavItem icon="wallet-outline" label="Debtors" active={selectedItem === "Debtors"} expanded={isExpanded} onPress={() => handleNavItemPress("Debtors")} />
+              <NavItem icon="person-outline" label="Profile" active={selectedItem === "Profile"} expanded={isExpanded} onPress={() => handleNavItemPress("Profile")} />
+            </View>
+
+            <View style={styles.divider} />
+
+            <View style={styles.utilityContainer}>
+              <NavItem icon="help-circle-outline" label="Help" expanded={isExpanded} onPress={() => setHelpModalVisible(true)} />
+              <NavItem icon="log-out-outline" label="Logout" expanded={isExpanded} onPress={() => setShowLogoutModal(true)} />
+            </View>
           </>
         )}
       </View>
 
-      {/* CONTENT */}
-      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0, backgroundColor: darkMode ? "#1a1a2e" : "#fff" }}>
-        <KeyboardAvoidingView 
-          style={{ flex: 1 }}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
+      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0 }}>
+        <ScrollView
+          contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[MAIN]} />
+          }
         >
-          <ScrollView 
-            contentContainerStyle={{ padding: 20, backgroundColor: darkMode ? "#1a1a2e" : "#fff" }}
-            style={darkMode && styles.darkScrollView}
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
-          >
-            {/* Header with back button */}
-            <View style={styles.headerRow}>
-              {navigation?.canGoBack() && (
-                <TouchableOpacity 
-                  onPress={() => navigation.goBack()}
-                  style={styles.backButton}
-                >
-                  <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
-                </TouchableOpacity>
-              )}
-              <View style={styles.logoContainer}>
-                <Image
-                  source={require("../assets/images/stock.png")}
-                  style={{ width: 36, height: 36 }}
-                />
-                <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
-              </View>
+          <View style={styles.headerRow}>
+            <View style={styles.logoContainerHeader}>
+              <Image source={require("../assets/images/stock.png")} style={{ width: 36, height: 36 }} />
+              <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
             </View>
-
-        {/* Search & Category */}
-        <View style={styles.searchCategoryContainer}>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search..."
-            value={searchText}
-            onChangeText={setSearchText}
-          />
-
-          <TouchableOpacity
-            style={styles.categoryDropdown}
-            onPress={() => setCategoryVisible(true)}
-          >
-            <Text style={styles.categoryText}>{selectedCategory}</Text>
-            <Ionicons name="chevron-down" size={20} color="#fff" />
-          </TouchableOpacity>
-        </View>
-
-        {/* Category Modal */}
-        <Modal visible={categoryVisible} transparent animationType="fade">
-          <TouchableOpacity
-            style={styles.modalOverlay}
-            onPress={() => setCategoryVisible(false)}
-          />
-          <View style={[styles.modalContainer, darkMode && styles.darkModalContainer]}>
-            {categories.map((cat) => (
-              <TouchableOpacity
-                key={cat}
-                style={[styles.modalItem, darkMode && styles.darkModalItem]}
-                onPress={() => {
-                  setSelectedCategory(cat);
-                  setCategoryVisible(false);
-                }}
-              >
-                <Text style={[styles.modalText, darkMode && styles.darkText]}>{cat}</Text>
-              </TouchableOpacity>
-            ))}
+            <TouchableOpacity onPress={() => setHelpModalVisible(true)}>
+              <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
+            </TouchableOpacity>
           </View>
-        </Modal>
 
-        <Text style={[styles.title, darkMode && styles.darkText]}>Products in Stock</Text>
+          <View style={styles.searchCategoryContainer}>
+            <TextInput style={styles.searchInput} placeholder="Search..." value={searchText} onChangeText={setSearchText} placeholderTextColor={darkMode ? "#aaa" : "#999"} />
+            <TouchableOpacity style={styles.categoryDropdown} onPress={() => setCategoryVisible(true)}>
+              <Text style={styles.categoryText}>{selectedCategory}</Text>
+              <Ionicons name="chevron-down" size={20} color="#fff" />
+            </TouchableOpacity>
+          </View>
 
-        {/* Products */}
-        <FlatList
-          data={filteredProducts.filter((p) =>
-            p.TextHead.toLowerCase().includes(searchText.toLowerCase())
-          )}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <View style={[styles.productCard, darkMode && styles.darkProductCard]}>
+          <Text style={[styles.title, darkMode && styles.darkText]}>Products in Stock</Text>
+
+          {filteredProducts.filter(p => p.TextHead.toLowerCase().includes(searchText.toLowerCase())).length === 0 ? (
+            <Text style={{ textAlign: 'center', marginTop: 20, color: darkMode ? '#aaa' : '#666' }}>No products found</Text>
+          ) : filteredProducts.filter(p => p.TextHead.toLowerCase().includes(searchText.toLowerCase())).map((item) => (
+            <View key={item.id} style={[styles.productCard, darkMode && styles.darkProductCard]}>
               <Image source={item.Image} style={styles.productImage} />
               <View style={{ flex: 1, marginLeft: 12 }}>
                 <Text style={[styles.productName, darkMode && styles.darkText]}>{item.TextHead}</Text>
@@ -487,18 +448,51 @@ const handleSaleChange = (field, value) => {
                 </TouchableOpacity>
               </View>
             </View>
-          )}
-        />
+          ))}
 
-         <View style={styles.addProductButton}>
-  <TouchableOpacity style={styles.productButton}>
-    <Text style={styles.addText}>+ Add Product</Text>
-  </TouchableOpacity>
-</View>
-
-          </ScrollView>
-        </KeyboardAvoidingView>
+          <TouchableOpacity style={styles.productButton} onPress={() => setAddNewProductVisible(true)}>
+            <Text style={styles.addText}>+ Add Product</Text>
+          </TouchableOpacity>
+        </ScrollView>
       </SafeAreaView>
+
+      {/* ================= CATEGORY MODAL ================= */}
+      <Modal visible={categoryVisible} transparent animationType="fade">
+        <TouchableOpacity style={styles.modalOverlay} onPress={() => setCategoryVisible(false)} />
+        <View style={[styles.modalContainer, darkMode && { backgroundColor: '#2a2a3e' }]}>
+          <FlatList
+            data={categories}
+            keyExtractor={(item) => item}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.modalItem}
+                onPress={() => {
+                  setSelectedCategory(item);
+                  setCategoryVisible(false);
+                }}
+              >
+                <Text style={[styles.modalText, darkMode && styles.darkText]}>{item}</Text>
+              </TouchableOpacity>
+            )}
+          />
+        </View>
+      </Modal>
+
+      {/* ================= HELP MODAL ================= */}
+      <Modal visible={helpModalVisible} transparent animationType="fade">
+        <View style={styles.overlay}>
+          <View style={[styles.helpModalCard, darkMode && { backgroundColor: '#2a2a3e' }]}>
+            <Ionicons name="help-circle-outline" size={48} color={darkMode ? "#4a9eff" : "#0A2A3F"} style={{ marginBottom: 15 }} />
+            <Text style={[styles.helpModalTitle, darkMode && styles.darkText]}>Need Help?</Text>
+            <Text style={[styles.helpModalText, darkMode && { color: '#aaa' }]}>
+              Any problem? Text us via SMS or WhatsApp on +250792050511
+            </Text>
+            <TouchableOpacity style={styles.helpModalButton} onPress={() => setHelpModalVisible(false)}>
+              <Text style={styles.helpModalButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       {/* ================= PRODUCT DETAILS MODAL ================= */}
       <Modal visible={!!selectedProduct} transparent animationType="fade">
@@ -538,12 +532,12 @@ const handleSaleChange = (field, value) => {
             {/* Buttons */}
             <View style={styles.detailsActions}>
               <TouchableOpacity style={styles.actionButton}
-                 onPress={() => setRecordSaleVisible(true)}
+                onPress={() => setRecordSaleVisible(true)}
               >
                 <Text style={styles.actionText}>Record Sale</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.actionButtonOutline}
-                 onPress={() => setAddStockVisible(true)}
+                onPress={() => setAddStockVisible(true)}
               >
                 <Text style={styles.actionTextOutline}>Add Stock</Text>
               </TouchableOpacity>
@@ -552,227 +546,297 @@ const handleSaleChange = (field, value) => {
         </View>
       </Modal>
 
-  {/* ================= ADD STOCK MODAL ================= */}
-<Modal visible={addStockVisible} transparent animationType="slide">
-  <View style={formStyles.overlay}>
-    <TouchableOpacity 
-      style={StyleSheet.absoluteFill}
-      activeOpacity={1}
-      onPress={() => setAddStockVisible(false)}
-    />
-    <KeyboardAvoidingView 
-      style={formStyles.modalContainer}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <ScrollView 
-        contentContainerStyle={formStyles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
+      {/* ================= CREATE NEW PRODUCT MODAL ================= */}
+      <Modal 
+        visible={addNewProductVisible} 
+        transparent 
+        animationType="slide"
+        onShow={() => {
+          // Ensure categories are loaded when modal opens
+          if (categoriesList.length === 0) {
+            fetchCategories();
+          }
+        }}
       >
-        <View style={[formStyles.card, darkMode && formStyles.darkCard]}>
+        <View style={styles.overlay}>
+          <View style={[styles.detailsCard, darkMode && styles.darkDetailsCard]}>
+            <View style={styles.detailsHeader}>
+              <Text style={[styles.detailsTitle, darkMode && styles.darkText]}>Create New Product</Text>
+              <TouchableOpacity onPress={() => setAddNewProductVisible(false)}>
+                <Ionicons name="close" size={22} color={darkMode ? "#fff" : "#333"} />
+              </TouchableOpacity>
+            </View>
 
-      {/* Header */}
-      <View style={[formStyles.header, darkMode && { borderBottomColor: "#444" }]}>
-        <Text style={[formStyles.title, darkMode && styles.darkText]}>Add to Stock</Text>
-        <TouchableOpacity onPress={() => setAddStockVisible(false)}>
-          <Ionicons name="close" size={22} color={darkMode ? "#fff" : "#333"} />
-        </TouchableOpacity>
-      </View>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <TouchableOpacity onPress={pickImage} style={[styles.imagePickerButton, { alignSelf: 'center', marginBottom: 20 }]}>
+                {newProductData.productImage ? (
+                  <Image source={{ uri: newProductData.productImage }} style={{ width: 100, height: 100, borderRadius: 10 }} />
+                ) : (
+                  <View style={{ width: 100, height: 100, borderRadius: 10, backgroundColor: '#f0f0f0', justifyContent: 'center', alignItems: 'center' }}>
+                    <Ionicons name="camera-outline" size={40} color={MAIN} />
+                    <Text style={{ fontSize: 10, color: MAIN }}>Add Picture</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
 
-      {/* Body */}
-      <View style={formStyles.body}>
+              <FormInput
+                label="Product Name"
+                placeholder="Ex: Irish Potatoes"
+                value={newProductData.productName}
+                onChangeText={(v) => setNewProductData({ ...newProductData, productName: v })}
+                darkMode={darkMode}
+              />
 
-        {/* LEFT SIDE */}
-        <View style={formStyles.left}>
+              <Text style={[styles.detailLabel, { marginBottom: 5 }, darkMode && { color: "#aaa" }]}>Category</Text>
+              <View style={{ backgroundColor: darkMode ? "#1a1a2e" : "#F2F2F2", borderRadius: 8, marginBottom: 12, borderWidth: darkMode ? 1 : 0, borderColor: "#444" }}>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ padding: 10 }}>
+                  {categoriesList.length === 0 ? (
+                    <Text style={{ color: darkMode ? "#aaa" : "#666", fontSize: 12, padding: 10 }}>
+                      No categories available. Please add a category first.
+                    </Text>
+                  ) : (
+                    categoriesList.map((cat) => (
+                    <TouchableOpacity
+                      key={cat.id}
+                      onPress={() => setNewProductData({ ...newProductData, categoryId: cat.id })}
+                      style={{
+                        paddingHorizontal: 12,
+                        paddingVertical: 6,
+                        borderRadius: 20,
+                        backgroundColor: newProductData.categoryId === cat.id ? MAIN : (darkMode ? "#2a2a3e" : "#fff"),
+                        marginRight: 8,
+                        borderWidth: 1,
+                        borderColor: newProductData.categoryId === cat.id ? MAIN : "#ddd"
+                      }}
+                    >
+                      <Text style={{ color: newProductData.categoryId === cat.id ? "#fff" : (darkMode ? "#fff" : "#333"), fontSize: 12 }}>
+                        {cat.category_name}
+                      </Text>
+                    </TouchableOpacity>
+                    ))
+                  )}
+                </ScrollView>
+              </View>
 
-          <Text style={[formStyles.staticLabel, darkMode && { color: "#aaa" }]}>Product Name</Text>
-          <Text style={[formStyles.staticValue, darkMode && styles.darkText]}>
-            {selectedProduct?.TextHead}
-          </Text>
+              <FormInput
+                label="Low Stock Threshold"
+                placeholder="Ex: 10"
+                keyboardType="numeric"
+                value={newProductData.lowStockThreshold}
+                onChangeText={(v) => setNewProductData({ ...newProductData, lowStockThreshold: v })}
+                darkMode={darkMode}
+              />
 
-          <Text style={[formStyles.staticLabel, darkMode && { color: "#aaa" }]}>Category</Text>
-          <Text style={[formStyles.staticValue, darkMode && styles.darkText]}>
-            {selectedProduct?.subText}
-          </Text>
-
-          <FormInput
-            label="Quantity purchased"
-            placeholder="Ex: 54kg"
-            value={formData.quantity}
-            onChangeText={(v) => handleChange("quantity", v)}
-            inputStyle={formStyles.input}
-            darkMode={darkMode}
-          />
-
-          <FormInput
-            label="Purchase price per unit"
-            placeholder="Ex: 200 RWF"
-            value={formData.price}
-            onChangeText={(v) => handleChange("price", v)}
-            inputStyle={formStyles.input}
-            darkMode={darkMode}
-          />
-
-          <FormInput
-            label="Purchase Date"
-            placeholder="Ex: 15 June 2025"
-            value={formData.purchaseDate}
-            onChangeText={(v) => handleChange("purchaseDate", v)}
-            inputStyle={formStyles.input}
-            darkMode={darkMode}
-          />
-
-          <FormInput
-            label="Expiry Date"
-            placeholder="Ex: 15 September 2025"
-            value={formData.expiryDate}
-            onChangeText={(v) => handleChange("expiryDate", v)}
-            inputStyle={formStyles.input}
-            darkMode={darkMode}
-          />
-
+              <TouchableOpacity style={[styles.actionButton, { marginTop: 10 }]} onPress={handleCreateProduct}>
+                <Text style={styles.actionText}>Create Product</Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </View>
         </View>
+      </Modal>
 
-        {/* RIGHT SIDE */}
-        <View style={formStyles.right}>
-          <Image
-            source={selectedProduct?.Image}
-            style={formStyles.image}
+      {/* ================= ADD STOCK MODAL ================= */}
+      <Modal visible={addStockVisible} transparent animationType="slide">
+        <View style={formStyles.overlay}>
+          <TouchableOpacity
+            style={StyleSheet.absoluteFill}
+            activeOpacity={1}
+            onPress={() => setAddStockVisible(false)}
           />
+          <KeyboardAvoidingView
+            style={formStyles.modalContainer}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+          >
+            <ScrollView
+              contentContainerStyle={formStyles.scrollContent}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+            >
+              <View style={[formStyles.card, darkMode && formStyles.darkCard]}>
 
-          <FormInput
-            label="Description (Optional)"
-            placeholder="Key notes about the product..."
-            multiline
-            value={formData.description}
-            onChangeText={(v) => handleChange("description", v)}
-            inputStyle={formStyles.descriptionInput}
-            darkMode={darkMode}
+                {/* Header */}
+                <View style={[formStyles.header, darkMode && { borderBottomColor: "#444" }]}>
+                  <Text style={[formStyles.title, darkMode && styles.darkText]}>Add to Stock</Text>
+                  <TouchableOpacity onPress={() => setAddStockVisible(false)}>
+                    <Ionicons name="close" size={22} color={darkMode ? "#fff" : "#333"} />
+                  </TouchableOpacity>
+                </View>
+
+                {/* Body */}
+                <View style={formStyles.body}>
+
+                  {/* LEFT SIDE */}
+                  <View style={formStyles.left}>
+
+                    <Text style={[formStyles.staticLabel, darkMode && { color: "#aaa" }]}>Product Name</Text>
+                    <Text style={[formStyles.staticValue, darkMode && styles.darkText]}>
+                      {selectedProduct?.TextHead}
+                    </Text>
+
+                    <Text style={[formStyles.staticLabel, darkMode && { color: "#aaa" }]}>Category</Text>
+                    <Text style={[formStyles.staticValue, darkMode && styles.darkText]}>
+                      {selectedProduct?.subText}
+                    </Text>
+
+                    <FormInput
+                      label="Quantity purchased"
+                      placeholder="Ex: 54kg"
+                      value={formData.quantity}
+                      onChangeText={(v) => handleChange("quantity", v)}
+                      inputStyle={formStyles.input}
+                      darkMode={darkMode}
+                    />
+
+                    <FormInput
+                      label="Purchase price per unit"
+                      placeholder="Ex: 200 RWF"
+                      value={formData.price}
+                      onChangeText={(v) => handleChange("price", v)}
+                      inputStyle={formStyles.input}
+                      darkMode={darkMode}
+                    />
+
+                    <FormInput
+                      label="Purchase Date"
+                      placeholder="Ex: 2025-11-12"
+                      value={formData.purchaseDate}
+                      onChangeText={(v) => handleChange("purchaseDate", v)}
+                      inputStyle={formStyles.input}
+                      darkMode={darkMode}
+                    />
+
+                    <FormInput
+                      label="Expiry Date"
+                      placeholder="Ex: 2026-01-02"
+                      value={formData.expiryDate}
+                      onChangeText={(v) => handleChange("expiryDate", v)}
+                      inputStyle={formStyles.input}
+                      darkMode={darkMode}
+                    />
+
+                  </View>
+
+                  {/* RIGHT SIDE */}
+                  <View style={formStyles.right}>
+                    <Image
+                      source={selectedProduct?.Image}
+                      style={formStyles.image}
+                    />
+
+                    <FormInput
+                      label="Description (Optional)"
+                      placeholder="Key notes..."
+                      multiline
+                      value={formData.description}
+                      onChangeText={(v) => handleChange("description", v)}
+                      inputStyle={formStyles.descriptionInput}
+                      darkMode={darkMode}
+                    />
+
+                  </View>
+
+                </View>
+
+                {/* Button */}
+                <TouchableOpacity style={formStyles.addButton} onPress={handleAddStock}>
+                  <Text style={formStyles.addText}>ADD STOCK</Text>
+                </TouchableOpacity>
+
+              </View>
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </View>
+      </Modal>
+
+      {/* ================= SALES RECORD MODAL ================= */}
+      <Modal visible={recordSaleVisible} transparent animationType="slide">
+        <View style={saleStyles.overlay}>
+          <TouchableOpacity
+            style={StyleSheet.absoluteFill}
+            activeOpacity={1}
+            onPress={() => setRecordSaleVisible(false)}
           />
+          <KeyboardAvoidingView
+            style={saleStyles.modalContainer}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+          >
+            <ScrollView
+              contentContainerStyle={saleStyles.scrollContent}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+            >
+              <View style={[saleStyles.card, darkMode && saleStyles.darkCard]}>
 
+                {/* Header */}
+                <View style={[saleStyles.header, darkMode && { borderBottomColor: "#444" }]}>
+                  <Text style={[saleStyles.title, darkMode && styles.darkText]}>Record Sale</Text>
+                  <TouchableOpacity onPress={() => setRecordSaleVisible(false)}>
+                    <Ionicons name="close" size={22} color={darkMode ? "#fff" : "#333"} />
+                  </TouchableOpacity>
+                </View>
+
+                {/* Body */}
+                <View style={saleStyles.body}>
+
+                  {/* LEFT */}
+                  <View style={saleStyles.left}>
+                    <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Product Name</Text>
+                    <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.TextHead}</Text>
+
+                    <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Category</Text>
+                    <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.subText}</Text>
+
+                    <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Remaining stock</Text>
+                    <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.kilos}</Text>
+                  </View>
+
+                  {/* RIGHT */}
+                  <View style={saleStyles.right}>
+                    <Image
+                      source={selectedProduct?.Image}
+                      style={saleStyles.image}
+                    />
+                  </View>
+
+                </View>
+
+                {/* SALE FORM */}
+                <Text style={[saleStyles.sectionTitle, darkMode && styles.darkText]}>Sale Details</Text>
+
+                <View style={saleStyles.formRow}>
+                  <View style={saleStyles.formInputWrapper}>
+                    <FormInput
+                      label="Quantity sold"
+                      placeholder="Ex: 5"
+                      value={saleData.quantity}
+                      onChangeText={(v) => handleSaleChange("quantity", v)}
+                      containerStyle={saleStyles.halfWidthContainer}
+                      darkMode={darkMode}
+                    />
+                  </View>
+
+                  <View style={saleStyles.formInputWrapper}>
+                    <FormInput
+                      label="Unit Selling Price"
+                      placeholder="Ex: 500"
+                      value={saleData.unitPrice}
+                      onChangeText={(v) => handleSaleChange("unitPrice", v)}
+                      containerStyle={saleStyles.halfWidthContainer}
+                      darkMode={darkMode}
+                    />
+                  </View>
+                </View>
+
+                {/* BUTTON */}
+                <TouchableOpacity style={saleStyles.recordButton} onPress={handleRecordSale}>
+                  <Text style={saleStyles.recordText}>RECORD SALE</Text>
+                </TouchableOpacity>
+
+              </View>
+            </ScrollView>
+          </KeyboardAvoidingView>
         </View>
-
-      </View>
-
-          {/* Button */}
-          <TouchableOpacity style={formStyles.addButton}>
-            <Text style={formStyles.addText}>ADD</Text>
-          </TouchableOpacity>
-
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
-  </View>
-</Modal>
-
-{/* ================= SALES RECORD MODAL ================= */}
-<Modal visible={recordSaleVisible} transparent animationType="slide">
-  <View style={saleStyles.overlay}>
-    <TouchableOpacity 
-      style={StyleSheet.absoluteFill}
-      activeOpacity={1}
-      onPress={() => setRecordSaleVisible(false)}
-    />
-    <KeyboardAvoidingView 
-      style={saleStyles.modalContainer}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <ScrollView 
-        contentContainerStyle={saleStyles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-      >
-        <View style={[saleStyles.card, darkMode && saleStyles.darkCard]}>
-
-      {/* Header */}
-      <View style={[saleStyles.header, darkMode && { borderBottomColor: "#444" }]}>
-        <Text style={[saleStyles.title, darkMode && styles.darkText]}>Product Details</Text>
-        <TouchableOpacity onPress={() => setRecordSaleVisible(false)}>
-          <Ionicons name="close" size={22} color={darkMode ? "#fff" : "#333"} />
-        </TouchableOpacity>
-      </View>
-
-      {/* Body */}
-      <View style={saleStyles.body}>
-
-        {/* LEFT */}
-        <View style={saleStyles.left}>
-          <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Product Name</Text>
-          <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.TextHead}</Text>
-
-          <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Category</Text>
-          <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.subText}</Text>
-
-          <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Remaining stock</Text>
-          <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.kilos}</Text>
-
-          <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Purchase date</Text>
-          <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.PurchaseDate}</Text>
-
-          <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Expiry date</Text>
-          <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.ExpiryDate}</Text>
-        </View>
-
-        {/* RIGHT */}
-        <View style={saleStyles.right}>
-          <Image
-            source={selectedProduct?.Image}
-            style={saleStyles.image}
-          />
-
-          <Text style={[saleStyles.descTitle, darkMode && styles.darkText]}>Description</Text>
-          <Text style={[saleStyles.description, darkMode && { color: "#aaa" }]}>
-            {selectedProduct?.description || "No description available."}
-          </Text>
-        </View>
-
-      </View>
-
-      {/* SALE FORM */}
-      <Text style={[saleStyles.sectionTitle, darkMode && styles.darkText]}>Record a sale</Text>
-
-      <View style={saleStyles.formRow}>
-        <View style={saleStyles.formInputWrapper}>
-          <FormInput
-            label="Quantity sold"
-            placeholder="Ex: 54kg"
-            value={saleData.quantity}
-            onChangeText={(v) => handleSaleChange("quantity", v)}
-            containerStyle={saleStyles.halfWidthContainer}
-            darkMode={darkMode}
-          />
-        </View>
-
-        <View style={saleStyles.formInputWrapper}>
-          <FormInput
-            label="Unit Selling Price"
-            placeholder="Ex: 200 RWF"
-            value={saleData.unitPrice}
-            onChangeText={(v) => handleSaleChange("unitPrice", v)}
-            containerStyle={saleStyles.halfWidthContainer}
-            darkMode={darkMode}
-          />
-        </View>
-      </View>
-
-      <FormInput
-        label="Total Price"
-        placeholder="0 RWF"
-        value={saleData.totalPrice}
-        onChangeText={(v) => handleSaleChange("totalPrice", v)}
-        darkMode={darkMode}
-      />
-
-          {/* BUTTON */}
-          <TouchableOpacity style={saleStyles.recordButton}>
-            <Text style={saleStyles.recordText}>RECORD</Text>
-          </TouchableOpacity>
-
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
-  </View>
-</Modal>
+      </Modal>
 
       {/* LOGOUT MODAL */}
       <Modal
@@ -799,9 +863,7 @@ const handleSaleChange = (field, value) => {
                 style={styles.logoutYesButton}
                 onPress={() => {
                   setShowLogoutModal(false);
-                  if (navigation) {
-                    navigation.navigate("Login");
-                  }
+                  logout();
                 }}
               >
                 <Text style={styles.logoutYesText}>YES</Text>
@@ -818,9 +880,24 @@ const handleSaleChange = (field, value) => {
         </View>
       </Modal>
 
-      </View>
+    </View>
   );
 }
+
+/* Sidebar NavItem Helper */
+const NavItem = ({ icon, label, active, expanded, onPress }) => (
+  <TouchableOpacity
+    style={[
+      styles.navItem,
+      expanded && styles.navItemExpanded,
+      active && expanded && styles.navItemSelected
+    ]}
+    onPress={onPress}
+  >
+    <Ionicons name={icon} size={22} color="#fff" />
+    {expanded && <Text style={styles.navText}>{label}</Text>}
+  </TouchableOpacity>
+);
 
 /* Small reusable component */
 const Detail = ({ label, value, darkMode }) => (
@@ -1050,10 +1127,10 @@ const styles = StyleSheet.create({
   stockaText: { fontFamily: "Poppins_700Bold", fontSize: 22, color: MAIN, marginLeft: 10 },
 
   searchCategoryContainer: { flexDirection: "row", marginBottom: 20 },
-  searchInput: { flex: 1, backgroundColor: "#F0F0F0", borderRadius: 8, padding: 10, marginRight: 10, fontFamily:"Poppins_400Regular", color: "#000" },
+  searchInput: { flex: 1, backgroundColor: "#F0F0F0", borderRadius: 8, padding: 10, marginRight: 10, fontFamily: "Poppins_400Regular", color: "#000" },
 
   categoryDropdown: { flexDirection: "row", backgroundColor: MAIN, padding: 10, borderRadius: 8 },
-  categoryText: { color: "#fff", marginRight: 5 ,fontFamily:"Poppins_400Regular"},
+  categoryText: { color: "#fff", marginRight: 5, fontFamily: "Poppins_400Regular" },
 
   modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.2)" },
   modalContainer: { position: "absolute", top: 100, right: 20, backgroundColor: "#fff", borderRadius: 10, width: 160 },
@@ -1067,14 +1144,14 @@ const styles = StyleSheet.create({
   productImage: { width: 80, height: 80, borderRadius: 8 },
 
   productName: { fontFamily: "Poppins_600SemiBold", fontSize: 16 },
-  productCategory: { fontSize: 12, color: "#555", fontFamily:"Poppins_400Regular" },
-  productKilos: { fontSize: 12, color: "#555" , fontFamily:"Poppins_400Regular"},
+  productCategory: { fontSize: 12, color: "#555", fontFamily: "Poppins_400Regular" },
+  productKilos: { fontSize: 12, color: "#555", fontFamily: "Poppins_400Regular" },
 
   warningWrapper: { flexDirection: "row", alignItems: "center", marginVertical: 4 },
-  productExpiry: { fontSize: 12, color: "red", marginLeft: 6,fontFamily:"Poppins_400Regular" },
+  productExpiry: { fontSize: 12, color: "red", marginLeft: 6, fontFamily: "Poppins_400Regular" },
 
   viewButton: { backgroundColor: MAIN, padding: 8, borderRadius: 8, marginTop: 4, alignSelf: "flex-start" },
-  viewButtonText: { color: "#fff", fontSize: 12,fontFamily:"Poppins_400Regular" },
+  viewButtonText: { color: "#fff", fontSize: 12, fontFamily: "Poppins_400Regular" },
 
   /* ===== MODAL ===== */
   overlay: { flex: 1, backgroundColor: "rgba(9,54,77,0.25)", justifyContent: "center", alignItems: "center" },
@@ -1087,200 +1164,200 @@ const styles = StyleSheet.create({
   detailsLeft: { flex: 1 },
   detailsRight: { flex: 1, alignItems: "center" },
 
-  detailsImage: { width: 120, height: 120, borderRadius: 10, marginBottom: 10, borderColor:"#e1dedeff", borderWidth:2 },
+  detailsImage: { width: 120, height: 120, borderRadius: 10, marginBottom: 10, borderColor: "#e1dedeff", borderWidth: 2 },
 
-  descriptionText: { fontSize: 12, color: "#555", textAlign: "left", fontFamily:"Poppins_400Regular" },
+  descriptionText: { fontSize: 12, color: "#555", textAlign: "left", fontFamily: "Poppins_400Regular" },
 
-  detailLabel: { fontSize: 12, color: "#777",fontFamily:"Poppins_400Regular"  },
+  detailLabel: { fontSize: 12, color: "#777", fontFamily: "Poppins_400Regular" },
   detailValue: { fontFamily: "Poppins_500Medium" },
 
   detailsActions: { flexDirection: "row", justifyContent: "space-between", marginTop: 20 },
 
   actionButton: { backgroundColor: MAIN, padding: 10, borderRadius: 8, flex: 1, marginRight: 8 },
-  actionText: { color: "#fff", textAlign: "center",fontFamily:"Poppins_400Regular"  },
+  actionText: { color: "#fff", textAlign: "center", fontFamily: "Poppins_400Regular" },
 
   actionButtonOutline: { borderWidth: 1, borderColor: MAIN, padding: 10, borderRadius: 8, flex: 1 },
-  actionTextOutline: { color: MAIN, textAlign: "center",fontFamily:"Poppins_400Regular"  },
+  actionTextOutline: { color: MAIN, textAlign: "center", fontFamily: "Poppins_400Regular" },
 
   addStockCard: {
-  width: "85%",
-  backgroundColor: "#fff",
-  borderRadius: 16,
-  padding: 20,
-},
+    width: "85%",
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 20,
+  },
 
-input: {
-  backgroundColor: "#F0F0F0",
-  borderRadius: 8,
-  padding: 12,
-  marginBottom: 12,
-  fontFamily: "Poppins_400Regular",
-},
+  input: {
+    backgroundColor: "#F0F0F0",
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    fontFamily: "Poppins_400Regular",
+  },
 
-/* ===== ADD STOCK MODAL ===== */
-addOverlay: {
-  flex: 1,
-  backgroundColor: "rgba(9,54,77,0.35)",
-  justifyContent: "center",
-  alignItems: "center",
-},
+  /* ===== ADD STOCK MODAL ===== */
+  addOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(9,54,77,0.35)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 
-addCard: {
-  width: "90%",
-  backgroundColor: "#fff",
-  borderRadius: 18,
-  padding: 20,
-},
+  addCard: {
+    width: "90%",
+    backgroundColor: "#fff",
+    borderRadius: 18,
+    padding: 20,
+  },
 
-addHeader: {
-  flexDirection: "row",
-  justifyContent: "space-between",
-  alignItems: "center",
-  marginBottom: 15,
-},
+  addHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 15,
+  },
 
-addTitle: {
-  fontFamily: "Poppins_700Bold",
-  fontSize: 18,
-  color: MAIN,
-},
+  addTitle: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 18,
+    color: MAIN,
+  },
 
-addForm: {
-  marginBottom: 15,
-},
+  addForm: {
+    marginBottom: 15,
+  },
 
-formGroup: {
-  marginBottom: 12,
-},
+  formGroup: {
+    marginBottom: 12,
+  },
 
-formLabel: {
-  fontSize: 12,
-  color: "#555",
-  marginBottom: 4,
-  fontFamily: "Poppins_400Regular",
-},
+  formLabel: {
+    fontSize: 12,
+    color: "#555",
+    marginBottom: 4,
+    fontFamily: "Poppins_400Regular",
+  },
 
-formInput: {
-  backgroundColor: "#F2F2F2",
-  borderRadius: 8,
-  padding: 10,
-  fontFamily: "Poppins_400Regular",
-  color: "#000",
-},
+  formInput: {
+    backgroundColor: "#F2F2F2",
+    borderRadius: 8,
+    padding: 10,
+    fontFamily: "Poppins_400Regular",
+    color: "#000",
+  },
 
-formTextarea: {
-  height: 80,
-  textAlignVertical: "top",
-},
+  formTextarea: {
+    height: 80,
+    textAlignVertical: "top",
+  },
 
-addActions: {
-  flexDirection: "row",
-  justifyContent: "space-between",
-},
+  addActions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
 
-addPrimaryBtn: {
-  backgroundColor: MAIN,
-  padding: 12,
-  borderRadius: 8,
-  flex: 1,
-  marginRight: 8,
-},
+  addPrimaryBtn: {
+    backgroundColor: MAIN,
+    padding: 12,
+    borderRadius: 8,
+    flex: 1,
+    marginRight: 8,
+  },
 
-addPrimaryText: {
-  color: "#fff",
-  textAlign: "center",
-  fontFamily: "Poppins_500Medium",
-},
+  addPrimaryText: {
+    color: "#fff",
+    textAlign: "center",
+    fontFamily: "Poppins_500Medium",
+  },
 
-addSecondaryBtn: {
-  borderWidth: 1,
-  borderColor: MAIN,
-  padding: 12,
-  borderRadius: 8,
-  flex: 1,
-},
+  addSecondaryBtn: {
+    borderWidth: 1,
+    borderColor: MAIN,
+    padding: 12,
+    borderRadius: 8,
+    flex: 1,
+  },
 
-addSecondaryText: {
-  color: MAIN,
-  textAlign: "center",
-  fontFamily: "Poppins_500Medium",
-},
+  addSecondaryText: {
+    color: MAIN,
+    textAlign: "center",
+    fontFamily: "Poppins_500Medium",
+  },
 
-addProductButton: {
-  width: "100%",
-  marginTop: 15,
-},
+  addProductButton: {
+    width: "100%",
+    marginTop: 15,
+  },
 
-productButton: {
-  backgroundColor: "#09364D",
-  paddingVertical: 12,
-  borderRadius: 12,
-  alignItems: "center",
-  justifyContent: "center",
+  productButton: {
+    backgroundColor: "#09364D",
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
 
-  // Shadow (iOS)
-  shadowColor: "#0A5E8C",
-  shadowOffset: { width: 0, height: 4 },
-  shadowOpacity: 0.4,
-  shadowRadius: 6,
+    // Shadow (iOS)
+    shadowColor: "#0A5E8C",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
 
-  // Shadow (Android)
-  elevation: 6,
-},
+    // Shadow (Android)
+    elevation: 6,
+  },
 
-addText: {
-  color: "#fff",
-  fontSize: 16,
-  fontFamily: "Poppins_600SemiBold",
-},
-logoutOverlay: {
-  flex: 1,
-  backgroundColor: "rgba(0,0,0,0.45)",
-  justifyContent: "center",
-  alignItems: "center",
-},
-logoutModalCard: {
-  width: "80%",
-  maxWidth: 350,
-  backgroundColor: "#fff",
-  borderRadius: 14,
-  padding: 20,
-  alignItems: "center",
-},
-logoutModalText: {
-  fontFamily: "Poppins_500Medium",
-  fontSize: 13,
-  marginVertical: 10,
-  textAlign: "center",
-},
-logoutModalButtons: {
-  flexDirection: "row",
-  marginTop: 14,
-},
-logoutYesButton: {
-  backgroundColor: "#0A2A3F",
-  paddingVertical: 10,
-  paddingHorizontal: 30,
-  borderRadius: 8,
-  marginRight: 10,
-},
-logoutYesText: {
-  color: "#fff",
-  fontFamily: "Poppins_500Medium",
-  fontSize: 12,
-},
-logoutNoButton: {
-  borderWidth: 1,
-  borderColor: "#0A2A3F",
-  paddingVertical: 10,
-  paddingHorizontal: 30,
-  borderRadius: 8,
-},
-logoutNoText: {
-  fontFamily: "Poppins_500Medium",
-  fontSize: 12,
-  color: "#0A2A3F",
-},
+  addText: {
+    color: "#fff",
+    fontSize: 16,
+    fontFamily: "Poppins_600SemiBold",
+  },
+  logoutOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  logoutModalCard: {
+    width: "80%",
+    maxWidth: 350,
+    backgroundColor: "#fff",
+    borderRadius: 14,
+    padding: 20,
+    alignItems: "center",
+  },
+  logoutModalText: {
+    fontFamily: "Poppins_500Medium",
+    fontSize: 13,
+    marginVertical: 10,
+    textAlign: "center",
+  },
+  logoutModalButtons: {
+    flexDirection: "row",
+    marginTop: 14,
+  },
+  logoutYesButton: {
+    backgroundColor: "#0A2A3F",
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+    marginRight: 10,
+  },
+  logoutYesText: {
+    color: "#fff",
+    fontFamily: "Poppins_500Medium",
+    fontSize: 12,
+  },
+  logoutNoButton: {
+    borderWidth: 1,
+    borderColor: "#0A2A3F",
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+  },
+  logoutNoText: {
+    fontFamily: "Poppins_500Medium",
+    fontSize: 12,
+    color: "#0A2A3F",
+  },
 
 });
 
@@ -1348,15 +1425,15 @@ const formStyles = StyleSheet.create({
     height: 110,
     borderRadius: 12,
     marginBottom: 10,
-    borderColor:"#c5c5c5ff",
-    borderWidth:2,
+    borderColor: "#c5c5c5ff",
+    borderWidth: 2,
   },
 
   staticLabel: {
     fontSize: 12,
     color: "#777",
     marginTop: 6,
-    fontFamily:"Poppins_400Regular",
+    fontFamily: "Poppins_400Regular",
   },
 
   staticValue: {
@@ -1372,7 +1449,7 @@ const formStyles = StyleSheet.create({
     fontSize: 12,
     color: "#333",
     marginBottom: 4,
-    fontFamily:"Poppins_400Regular",
+    fontFamily: "Poppins_400Regular",
   },
 
   input: {
@@ -1381,8 +1458,8 @@ const formStyles = StyleSheet.create({
     borderRadius: 10,
     padding: 12,
     fontSize: 14,
-    fontFamily:"Poppins_400Regular",
-    color:"#333",
+    fontFamily: "Poppins_400Regular",
+    color: "#333",
     backgroundColor: "#FAFAFA",
   },
 
@@ -1411,11 +1488,11 @@ const formStyles = StyleSheet.create({
     letterSpacing: 1,
   },
   descriptionInput: {
-  height: 120,
-  textAlignVertical: "top",
-  paddingTop: 12,
-  color:"#000",
-},
+    height: 120,
+    textAlignVertical: "top",
+    paddingTop: 12,
+    color: "#000",
+  },
 
 });
 
@@ -1496,8 +1573,8 @@ const saleStyles = StyleSheet.create({
     height: 110,
     borderRadius: 10,
     marginBottom: 8,
-    borderColor:"#dededeff",
-    borderWidth:2,
+    borderColor: "#dededeff",
+    borderWidth: 2,
   },
 
   descTitle: {
@@ -1553,7 +1630,46 @@ const saleStyles = StyleSheet.create({
     letterSpacing: 1,
   },
 
-
+  /* Help Modal Styles */
+  helpModalCard: {
+    width: "80%",
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 25,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  helpModalTitle: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 20,
+    color: "#0A2A3F",
+    marginBottom: 10,
+  },
+  helpModalText: {
+    fontFamily: "Poppins_400Regular",
+    fontSize: 14,
+    color: "#555",
+    textAlign: "center",
+    marginBottom: 20,
+    lineHeight: 22,
+  },
+  helpModalButton: {
+    backgroundColor: "#0A2A3F",
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+    width: '100%',
+  },
+  helpModalButtonText: {
+    color: "#fff",
+    fontFamily: "Poppins_600SemiBold",
+    fontSize: 15,
+    textAlign: "center",
+  },
 
 });
 

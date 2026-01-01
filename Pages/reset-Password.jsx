@@ -19,9 +19,13 @@ import {
   Poppins_600SemiBold,
 } from "@expo-google-fonts/poppins";
 
-export default function ResetPasswordScreen({ navigation }) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+import { api } from "../src/services/api";
+
+export default function ResetPasswordScreen({ navigation, route }) {
+  const { phoneNumber, otp } = route.params || {};
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -30,6 +34,29 @@ export default function ResetPasswordScreen({ navigation }) {
   });
 
   if (!fontsLoaded) return null;
+
+  const handleReset = async () => {
+    if (!newPassword || !confirmPassword) { alert("Please enter passwords"); return; }
+    if (newPassword !== confirmPassword) { alert("Passwords do not match"); return; }
+
+    try {
+      setLoading(true);
+      const { recoveryToken } = route.params || {};
+      const res = await api.resetPassword({
+        newPassword
+      }, recoveryToken);
+      setLoading(false);
+
+      if (res && (res.message || res.success || res.status === 200)) {
+        navigation.navigate("lastOTP");
+      } else {
+        alert("Reset failed: " + (res.message || "Unknown error"));
+      }
+    } catch (e) {
+      setLoading(false);
+      alert("Error: " + e.message);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -50,16 +77,17 @@ export default function ResetPasswordScreen({ navigation }) {
             />
 
             <Text style={styles.welcometext}>
-              Reset your password. And make sure to put a password 
-                   that is easy for you to remember.
+              Reset your password. And make sure to put a password
+              that is easy for you to remember.
             </Text>
 
             <TextInput
               style={styles.input}
               placeholder="Create Password"
               placeholderTextColor="#107EBA"
-              value={username}
-              onChangeText={setPassword}
+              secureTextEntry
+              value={newPassword}
+              onChangeText={setNewPassword}
             />
 
             <TextInput
@@ -67,15 +95,15 @@ export default function ResetPasswordScreen({ navigation }) {
               placeholder="Confirm Password"
               placeholderTextColor="#107EBA"
               secureTextEntry
-              value={password}
-              onChangeText={setPassword}
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
             />
 
             <TouchableOpacity
               style={styles.button}
-              onPress={() => navigation.navigate("lastOTP")}
+              onPress={handleReset}
             >
-              <Text style={styles.buttonText}>RESET PASSWORD</Text>
+              <Text style={styles.buttonText}>{loading ? "RESETTING..." : "RESET PASSWORD"}</Text>
             </TouchableOpacity>
 
           </View>
@@ -179,12 +207,12 @@ const styles = StyleSheet.create({
   },
 
   forgot: {
-  fontSize: 16,            // slightly smaller than regular text
-  color: "#1FA5ED",        // bright blue for clickable feel
-  textAlign: "right",      // align to the right if needed
-  fontWeight: "500",       // medium weight
-  marginTop: 10,           // spacing from input fields above
- fontFamily:"Poppins_400Regular",
-}
+    fontSize: 16,            // slightly smaller than regular text
+    color: "#1FA5ED",        // bright blue for clickable feel
+    textAlign: "right",      // align to the right if needed
+    fontWeight: "500",       // medium weight
+    marginTop: 10,           // spacing from input fields above
+    fontFamily: "Poppins_400Regular",
+  }
 
 });

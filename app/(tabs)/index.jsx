@@ -21,20 +21,14 @@ import OTPScreen from "../../Pages/OTP.jsx";
 import ResetPasswordScreen from "../../Pages/reset-Password.jsx";
 import LastOTPScreen from "../../Pages/lastOTP.jsx";
 
+import { AuthProvider, useAuth } from '../../src/context/AuthContext';
+
 const Stack = createNativeStackNavigator();
 
-export default function MainScreen() {
-  const [isReady, setIsReady] = useState(false);
+function AppNavigator() {
+  const { user, isLoading } = useAuth();
 
-  useEffect(() => {
-    // Small delay to ensure everything is initialized
-    const timer = setTimeout(() => {
-      setIsReady(true);
-    }, 100);
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (!isReady) {
+  if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
         <ActivityIndicator size="large" color="#09364D" />
@@ -43,33 +37,40 @@ export default function MainScreen() {
   }
 
   return (
+    <Stack.Navigator
+      initialRouteName={user ? "dashboard" : "Landing"}
+      screenOptions={{
+        headerShown: false,
+        animation: 'slide_from_right',
+        contentStyle: { backgroundColor: '#fff' },
+        animationDuration: 200,
+      }}
+    >
+      <Stack.Screen name="Welcome" component={WelcomeScreen} />
+      <Stack.Screen name="Landing" component={LandingScreen} />
+      <Stack.Screen name="signup" component={SignupScreen} />
+      <Stack.Screen name="Login" component={SignInScreen} />
+      <Stack.Screen name="dashboard" component={PlainDashboardScreen} />
+      <Stack.Screen name="Stock" component={StockScreen} />
+      <Stack.Screen name="Sales" component={SalesScreen} />
+      <Stack.Screen name="Reports" component={ReportScreen} />
+      <Stack.Screen name="Profile" component={ProfileScreen} />
+      <Stack.Screen name="debtors" component={DebtorsScreen} />
+      <Stack.Screen name="forgot-password" component={ForgotPasswordScreen} />
+      {/* OTP Screen removed as per requirements */}
+      <Stack.Screen name="reset-Password" component={ResetPasswordScreen} />
+      <Stack.Screen name="lastOTP" component={LastOTPScreen} />
+    </Stack.Navigator>
+  );
+}
+
+export default function MainScreen() {
+  return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-          <Stack.Navigator
-            initialRouteName="Landing"
-            screenOptions={{
-              headerShown: false,
-              animation: 'slide_from_right',
-              contentStyle: { backgroundColor: '#fff' },
-              animationDuration: 200,
-            }}
-          >
-            <Stack.Screen name="Welcome" component={WelcomeScreen} />
-            <Stack.Screen name="Landing" component={LandingScreen} />
-            <Stack.Screen name="signup" component={SignupScreen} />
-            <Stack.Screen name="Login" component={SignInScreen} />
-            <Stack.Screen name="dashboard" component={PlainDashboardScreen} />
-            <Stack.Screen name="Stock" component={StockScreen} />
-            <Stack.Screen name="Sales" component={SalesScreen} />
-            <Stack.Screen name="Reports" component={ReportScreen} />
-            <Stack.Screen name="Profile" component={ProfileScreen} />
-            <Stack.Screen name="debtors" component={DebtorsScreen} />
-            <Stack.Screen name="forgot-password" component={ForgotPasswordScreen} />
-            <Stack.Screen name="OTP" component={OTPScreen} />
-            <Stack.Screen name="reset-Password" component={ResetPasswordScreen} />
-            <Stack.Screen name="lastOTP" component={LastOTPScreen} />
-
-          </Stack.Navigator>
+        <AuthProvider>
+          <AppNavigator />
+        </AuthProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

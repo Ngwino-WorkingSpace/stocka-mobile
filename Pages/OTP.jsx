@@ -19,9 +19,12 @@ import {
   Poppins_600SemiBold,
 } from "@expo-google-fonts/poppins";
 
-export default function OTPScreen({ navigation }) {
-  const [Email, setEmail] = useState("");
-  const [Phonenumber, setPhonenumber] = useState("");
+import { api } from "../src/services/api";
+
+export default function OTPScreen({ navigation, route }) {
+  const { phoneNumber } = route.params || {};
+  const [otp, setOtp] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -30,6 +33,30 @@ export default function OTPScreen({ navigation }) {
   });
 
   if (!fontsLoaded) return null;
+
+  const handleVerify = async () => {
+    if (!otp || otp.length < 5) { alert("Please enter valid OTP"); return; }
+    if (!phoneNumber) { alert("Phone number missing"); return; }
+
+    try {
+      setLoading(true);
+      // Assuming the API expects { phoneNumber, recoveryPin }
+      const res = await api.verifyRecoveryPin({
+        phoneNumber,
+        recoveryPin: otp
+      });
+      setLoading(false);
+
+      if (res && (res.message || res.success || res.status === 200)) {
+        navigation.navigate("reset-Password", { phoneNumber, otp });
+      } else {
+        alert("Invalid OTP");
+      }
+    } catch (e) {
+      setLoading(false);
+      alert("Error: " + e.message);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -50,27 +77,25 @@ export default function OTPScreen({ navigation }) {
             />
 
             <Text style={styles.welcometext}>
-                 An OTP Code has been sent to your email please 
-                    check your email and input the code below.
+              An OTP Code has been sent to your phone {phoneNumber}, please
+              input the code below.
             </Text>
 
-                <View style={styles.otpContainer}>
-          {[1, 2, 3, 4,5].map((item, index) => (
             <TextInput
-              key={index}
-              style={styles.otpInput}
+              style={styles.otpInputFull}
+              placeholder="Enter 5-digit OTP"
+              placeholderTextColor="#107EBA"
+              value={otp}
+              onChangeText={setOtp}
               keyboardType="numeric"
-              maxLength={1}
-              // You can manage state for OTP here
+              maxLength={5}
             />
-          ))}
-        </View>
 
             <TouchableOpacity
               style={styles.button}
-              onPress={() => navigation.navigate("reset-Password")}
+              onPress={handleVerify}
             >
-              <Text style={styles.buttonText}>RESET PASSWORD</Text>
+              <Text style={styles.buttonText}>{loading ? "VERIFYING..." : "RESET PASSWORD"}</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -173,14 +198,14 @@ const styles = StyleSheet.create({
   },
 
   forgot: {
-  fontSize: 16,           
-  color: "#1FA5ED",        
-  textAlign: "right",      
-  fontWeight: "500",       // medium weight
-  marginTop: 10,           // spacing from input fields above
- fontFamily:"Poppins_400Regular",
-},
-otpContainer: {
+    fontSize: 16,
+    color: "#1FA5ED",
+    textAlign: "right",
+    fontWeight: "500",       // medium weight
+    marginTop: 10,           // spacing from input fields above
+    fontFamily: "Poppins_400Regular",
+  },
+  otpContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 20,
@@ -207,6 +232,26 @@ otpContainer: {
     fontSize: 16, // was 17
     fontFamily: "Poppins_400Regular",
 
+    shadowColor: "#0A5E8C",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  otpInputFull: {
+    width: "100%",
+    backgroundColor: "#09364D",
+    paddingVertical: 16,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    color: "#107EBA",
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "#0F4461",
+    fontSize: 22,
+    fontFamily: "Poppins_600SemiBold",
+    textAlign: "center",
+    letterSpacing: 10,
     shadowColor: "#0A5E8C",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.5,

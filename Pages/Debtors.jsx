@@ -13,6 +13,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  RefreshControl,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -39,31 +40,34 @@ const getRouteName = (itemName) => {
   return routeMap[itemName] || itemName;
 };
 
-const DEBTORS_DATA = [
-  { id: "1", name: "NDAYAMBAJE Jean Bosco", phone: "+250 780 602 022", amount: "25,000 FRW" },
-  { id: "2", name: "NDAYAMBAJE Jean Bosco", phone: "+250 780 602 022", amount: "25,000 FRW" },
-];
+import { api } from "../src/services/api";
+import { useAuth } from "../src/context/AuthContext";
+import { useFocusEffect } from '@react-navigation/native';
 
-const CREDITORS_DATA = [
-  { id: "1", name: "MUKAMANA Alice", phone: "+250 788 111 222", amount: "40,000 FRW" },
-  { id: "2", name: "HABIMANA Eric", phone: "+250 722 333 444", amount: "15,000 FRW" },
-];
+
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 
 export default function DebtorsScreen({ navigation }) {
+  const insets = useSafeAreaInsets();
+  const { logout } = useAuth();
   // Sidebar states: "press" (minimal), "collapsed" (icons only), "expanded" (full)
   const [sidebarState, setSidebarState] = useState("press");
+  const isPressState = sidebarState === "press";
+  const isCollapsed = sidebarState === "collapsed";
+  const isExpanded = sidebarState === "expanded";
+
   const [darkMode, setDarkMode] = useState(false);
   const [selectedItem, setSelectedItem] = useState("Debtors");
-  
+
   const [activeTab, setActiveTab] = useState("debtors");
   const [sortOpen, setSortOpen] = useState(false);
   const [sortBy, setSortBy] = useState("Phone");
   const [searchText, setSearchText] = useState("");
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedType, setSelectedType] = useState("debtor"); // debtor | creditor
   const [formName, setFormName] = useState("");
-  const [formAmount, setFormAmount] = useState("");
+  const [formPhone, setFormPhone] = useState("");
   const [paymentModalVisible, setPaymentModalVisible] = useState(false);
   const [paymentAmount, setPaymentAmount] = useState("");
 
@@ -73,6 +77,7 @@ export default function DebtorsScreen({ navigation }) {
   const [infoModalVisible, setInfoModalVisible] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
+  const [helpModalVisible, setHelpModalVisible] = useState(false);
   const [entryInfo, setEntryInfo] = useState({
     name: "",
     phone: "",
@@ -80,31 +85,145 @@ export default function DebtorsScreen({ navigation }) {
     date: "",
     type: "",
   });
-  const currentData =
-    activeTab === "debtors" ? DEBTORS_DATA : CREDITORS_DATA;
-  
+  const [debtorsList, setDebtorsList] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [selectedDebtor, setSelectedDebtor] = useState(null);
+
+  const fetchDebtors = async () => {
+    try {
+      setLoading(true);
+      // activeTab is either "debtors" or "creditors"
+      const res = await api.getDebtors(activeTab);
+      // Fallback if backend returns array directly or under 'debtors' key
+      const data = res.debtors || (Array.isArray(res) ? res : []);
+
+      if (data) {
+        // Map to UI Structure
+        const mapped = data.map(d => {
+          // Backend returns balance as string, parse it to number
+          const balance = parseFloat(d.balance || 0);
+          return {
+            id: d.id,
+            name: d.full_name || d.name || "Unknown",
+            phone: d.phone_number || d.phone || "",
+            // Display absolute value for amount, but preserve sign for rawAmount
+            amount: `${Math.abs(balance).toLocaleString()} FRW`,
+            rawAmount: balance, // Keep original sign for calculations
+            type: activeTab === "debtors" ? "DEBTOR" : "CREDITOR",
+            date: new Date(d.created_at || Date.now()).toLocaleDateString()
+          };
+        });
+        setDebtorsList(mapped);
+      } else {
+        setDebtorsList([]);
+      }
+    } catch (e) {
+      console.log("Error fetching debtors:", e);
+      Toast.show({ type: 'error', text1: 'Error', text2: 'Failed to fetch debtors. Please try again.' });
+      setDebtorsList([]);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    fetchDebtors();
+  }, [activeTab]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchDebtors();
+    }, [activeTab])
+  );
+
+  // No more filtering out based on local activeTab state, API handles it
+  const currentData = debtorsList;
 
   const filteredData = currentData
-  .filter((item) =>
-    item.name.toLowerCase().includes(searchText.toLowerCase()) ||
-    item.phone.includes(searchText)
-  )
-  .sort((a, b) => {
-    if (sortBy === "Phone") {
-      return a.phone.localeCompare(b.phone);
+    .filter((item) =>
+      (item.name || "").toLowerCase().includes(searchText.toLowerCase()) ||
+      (item.phone || "").includes(searchText)
+    )
+    .sort((a, b) => {
+      if (sortBy === "Phone") {
+        return (a.phone || "").localeCompare(b.phone || "");
+      }
+      return 0;
+    });
+
+  const handleCreateDebtor = async () => {
+    if (!formName || !formPhone) {
+      Toast.show({ type: 'error', text1: 'Missing Fields', text2: 'Name and Phone required' });
+      return;
     }
-    return 0;
-  });
+    try {
+      setLoading(true);
+      // 1. Create the person
+      const res = await api.createDebtor({
+        fullName: formName,
+        phoneNumber: formPhone,
+      });
 
+      if (res && (res.message || res.status === 201)) {
+        Toast.show({ type: 'success', text1: 'Success', text2: `${activeTab === "debtors" ? "Debtor" : "Creditor"} added` });
+        setModalVisible(false);
+        fetchDebtors();
+        setFormName("");
+        setFormPhone("");
+      } else {
+        Toast.show({ type: 'error', text1: 'Error', text2: `Error adding ${activeTab}` });
+      }
+    } catch (e) {
+      Toast.show({ type: 'error', text1: 'Error', text2: e.message });
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const [fontsLoaded] = useFonts({
-    Poppins_400Regular,
-    Poppins_500Medium,
-    Poppins_600SemiBold,
-    Poppins_700Bold,
-  });
+  const handleRecordPayment = async () => {
+    if (!selectedDebtor || !paymentAmount) return;
+    try {
+      const res = await api.recordPayment({
+        debtorId: selectedDebtor.id,
+        amount: parseFloat(paymentAmount)
+      });
+      if (res && (res.message || res.status === 201)) {
+        Toast.show({ type: 'success', text1: 'Success', text2: 'Payment recorded' });
+        setPaymentModalVisible(false);
+        fetchDebtors();
+        setPaymentAmount("");
+        setInfoModalVisible(false);
+      } else {
+        Toast.show({ type: 'error', text1: 'Error', text2: 'Error recording payment' });
+      }
+    } catch (e) {
+      Toast.show({ type: 'error', text1: 'Error', text2: e.message });
+    }
+  };
 
-  if (!fontsLoaded) return null;
+  const handleRecordDebt = async () => {
+    if (!selectedDebtor || !DebtAmount) return;
+    try {
+      const res = await api.recordDebt({
+        debtorId: selectedDebtor.id,
+        amount: parseFloat(DebtAmount)
+      });
+      if (res && (res.message || res.status === 201)) {
+        Toast.show({ type: 'success', text1: 'Success', text2: 'Debt recorded' });
+        setDebtModalVisible(false);
+        fetchDebtors();
+        setDebtAmount("");
+        setInfoModalVisible(false);
+      } else {
+        Toast.show({ type: 'error', text1: 'Error', text2: 'Error recording debt' });
+      }
+    } catch (e) {
+      Toast.show({ type: 'error', text1: 'Error', text2: e.message });
+    }
+  };
 
   const handlePressTextClick = () => {
     setSidebarState("collapsed");
@@ -130,28 +249,30 @@ export default function DebtorsScreen({ navigation }) {
     setShowLogoutModal(true);
   };
 
-  const isPressState = sidebarState === "press";
-  const isCollapsed = sidebarState === "collapsed";
-  const isExpanded = sidebarState === "expanded";
+  const renderDebtorItem = (item) => (
+    <TouchableOpacity key={item.id} onPress={() => {
+      setSelectedDebtor(item);
+      setEntryInfo(item);
+      setInfoModalVisible(true);
+    }}>
+      <View style={[styles.card, darkMode && styles.darkCard]}>
+        <View style={[styles.avatar, darkMode && styles.darkAvatar]}>
+          <Ionicons name="person-outline" size={22} color={darkMode ? "#fff" : "#0B3A53"} />
+        </View>
 
-  const renderItem = ({ item }) => (
-    <View style={[styles.card, darkMode && styles.darkCard]}>
-      <View style={[styles.avatar, darkMode && styles.darkAvatar]}>
-        <Ionicons name="person-outline" size={22} color={darkMode ? "#fff" : "#0B3A53"} />
+        <View style={styles.cardText}>
+          <Text style={[styles.name, darkMode && styles.darkText]} numberOfLines={1}>
+            {item.name}
+          </Text>
+          <Text style={[styles.phone, darkMode && { color: "#aaa" }]}>{item.phone}</Text>
+        </View>
+
+        <Text style={[styles.amount, darkMode && styles.darkText]}>{item.amount}</Text>
       </View>
-
-      <View style={styles.cardText}>
-        <Text style={[styles.name, darkMode && styles.darkText]} numberOfLines={1}>
-          {item.name}
-        </Text>
-        <Text style={[styles.phone, darkMode && { color: "#aaa" }]}>{item.phone}</Text>
-      </View>
-
-      <Text style={[styles.amount, darkMode && styles.darkText]}>{item.amount}</Text>
-    </View>
+    </TouchableOpacity>
   );
 
-  
+
 
   return (
     <View style={[styles.mainContainer, { backgroundColor: darkMode ? "#1a1a2e" : "#fff" }]}>
@@ -236,9 +357,9 @@ export default function DebtorsScreen({ navigation }) {
         {!isPressState && (
           <>
             <View style={styles.menuContainer}>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[
-                  styles.navItem, 
+                  styles.navItem,
                   isExpanded && styles.navItemExpanded,
                   selectedItem === "Dashboard" && isExpanded && styles.navItemSelected
                 ]}
@@ -248,9 +369,9 @@ export default function DebtorsScreen({ navigation }) {
                 {isExpanded && <Text style={styles.navText}>Dashboard</Text>}
               </TouchableOpacity>
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[
-                  styles.navItem, 
+                  styles.navItem,
                   isExpanded && styles.navItemExpanded,
                   selectedItem === "Stock" && isExpanded && styles.navItemSelected
                 ]}
@@ -260,9 +381,9 @@ export default function DebtorsScreen({ navigation }) {
                 {isExpanded && <Text style={styles.navText}>Stock</Text>}
               </TouchableOpacity>
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[
-                  styles.navItem, 
+                  styles.navItem,
                   isExpanded && styles.navItemExpanded,
                   selectedItem === "Sales" && isExpanded && styles.navItemSelected
                 ]}
@@ -272,9 +393,9 @@ export default function DebtorsScreen({ navigation }) {
                 {isExpanded && <Text style={styles.navText}>Sales</Text>}
               </TouchableOpacity>
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[
-                  styles.navItem, 
+                  styles.navItem,
                   isExpanded && styles.navItemExpanded,
                   selectedItem === "Reports" && isExpanded && styles.navItemSelected
                 ]}
@@ -284,9 +405,9 @@ export default function DebtorsScreen({ navigation }) {
                 {isExpanded && <Text style={styles.navText}>Reports</Text>}
               </TouchableOpacity>
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[
-                  styles.navItem, 
+                  styles.navItem,
                   isExpanded && styles.navItemExpanded,
                   selectedItem === "Debtors" && isExpanded && styles.navItemSelected
                 ]}
@@ -296,9 +417,9 @@ export default function DebtorsScreen({ navigation }) {
                 {isExpanded && <Text style={styles.navText}>Debtors</Text>}
               </TouchableOpacity>
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[
-                  styles.navItem, 
+                  styles.navItem,
                   isExpanded && styles.navItemExpanded,
                   selectedItem === "Profile" && isExpanded && styles.navItemSelected
                 ]}
@@ -314,7 +435,14 @@ export default function DebtorsScreen({ navigation }) {
 
             {/* Utility Items */}
             <View style={styles.utilityContainer}>
-              <TouchableOpacity 
+              <TouchableOpacity
+                style={[styles.navItem, isExpanded && styles.navItemExpanded]}
+                onPress={() => setHelpModalVisible(true)}
+              >
+                <Ionicons name="help-circle-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Help</Text>}
+              </TouchableOpacity>
+              <TouchableOpacity
                 style={[styles.navItem, isExpanded && styles.navItemExpanded]}
                 onPress={handleLogout}
               >
@@ -357,8 +485,8 @@ export default function DebtorsScreen({ navigation }) {
       </View>
 
       {/* CONTENT */}
-      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0, backgroundColor: darkMode ? "#1a1a2e" : "#fff" }}>
-        <KeyboardAvoidingView 
+      <View style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0, backgroundColor: darkMode ? "#1a1a2e" : "#fff", paddingTop: insets.top, paddingBottom: insets.bottom }}>
+        <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
@@ -366,59 +494,77 @@ export default function DebtorsScreen({ navigation }) {
             contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 16, backgroundColor: darkMode ? "#1a1a2e" : "#fff" }}
             style={darkMode && styles.darkScrollView}
             showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[MAIN]} />
+            }
           >
             {/* HEADER */}
-            <Text style={[styles.header, darkMode && styles.darkText]}>Stocka</Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={[styles.header, darkMode && styles.darkText]}>Stocka</Text>
+              <TouchableOpacity onPress={() => setHelpModalVisible(true)}>
+                <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
+              </TouchableOpacity>
+            </View>
 
-        {/* TABS */}
-        <View style={[styles.tabs, darkMode && styles.darkTabs]}>
-          {["debtors", "creditors"].map((tab) => (
-            <TouchableOpacity
-              key={tab}
-              style={[styles.tab, activeTab === tab && styles.activeTab]}
-              onPress={() => setActiveTab(tab)}
-            >
-              <Text style={[styles.tabText, activeTab === tab && styles.activeTabText, darkMode && !(activeTab === tab) && styles.darkText]}>
-                {tab === "debtors" ? "Debtors" : "Creditors"}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+            {/* TABS */}
+            <View style={[styles.tabs, darkMode && styles.darkTabs]}>
+              {["debtors", "creditors"].map((tab) => (
+                <TouchableOpacity
+                  key={tab}
+                  style={[styles.tab, activeTab === tab && styles.activeTab]}
+                  onPress={() => setActiveTab(tab)}
+                >
+                  <Text style={[styles.tabText, activeTab === tab && styles.activeTabText, darkMode && !(activeTab === tab) && styles.darkText]}>
+                    {tab === "debtors" ? "To Receive" : "To Pay"}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
 
-        {/* TITLE */}
-        <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>
-          {activeTab === "debtors" ? "Current Debtors" : "Current Creditors"}
-        </Text>
+            {/* SUMMARY CARD */}
+            <View style={[styles.summaryCard, darkMode && styles.darkSummaryCard]}>
+              <View>
+                <Text style={[styles.summaryLabel, darkMode && { color: "#ccc" }]}>
+                  {activeTab === "debtors" ? "Total Debtors Balance" : "Total Creditors Balance"}
+                </Text>
+                <Text style={styles.summaryValue}>
+                  {Math.abs(debtorsList.reduce((acc, d) => acc + (Number(d.rawAmount) || 0), 0)).toLocaleString()} FRW
+                </Text>
+              </View>
+              <View style={styles.summaryIconBox}>
+                <Ionicons name={activeTab === "debtors" ? "arrow-down-circle" : "arrow-up-circle"} size={32} color="#fff" />
+              </View>
+            </View>
 
-        {/* SEARCH & SORT */}
-        <View style={styles.searchRow}>
-          <TextInput
-             placeholder="Search by name or phone..."
-                 placeholderTextColor="#777"
-               value={searchText}
-                 onChangeText={setSearchText}
-               style={styles.searchInput}
-/>
+            {/* TITLE */}
+            <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>
+              {activeTab === "debtors" ? "Current Debtors" : "Current Creditors"}
+            </Text>
+
+            {/* SEARCH & SORT */}
+            <View style={styles.searchRow}>
+              <TextInput
+                placeholder="Search by name or phone..."
+                placeholderTextColor="#777"
+                value={searchText}
+                onChangeText={setSearchText}
+                style={styles.searchInput}
+              />
 
 
-          <TouchableOpacity
-            style={styles.sortBtn}
-            onPress={() => setSortOpen(!sortOpen)}
-          >
-            <Text style={styles.sortText}>{sortBy}</Text>
-            <Ionicons name="chevron-down" size={14} color="#fff" />
-          </TouchableOpacity>
-        </View>
+              <TouchableOpacity
+                style={styles.sortBtn}
+                onPress={() => setSortOpen(!sortOpen)}
+              >
+                <Text style={styles.sortText}>{sortBy}</Text>
+                <Ionicons name="chevron-down" size={14} color="#fff" />
+              </TouchableOpacity>
+            </View>
 
             {/* LIST */}
-            <FlatList
-              data={filteredData}
-              keyExtractor={(item) => item.id}
-              renderItem={renderItem}
-              showsVerticalScrollIndicator={false}
-              scrollEnabled={false}
-              contentContainerStyle={{ paddingBottom: 100 }}
-            />
+            <View style={{ paddingBottom: 100 }}>
+              {filteredData.map(renderDebtorItem)}
+            </View>
 
             {/* ADD BUTTON */}
             <TouchableOpacity style={styles.addBtn}
@@ -426,332 +572,358 @@ export default function DebtorsScreen({ navigation }) {
             >
               <Ionicons name="add" size={18} color="#fff" />
               <Text style={styles.addText}>
-                {activeTab === "debtors" ? "Add Debtor" : "Add Creditor"}
+                {activeTab === "debtors" ? "Add Person" : "Add Person"}
               </Text>
             </TouchableOpacity>
           </ScrollView>
         </KeyboardAvoidingView>
-      </SafeAreaView>
+      </View>
 
       <Modal
-         visible={modalVisible}
-          transparent
-          animationType="fade"
-             onRequestClose={() => setModalVisible(false)}
->
-  <View style={styles.modalOverlay}>
-    <View style={[styles.modalBox, darkMode && styles.darkModalBox]}>
+        visible={modalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalBox, darkMode && styles.darkModalBox]}>
 
-      <Text style={[styles.modalTitle, darkMode && styles.darkText]}>
-        Add {activeTab === "debtors" ? " a new debtor" : " a new creditor"}
-      </Text>
+            <Text style={[styles.modalTitle, darkMode && styles.darkText]}>
+              Add {activeTab === "debtors" ? " a new Person" : " a new Person"}
+            </Text>
 
-      <TextInput
-        placeholder="Full name"
-        placeholderTextColor={darkMode ? "#aaa" : "#777"}
-        value={formName}
-        onChangeText={setFormName}
-        style={[styles.modalInput, darkMode && styles.darkModalInput]}
-      />
-
-      <TextInput
-        placeholder="Phone number"
-        placeholderTextColor={darkMode ? "#aaa" : "#777"}
-        value={formAmount}
-        onChangeText={setFormAmount}
-        style={[styles.modalInput, darkMode && styles.darkModalInput]}
-      />
-
-      <View style={styles.modalActions}>
-        <TouchableOpacity
-          style={styles.cancelBtn}
-          onPress={() => {
-            setModalVisible(false);
-            setFormName("");
-            setFormAmount("");
-          }}
-        >
-          <Text style={styles.cancelText}>Cancel</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-  style={styles.saveBtn}
-  onPress={() => {
-    setEntryInfo({
-      name: formName,
-      phone: "+250 780 602 022",
-      amount: formAmount,
-      date: "12th November 2025",
-      type: activeTab === "debtors" ? "DEBT" : "CREDIT",
-    });
-
-    setModalVisible(false);       // close form modal
-    setInfoModalVisible(true);    // open info modal
-
-    setFormName("");
-    setFormAmount("");
-  }}
->
-  <Text style={styles.saveText}>Save</Text>
-</TouchableOpacity>
-
-      </View>
-
-    </View>
-  </View>
-</Modal>
-
-   {/* ==================INFO MODAL ====================*/}
-<Modal
-  visible={infoModalVisible}
-  transparent
-  animationType="fade"
-  onRequestClose={() => setInfoModalVisible(false)}
->
-  <View style={styles.infoOverlay}>
-    <View style={[styles.infoModal, darkMode && styles.darkInfoModal]}>
-             
-             <TouchableOpacity
-               style={[styles.closeIcon, darkMode && styles.darkCloseIcon]}
-    onPress={() => {
-      setInfoModalVisible(false);
-      setFormName("");
-      setFormAmount("");
-    }}
-  >
-    <Ionicons name="close" size={20} color={darkMode ? "#fff" : "#555"} />
-  </TouchableOpacity>
-
-      <Text style={[styles.infoTitle, darkMode && styles.darkText]}>
-        {activeTab === "debtors" ? "Debtor info" : "Creditor info"}
-      </Text>
-
-      <View style={styles.infoRow}>
-        <View style={{ flex: 1 }}>
-          <Text style={[styles.infoLabel, darkMode && { color: "#aaa" }]}>Full name:</Text>
-          <Text style={[styles.infoValue, darkMode && styles.darkText]}>{entryInfo.name}</Text>
-
-          <Text style={[styles.infoLabel, darkMode && { color: "#aaa" }]}>Phone number:</Text>
-          <Text style={[styles.infoValue, darkMode && styles.darkText]}>{entryInfo.phone}</Text>
-
-          <Text style={[styles.infoLabel, darkMode && { color: "#aaa" }]}>Current balance:</Text>
-          <Text style={[styles.infoValue, darkMode && styles.darkText]}>{entryInfo.amount} FRW</Text>
-
-          <Text style={[styles.infoLabel, darkMode && { color: "#aaa" }]}>Date:</Text>
-          <Text style={[styles.infoValue, darkMode && styles.darkText]}>{entryInfo.date}</Text>
-
-          <Text style={[styles.infoLabel, darkMode && { color: "#aaa" }]}>Type:</Text>
-          <Text style={[styles.typeBadge, darkMode && styles.darkTypeBadge]}>{entryInfo.type}</Text>
-        </View>
-
-        <View style={[styles.avatarBox, darkMode && styles.darkAvatarBox]}>
-          <Ionicons name="person" size={40} color={darkMode ? "#fff" : "#000"} />
-        </View>
-      </View>
-
-      <View style={styles.infoActions}>
-        <TouchableOpacity style={styles.secondaryBtn}
-           onPress={()=>{
-            setDebtModalVisible(true);
-           }}
-          >
-          <Text style={styles.secondaryText}>Record debt</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.primaryBtn}
-            onPress={()=>{
-              setPaymentModalVisible(true);
-            }}
-          >
-          <Text style={styles.primaryText}>Record payment</Text>
-        </TouchableOpacity>
-      </View>
-
-    </View>
-  </View>
-</Modal>
-
-  {/* ============ RECORD PAYMENT MODAL ==================*/}
-
- <Modal
-      transparent
-      animationType="fade"
-      visible={paymentModalVisible}
-      onRequestClose={() => setPaymentModalVisible(false)}
-    >
-      <View style={paymentStyles.overlay}>
-        <View style={paymentStyles.paymentModalBox}>
-
-          {/* CLOSE ICON */}
-          <TouchableOpacity
-            style={paymentStyles.closeIcon}
-            onPress={() => {
-              setPaymentModalVisible(false);
-              setPaymentAmount("");
-            }}
-          >
-            <Ionicons name="close" size={20} color="#555" />
-          </TouchableOpacity>
-
-          {/* TITLE */}
-          <Text style={paymentStyles.modalTitle}>Record Payment</Text>
-
-          {/* INFO + AVATAR */}
-          <View style={paymentStyles.infoRow}>
-
-            <View style={paymentStyles.infoText}>
-              <Text style={paymentStyles.label}>Full name:</Text>
-              <Text style={paymentStyles.value}>NIZIHINDA Divin</Text>
-
-              <Text style={paymentStyles.label}>Phone number:</Text>
-              <Text style={paymentStyles.value}>+250 780 602 022</Text>
-
-              <Text style={paymentStyles.label}>Type:</Text>
-              <Text style={paymentStyles.value}>DEBIT</Text>
-            </View>
-
-            <View style={paymentStyles.avatarBox}>
-              <Ionicons name="person" size={42} color="#555" />
-            </View>
-
-          </View>
-
-          {/* PAYMENT INPUT */}
-          <View style={paymentStyles.inputGroup}>
-            <Text style={paymentStyles.inputLabel}>Payment amount</Text>
             <TextInput
-              placeholder="e.g. 25,700 FRW"
-              value={paymentAmount}
-              onChangeText={setPaymentAmount}
-              keyboardType="numeric"
-              style={paymentStyles.input}
+              placeholder="Full name"
+              placeholderTextColor={darkMode ? "#aaa" : "#777"}
+              value={formName}
+              onChangeText={setFormName}
+              style={[styles.modalInput, darkMode && styles.darkModalInput]}
             />
-          </View>
 
-          {/* BUTTON */}
-          <TouchableOpacity style={paymentStyles.updateButton}>
-            <Text style={paymentStyles.updateButtonText}>UPDATE</Text>
-          </TouchableOpacity>
-
-        </View>
-      </View>
-    </Modal>
-
-    {/* ============ RECORD DEBT MODAL ==================*/}
-
- <Modal
-      transparent
-      animationType="fade"
-      visible={DebtModalVisible}
-      onRequestClose={() => setDebtModalVisible(false)}
-    >
-      <View style={paymentStyles.overlay}>
-        <View style={paymentStyles.paymentModalBox}>
-
-          {/* CLOSE ICON */}
-          <TouchableOpacity
-            style={paymentStyles.closeIcon}
-            onPress={() => {
-              setDebtModalVisible(false);
-              setDebtAmount("");
-            }}
-          >
-            <Ionicons name="close" size={20} color="#555" />
-          </TouchableOpacity>
-
-          {/* TITLE */}
-          <Text style={paymentStyles.modalTitle}>Record Debt</Text>
-
-          {/* INFO + AVATAR */}
-          <View style={paymentStyles.infoRow}>
-
-            <View style={paymentStyles.infoText}>
-              <Text style={paymentStyles.label}>Full name:</Text>
-              <Text style={paymentStyles.value}>NIZIHINDA Divin</Text>
-
-              <Text style={paymentStyles.label}>Phone number:</Text>
-              <Text style={paymentStyles.value}>+250 780 602 022</Text>
-
-              <Text style={paymentStyles.label}>Type:</Text>
-              <Text style={paymentStyles.value}>DEBIT</Text>
-            </View>
-
-            <View style={paymentStyles.avatarBox}>
-              <Ionicons name="person" size={42} color="#555" />
-            </View>
-
-          </View>
-
-          {/* PAYMENT INPUT */}
-          <View style={paymentStyles.inputGroup}>
-            <Text style={paymentStyles.inputLabel}>Payment amount</Text>
             <TextInput
-              placeholder="e.g. 25,700 FRW"
-              value={paymentAmount}
-              onChangeText={setPaymentAmount}
-              keyboardType="numeric"
-              style={paymentStyles.input}
+              placeholder="Phone number"
+              placeholderTextColor={darkMode ? "#aaa" : "#777"}
+              value={formPhone}
+              onChangeText={setFormPhone}
+              keyboardType="phone-pad"
+              style={[styles.modalInput, darkMode && styles.darkModalInput]}
             />
+
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                style={styles.cancelBtn}
+                onPress={() => {
+                  setModalVisible(false);
+                  setFormName("");
+                  setFormPhone("");
+                }}
+              >
+                <Text style={styles.cancelText}>Cancel</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.saveBtn}
+                onPress={handleCreateDebtor}
+              >
+                <Text style={styles.saveText}>Save</Text>
+              </TouchableOpacity>
+            </View>
+
           </View>
 
-          {/* BUTTON */}
-          <TouchableOpacity style={paymentStyles.updateButton}>
-            <Text style={paymentStyles.updateButtonText}>UPDATE</Text>
-          </TouchableOpacity>
-
         </View>
-      </View>
-    </Modal>
+      </Modal>
 
-    {/* LOGOUT MODAL */}
-    <Modal
-      transparent
-      animationType="fade"
-      visible={showLogoutModal}
-      onRequestClose={() => setShowLogoutModal(false)}
-    >
-      <View style={paymentStyles.logoutOverlay}>
-        <View style={paymentStyles.logoutModalCard}>
-          <Ionicons
-            name="warning-outline"
-            size={38}
-            color="#0A2A3F"
-            style={{ marginBottom: 10 }}
-          />
+      {/* ==================INFO MODAL ====================*/}
+      <Modal
+        visible={infoModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setInfoModalVisible(false)}
+      >
+        <View style={styles.infoOverlay}>
+          <View style={[styles.infoModal, darkMode && styles.darkInfoModal]}>
 
-          <Text style={paymentStyles.logoutModalText}>
-            Are you sure about logging out?
-          </Text>
-
-          <View style={paymentStyles.logoutModalButtons}>
             <TouchableOpacity
-              style={paymentStyles.logoutYesButton}
+              style={[styles.closeIcon, darkMode && styles.darkCloseIcon]}
               onPress={() => {
-                setShowLogoutModal(false);
-                if (navigation) {
-                  navigation.navigate("Login");
-                }
+                setInfoModalVisible(false);
               }}
             >
-              <Text style={paymentStyles.logoutYesText}>YES</Text>
+              <Ionicons name="close" size={20} color={darkMode ? "#fff" : "#555"} />
             </TouchableOpacity>
 
+            <Text style={[styles.infoTitle, darkMode && styles.darkText]}>
+              {activeTab === "debtors" ? "Person info" : "Person info"}
+            </Text>
+
+            <View style={styles.infoRow}>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.infoLabel, darkMode && { color: "#aaa" }]}>Full name:</Text>
+                <Text style={[styles.infoValue, darkMode && styles.darkText]}>{selectedDebtor?.name}</Text>
+
+                <Text style={[styles.infoLabel, darkMode && { color: "#aaa" }]}>Phone number:</Text>
+                <Text style={[styles.infoValue, darkMode && styles.darkText]}>{selectedDebtor?.phone}</Text>
+
+                <Text style={[styles.infoLabel, darkMode && { color: "#aaa" }]}>Current balance:</Text>
+                <Text style={[styles.infoValue, darkMode && styles.darkText]}>{selectedDebtor?.amount}</Text>
+
+                <Text style={[styles.infoLabel, darkMode && { color: "#aaa" }]}>Date:</Text>
+                <Text style={[styles.infoValue, darkMode && styles.darkText]}>{selectedDebtor?.date}</Text>
+              </View>
+
+              <View style={[styles.avatarBox, darkMode && styles.darkAvatarBox]}>
+                <Ionicons name="person" size={40} color={darkMode ? "#fff" : "#000"} />
+              </View>
+            </View>
+
+            <View style={styles.infoActions}>
+              <TouchableOpacity style={styles.secondaryBtn}
+                onPress={() => {
+                  setDebtModalVisible(true);
+                }}
+              >
+                <Text style={styles.secondaryText}>Record debt</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.primaryBtn}
+                onPress={() => {
+                  setPaymentModalVisible(true);
+                }}
+              >
+                <Text style={styles.primaryText}>Record payment</Text>
+              </TouchableOpacity>
+            </View>
+
+          </View>
+        </View>
+      </Modal>
+
+      {/* ============ RECORD PAYMENT MODAL ==================*/}
+
+      <Modal
+        transparent
+        animationType="fade"
+        visible={paymentModalVisible}
+        onRequestClose={() => setPaymentModalVisible(false)}
+      >
+        <View style={paymentStyles.overlay}>
+          <View style={paymentStyles.paymentModalBox}>
+
+            {/* CLOSE ICON */}
             <TouchableOpacity
-              style={paymentStyles.logoutNoButton}
-              onPress={() => setShowLogoutModal(false)}
+              style={paymentStyles.closeIcon}
+              onPress={() => {
+                setPaymentModalVisible(false);
+                setPaymentAmount("");
+              }}
             >
-              <Text style={paymentStyles.logoutNoText}>NO</Text>
+              <Ionicons name="close" size={20} color="#555" />
+            </TouchableOpacity>
+
+            {/* TITLE */}
+            <Text style={paymentStyles.modalTitle}>Record Payment</Text>
+
+            {/* INFO + AVATAR */}
+            <View style={paymentStyles.infoRow}>
+
+              <View style={paymentStyles.infoText}>
+                <Text style={paymentStyles.label}>Full name:</Text>
+                <Text style={paymentStyles.value}>{selectedDebtor?.name}</Text>
+
+                <Text style={paymentStyles.label}>Phone number:</Text>
+                <Text style={paymentStyles.value}>{selectedDebtor?.phone}</Text>
+
+                <Text style={paymentStyles.label}>Type:</Text>
+                <Text style={paymentStyles.value}>{selectedDebtor?.type || "DEBTOR"}</Text>
+              </View>
+
+              <View style={paymentStyles.avatarBox}>
+                <Ionicons name="person" size={42} color="#555" />
+              </View>
+
+            </View>
+
+            {/* PAYMENT INPUT */}
+            <View style={paymentStyles.inputGroup}>
+              <Text style={paymentStyles.inputLabel}>Payment amount</Text>
+              <TextInput
+                placeholder="e.g. 25,700 FRW"
+                value={paymentAmount}
+                onChangeText={setPaymentAmount}
+                keyboardType="numeric"
+                style={paymentStyles.input}
+              />
+            </View>
+
+            {/* BUTTON */}
+            <TouchableOpacity style={paymentStyles.updateButton} onPress={handleRecordPayment}>
+              <Text style={paymentStyles.updateButtonText}>UPDATE</Text>
+            </TouchableOpacity>
+
+          </View>
+        </View>
+      </Modal>
+
+      {/* ============ RECORD DEBT MODAL ==================*/}
+
+      <Modal
+        transparent
+        animationType="fade"
+        visible={DebtModalVisible}
+        onRequestClose={() => setDebtModalVisible(false)}
+      >
+        <View style={paymentStyles.overlay}>
+          <View style={paymentStyles.paymentModalBox}>
+
+            {/* CLOSE ICON */}
+            <TouchableOpacity
+              style={paymentStyles.closeIcon}
+              onPress={() => {
+                setDebtModalVisible(false);
+                setDebtAmount("");
+              }}
+            >
+              <Ionicons name="close" size={20} color="#555" />
+            </TouchableOpacity>
+
+            {/* TITLE */}
+            <Text style={paymentStyles.modalTitle}>Record Debt</Text>
+
+            {/* INFO + AVATAR */}
+            <View style={paymentStyles.infoRow}>
+
+              <View style={paymentStyles.infoText}>
+                <Text style={paymentStyles.label}>Full name:</Text>
+                <Text style={paymentStyles.value}>{selectedDebtor?.name}</Text>
+
+                <Text style={paymentStyles.label}>Phone number:</Text>
+                <Text style={paymentStyles.value}>{selectedDebtor?.phone}</Text>
+
+                <Text style={paymentStyles.label}>Type:</Text>
+                <Text style={paymentStyles.value}>{selectedDebtor?.type || "DEBTOR"}</Text>
+              </View>
+
+              <View style={paymentStyles.avatarBox}>
+                <Ionicons name="person" size={42} color="#555" />
+              </View>
+
+            </View>
+
+            {/* PAYMENT INPUT */}
+            <View style={paymentStyles.inputGroup}>
+              <Text style={paymentStyles.inputLabel}>Payment amount</Text>
+              <TextInput
+                placeholder="e.g. 25,700 FRW"
+                value={DebtAmount}
+                onChangeText={setDebtAmount}
+                keyboardType="numeric"
+                style={paymentStyles.input}
+              />
+            </View>
+
+            {/* BUTTON */}
+            <TouchableOpacity style={paymentStyles.updateButton} onPress={handleRecordDebt}>
+              <Text style={paymentStyles.updateButtonText}>UPDATE</Text>
+            </TouchableOpacity>
+
+          </View>
+        </View>
+      </Modal>
+
+      {/* LOGOUT MODAL */}
+      <Modal
+        transparent
+        animationType="fade"
+        visible={showLogoutModal}
+        onRequestClose={() => setShowLogoutModal(false)}
+      >
+        <View style={paymentStyles.logoutOverlay}>
+          <View style={paymentStyles.logoutModalCard}>
+            <Ionicons
+              name="warning-outline"
+              size={38}
+              color="#0A2A3F"
+              style={{ marginBottom: 10 }}
+            />
+
+            <Text style={paymentStyles.logoutModalText}>
+              Are you sure about logging out?
+            </Text>
+
+            <View style={paymentStyles.logoutModalButtons}>
+              <TouchableOpacity
+                style={paymentStyles.logoutYesButton}
+                onPress={() => {
+                  setShowLogoutModal(false);
+                  logout();
+                }}
+              >
+                <Text style={paymentStyles.logoutYesText}>YES</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={paymentStyles.logoutNoButton}
+                onPress={() => setShowLogoutModal(false)}
+              >
+                <Text style={paymentStyles.logoutNoText}>NO</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal >
+
+      {/* ================= HELP MODAL ================= */}
+      <Modal visible={helpModalVisible} transparent animationType="fade">
+        <View style={styles.overlay}>
+          <View style={[styles.helpModalCard, darkMode && { backgroundColor: '#2a2a3e' }]}>
+            <Ionicons name="help-circle-outline" size={48} color={darkMode ? "#4a9eff" : "#0A2A3F"} style={{ marginBottom: 15 }} />
+            <Text style={[styles.helpModalTitle, darkMode && styles.darkText]}>Need Help?</Text>
+            <Text style={[styles.helpModalText, darkMode && { color: '#aaa' }]}>
+              Any problem? Text us via SMS or WhatsApp on +250792050511
+            </Text>
+            <TouchableOpacity style={styles.helpModalButton} onPress={() => setHelpModalVisible(false)}>
+              <Text style={styles.helpModalButtonText}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
-      </View>
-    </Modal>
+      </Modal>
 
-    </View>
+    </View >
   );
 }
 
 const styles = StyleSheet.create({
+  summaryCard: {
+    backgroundColor: "#F0F7FF",
+    borderRadius: 12,
+    padding: 20,
+    marginVertical: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderLeftWidth: 5,
+    borderLeftColor: MAIN,
+  },
+  darkSummaryCard: {
+    backgroundColor: "#2a2a3e",
+    borderLeftColor: "#4a9eff",
+  },
+  summaryLabel: {
+    fontFamily: "Poppins_400Regular",
+    fontSize: 12,
+    color: "#555",
+  },
+  summaryValue: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 20,
+    color: MAIN,
+  },
+  summaryIconBox: {
+    backgroundColor: MAIN,
+    padding: 10,
+    borderRadius: 10,
+  },
   mainContainer: {
     flex: 1,
     flexDirection: "row",
@@ -981,7 +1153,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 12,
     height: 42,
-    fontFamily:"Poppins_400Regular",
+    fontFamily: "Poppins_400Regular",
     color: "#000",
   },
 
@@ -994,7 +1166,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 
-  sortText: { color: "#fff", fontSize: 12,fontFamily:"Poppins_400Regular", },
+  sortText: { color: "#fff", fontSize: 12, fontFamily: "Poppins_400Regular", },
 
   card: {
     flexDirection: "row",
@@ -1033,179 +1205,179 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
 
-  addText: { color: "#fff", fontSize: 12, fontFamily:"Poppins_400Regular" },
+  addText: { color: "#fff", fontSize: 12, fontFamily: "Poppins_400Regular" },
 
   modalOverlay: {
-  flex: 1,
-  backgroundColor: "rgba(9,54,77,0.5)",
-  justifyContent: "center",
-  alignItems: "center",
-},
+    flex: 1,
+    backgroundColor: "rgba(9,54,77,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 
-modalBox: {
-  width: "90%",
-  backgroundColor: "#fff",
-  borderRadius: 16,
-  padding: 20,
-  marginHorizontal: 10,
-},
+  modalBox: {
+    width: "90%",
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 20,
+    marginHorizontal: 10,
+  },
 
-modalTitle: {
-  fontFamily: "Poppins_600SemiBold",
-  fontSize: 16,
-  marginBottom: 16,
-  textAlign: "center",
-},
+  modalTitle: {
+    fontFamily: "Poppins_600SemiBold",
+    fontSize: 16,
+    marginBottom: 16,
+    textAlign: "center",
+  },
 
-modalInput: {
-  backgroundColor: "#F1F4F6",
-  borderRadius: 10,
-  paddingHorizontal: 14,
-  height: 44,
-  marginBottom: 12,
-  fontFamily: "Poppins_400Regular",
-  color: "#000",
-},
+  modalInput: {
+    backgroundColor: "#F1F4F6",
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    height: 44,
+    marginBottom: 12,
+    fontFamily: "Poppins_400Regular",
+    color: "#000",
+  },
 
-modalActions: {
-  flexDirection: "row",
-  justifyContent: "space-between",
-  marginTop: 10,
-},
+  modalActions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 10,
+  },
 
-cancelBtn: {
-  paddingVertical: 10,
-  paddingHorizontal: 20,
-},
+  cancelBtn: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
 
-cancelText: {
-  color: "#777",
-  fontFamily: "Poppins_500Medium",
-},
+  cancelText: {
+    color: "#777",
+    fontFamily: "Poppins_500Medium",
+  },
 
-saveBtn: {
-  backgroundColor: MAIN,
-  borderRadius: 10,
-  paddingVertical: 10,
-  paddingHorizontal: 24,
-},
+  saveBtn: {
+    backgroundColor: MAIN,
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+  },
 
-saveText: {
-  color: "#fff",
-  fontFamily: "Poppins_500Medium",
-},
+  saveText: {
+    color: "#fff",
+    fontFamily: "Poppins_500Medium",
+  },
 
-/* ===== INFO MODAL ===== */
+  /* ===== INFO MODAL ===== */
 
-infoOverlay: {
-  flex: 1,
-  backgroundColor: "rgba(0,0,0,0.45)",
-  justifyContent: "center",
-  alignItems: "center",
-},
+  infoOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 
-infoModal: {
-  width: "90%",
-  backgroundColor: "#FFFFFF",
-  borderRadius: 10,
-  padding: 20,
-  marginHorizontal: 10,
-},
+  infoModal: {
+    width: "90%",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    padding: 20,
+    marginHorizontal: 10,
+  },
 
-infoTitle: {
-  fontFamily: "Poppins_600SemiBold",
-  fontSize: 16,
-  color: "#111",
-  marginBottom: 18,
-},
+  infoTitle: {
+    fontFamily: "Poppins_600SemiBold",
+    fontSize: 16,
+    color: "#111",
+    marginBottom: 18,
+  },
 
-infoRow: {
-  flexDirection: "row",
-  alignItems: "flex-start",
-  gap: 14,
-},
+  infoRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 14,
+  },
 
-infoLabel: {
-  fontFamily: "Poppins_400Regular",
-  fontSize: 11,
-  color: "#6B7280",
-  marginTop: 8,
-},
+  infoLabel: {
+    fontFamily: "Poppins_400Regular",
+    fontSize: 11,
+    color: "#6B7280",
+    marginTop: 8,
+  },
 
-infoValue: {
-  fontFamily: "Poppins_500Medium",
-  fontSize: 13,
-  color: "#111",
-},
+  infoValue: {
+    fontFamily: "Poppins_500Medium",
+    fontSize: 13,
+    color: "#111",
+  },
 
-typeBadge: {
-  marginTop: 6,
-  alignSelf: "flex-start",
-  backgroundColor: "#EAF2F6",
-  paddingHorizontal: 12,
-  paddingVertical: 4,
-  borderRadius: 8,
-  fontFamily: "Poppins_500Medium",
-  fontSize: 11,
-  color: "#0B3A53",
-},
+  typeBadge: {
+    marginTop: 6,
+    alignSelf: "flex-start",
+    backgroundColor: "#EAF2F6",
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 8,
+    fontFamily: "Poppins_500Medium",
+    fontSize: 11,
+    color: "#0B3A53",
+  },
 
-avatarBox: {
-  width: 72,
-  height: 72,
-  borderRadius: 14,
-  backgroundColor: "#F1F4F6",
-  justifyContent: "center",
-  alignItems: "center",
-},
+  avatarBox: {
+    width: 72,
+    height: 72,
+    borderRadius: 14,
+    backgroundColor: "#F1F4F6",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 
-infoActions: {
-  flexDirection: "row",
-  justifyContent: "space-between",
-  marginTop: 22,
-},
+  infoActions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 22,
+  },
 
-secondaryBtn: {
-  borderWidth: 1,
-  borderColor: "#0B3A53",
-  borderRadius: 5,
-  paddingVertical: 10,
-  paddingHorizontal: 16,
-},
+  secondaryBtn: {
+    borderWidth: 1,
+    borderColor: "#0B3A53",
+    borderRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+  },
 
-secondaryText: {
-  fontFamily: "Poppins_500Medium",
-  fontSize: 12,
-  color: "#0B3A53",
-},
+  secondaryText: {
+    fontFamily: "Poppins_500Medium",
+    fontSize: 12,
+    color: "#0B3A53",
+  },
 
-primaryBtn: {
-  backgroundColor: "#0B3A53",
-  borderRadius: 5,
-  paddingVertical: 10,
-  paddingHorizontal: 20,
-},
+  primaryBtn: {
+    backgroundColor: "#0B3A53",
+    borderRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
 
-primaryText: {
-  fontFamily: "Poppins_500Medium",
-  fontSize: 12,
-  color: "#FFFFFF",
-},
+  primaryText: {
+    fontFamily: "Poppins_500Medium",
+    fontSize: 12,
+    color: "#FFFFFF",
+  },
 
-/* ===== FORM MODAL CLOSE ICON ===== */
+  /* ===== FORM MODAL CLOSE ICON ===== */
 
-closeIcon: {
-  position: "absolute",
-  top: 12,
-  right: 12,
-  width: 32,
-  height: 32,
-  borderRadius: 16,
-  backgroundColor: "#F1F4F6",
-  justifyContent: "center",
-  alignItems: "center",
-  zIndex: 10,
-},
+  closeIcon: {
+    position: "absolute",
+    top: 12,
+    right: 12,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "#F1F4F6",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 10,
+  },
 
 });
 
@@ -1237,7 +1409,7 @@ const paymentStyles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 20,
     textAlign: "center",
-    fontFamily:"Poppins_400Regular",
+    fontFamily: "Poppins_400Regular",
   },
   infoRow: {
     flexDirection: "row",
@@ -1252,7 +1424,7 @@ const paymentStyles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "500",
     color: "#555",
-    fontFamily:"Poppins_400Regular",
+    fontFamily: "Poppins_400Regular",
   },
   value: {
     fontSize: 16,
@@ -1276,7 +1448,7 @@ const paymentStyles = StyleSheet.create({
     fontWeight: "500",
     color: "#555",
     marginBottom: 5,
-    fontFamily:"Poppins_400Regular",
+    fontFamily: "Poppins_400Regular",
   },
   input: {
     borderWidth: 1,
@@ -1284,7 +1456,7 @@ const paymentStyles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     fontSize: 16,
-    fontFamily:"Poppins_400Regular",
+    fontFamily: "Poppins_400Regular",
     color: "#000",
   },
   updateButton: {
@@ -1345,5 +1517,51 @@ const paymentStyles = StyleSheet.create({
     fontFamily: "Poppins_500Medium",
     fontSize: 12,
     color: "#0A2A3F",
+  },
+  /* Help Modal Styles */
+  helpModalCard: {
+    width: "80%",
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 25,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  helpModalTitle: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 20,
+    color: "#0A2A3F",
+    marginBottom: 10,
+  },
+  helpModalText: {
+    fontFamily: "Poppins_400Regular",
+    fontSize: 14,
+    color: "#555",
+    textAlign: "center",
+    marginBottom: 20,
+    lineHeight: 22,
+  },
+  helpModalButton: {
+    backgroundColor: "#0A2A3F",
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+    width: '100%',
+  },
+  helpModalButtonText: {
+    color: "#fff",
+    fontFamily: "Poppins_600SemiBold",
+    fontSize: 15,
+    textAlign: "center",
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

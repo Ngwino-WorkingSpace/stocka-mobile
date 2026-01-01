@@ -8,10 +8,11 @@ import {
   Image,
   Modal,
   TextInput,
-  SafeAreaView,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  RefreshControl,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   useFonts,
   Poppins_400Regular,
@@ -31,111 +32,118 @@ const getRouteName = (itemName) => {
     "Sales": "Sales",
     "Reports": "Reports",
     "Profile": "Profile",
-    "Debtors":"debtors",
+    "Debtors": "debtors",
   };
   return routeMap[itemName] || itemName;
 };
 
-export default function PlainDashboardScreen({navigation}) {
-  // Sidebar states: "press" (minimal), "collapsed" (icons only), "expanded" (full)
+import { api } from "../src/services/api";
+import { useAuth } from "../src/context/AuthContext";
+import { useFocusEffect } from '@react-navigation/native'; // To refresh on focus
+
+// ... imports
+
+export default function PlainDashboardScreen({ navigation }) {
+  const { logout, user } = useAuth(); // Use auth context
+  // Sidebar states
   const [sidebarState, setSidebarState] = useState("press");
   const [darkMode, setDarkMode] = useState(false);
   const [selectedItem, setSelectedItem] = useState("Dashboard");
-   const [selectedTab, setSelectedTab] = useState("Daily");
-   const [searchText, setSearchText] = useState("");
-     const [categoryVisible, setCategoryVisible] = useState(false);
-     const [selectedCategory, setSelectedCategory] = useState("Category");
-     const [selectedProduct, setSelectedProduct] = useState(null);
-     const [addStockVisible, setAddStockVisible] = useState(false);
-     const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [selectedTab, setSelectedTab] = useState("Daily");
+  const [metrics, setMetrics] = useState(null);
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  const [searchText, setSearchText] = useState("");
+  const [categoryVisible, setCategoryVisible] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("Category");
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [addStockVisible, setAddStockVisible] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [helpModalVisible, setHelpModalVisible] = useState(false);
 
-const [formData, setFormData] = useState({
-  quantity: "",
-  price: "",
-  purchaseDate: "",
-  expiryDate: "",
-  description: "",
-});
-const handleChange = (key, value) => {
-  setFormData({ ...formData, [key]: value });
-};
+  const [formData, setFormData] = useState({
+    quantity: "",
+    price: "",
+    purchaseDate: "",
+    expiryDate: "",
+    description: "",
+  });
+  const handleChange = (key, value) => {
+    setFormData({ ...formData, [key]: value });
+  };
 
+  const [recordSaleVisible, setRecordSaleVisible] = useState(false);
+  const [saleData, setSaleData] = useState({
+    quantity: "",
+    unitPrice: "",
+    totalPrice: "",
+  });
+  const handleSaleChange = (field, value) => {
+    setSaleData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
 
-const [recordSaleVisible, setRecordSaleVisible] = useState(false);
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      const rangeMap = {
+        "Daily": "today",
+        "Weekly": "7d",
+        "Monthly": "30d",
+        "Annually": "all"
+      };
+      const range = rangeMap[selectedTab] || "today";
+      // Note: Dashboard metrics always returns today's data (backend doesn't support range)
+      const metricsData = await api.getDashboardMetrics();
+      setMetrics(metricsData);
 
-const [saleData, setSaleData] = useState({
-  quantity: "",
-  unitPrice: "",
-  totalPrice: "",
-});
+      // Fetch recent sales and stock for transactions
+      const salesRes = await api.getSalesHistory(range);
+      const stockRes = await api.getAllStockBatches();
 
-const handleSaleChange = (field, value) => {
-  setSaleData((prev) => ({
-    ...prev,
-    [field]: value,
-  }));
-};
+      const sales = (salesRes.sales || []).map(s => ({
+        type: 'sale',
+        txt: `Sold ${s.quantity_sold} of ${s.product_name}`,
+        date: new Date(s.created_at).toLocaleDateString(),
+        price: `+${Number(s.total_price).toLocaleString()} FRW`,
+        icon: "checkmark-circle",
+        timestamp: new Date(s.created_at)
+      }));
 
-const StockProducts = [
-    {
-      id: 1,
-      Image: require("../assets/images/irishPotatoes.png"),
-      TextHead: "Irish Potatoes",
-      subText: "Vegetables",
-      kilos: "54kg",
-      ViewText: "Expiration in 2 months",
-      PurchaseDate: "12th November 2025",
-      ExpiryDate: "2nd January 2026",
-      description: "Irish potatoes are a high-demand root vegetable with steady market turnover. They should be stored in a cool, dry, well-ventilated area away from direct light.",
-    },
-    {
-      id: 2,
-      Image: require("../assets/images/Maize.png"),
-      TextHead: "Maize",
-      subText: "Grains",
-      kilos: "112kg",
-      ViewText: "Expiration in 2 months",
-      PurchaseDate: "12th November 2025",
-      ExpiryDate: "2nd January 2026",
-      description: "Maize is a versatile grain crop that requires proper storage in dry conditions to prevent mold and spoilage. Keep in well-ventilated containers away from moisture.",
-    },
-    {
-      id: 3,
-      Image: require("../assets/images/Tomato.png"),
-      TextHead: "Tomatoes",
-      subText: "Vegetables",
-      kilos: "23kg",
-      ViewText: "Expiration in 2 months",
-      PurchaseDate: "12th November 2025",
-      ExpiryDate: "2nd January 2026",
-      description: "Tomatoes are perishable vegetables that should be stored at room temperature until ripe, then refrigerated. Handle with care to avoid bruising.",
-    },
-    {
-      id: 4,
-      Image: require("../assets/images/WaterMelon.png"),
-      TextHead: "WaterMelons",
-      subText: "Fruits",
-      kilos: "11kg",
-      ViewText: "Expiration in 2 months",
-      PurchaseDate: "12th November 2025",
-      ExpiryDate: "2nd January 2026",
-      description: "Watermelons are refreshing fruits best stored at room temperature before cutting. Once cut, refrigerate and consume within a few days for best quality.",
-    },
-    {
-      id: 5,
-      Image: require("../assets/images/Digestive.png"),
-      TextHead: "Biscuits(Vegetables)",
-      subText: "Biscuits",
-      kilos: "2 boxes (50 pieces each)",
-      ViewText: "Expiration in 2 months",
-      PurchaseDate: "12th November 2025",
-      ExpiryDate: "2nd January 2026",
-      description: "Biscuits should be stored in a cool, dry place in their original packaging to maintain freshness and prevent them from becoming stale or soft.",
-    },
-  ];
+      const purchases = (stockRes.stockBatch || []).map(s => ({
+        type: 'purchase',
+        txt: `Bought ${s.quantity_added} of ${s.product_name}`,
+        date: new Date(s.purchase_date).toLocaleDateString(),
+        price: `-${(Number(s.quantity_added) * Number(s.purchase_price)).toLocaleString()} FRW`,
+        icon: "cart",
+        timestamp: new Date(s.purchase_date)
+      }));
 
-  
+      const allTrans = [...sales, ...purchases].sort((a, b) => b.timestamp - a.timestamp).slice(0, 5);
+      setTransactions(allTrans);
+
+    } catch (error) {
+      console.log("Error fetching dashboard data:", error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    fetchDashboardData();
+  }, [selectedTab]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchDashboardData();
+    }, [selectedTab])
+  );
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -143,15 +151,14 @@ const StockProducts = [
     Poppins_600SemiBold,
     Poppins_700Bold,
   });
+
   if (!fontsLoaded) return null;
 
   const handlePressTextClick = () => {
-    // From "press" state, go to "collapsed" (icons only)
     setSidebarState("collapsed");
   };
 
   const handleNavItemPress = (itemName) => {
-    // Collapse sidebar when clicking on menu items (go back to icons only)
     setSelectedItem(itemName);
     setSidebarState("press");
     if (navigation) {
@@ -159,15 +166,11 @@ const StockProducts = [
     }
   };
 
-
-  
   const handleArrowPress = () => {
-    // Expand sidebar when clicking on arrow (go to full sidebar)
     setSidebarState("expanded");
   };
 
   const handleCloseSidebar = () => {
-    // Close sidebar back to icons only
     setSidebarState("press");
   };
 
@@ -178,22 +181,22 @@ const StockProducts = [
   return (
     <View style={[styles.container, { backgroundColor: darkMode ? "#1a1a2e" : "#fff" }]}>
 
-        {/* FLOATING PRESS HANDLE */}
-{isPressState && (
-  <TouchableOpacity
-    onPress={handlePressTextClick}
-    activeOpacity={0.8}
-    style={styles.floatingPress}
-  >
-    <View style={styles.pressTextWrapper}>
-      <Text style={styles.pressText}>S</Text>
-      <Text style={styles.pressText}>S</Text>
-      <Text style={styles.pressText}>E</Text>
-      <Text style={styles.pressText}>R</Text>
-      <Text style={styles.pressText}>P</Text>
-    </View>
-  </TouchableOpacity>
-)}
+      {/* FLOATING PRESS HANDLE */}
+      {isPressState && (
+        <TouchableOpacity
+          onPress={handlePressTextClick}
+          activeOpacity={0.8}
+          style={styles.floatingPress}
+        >
+          <View style={styles.pressTextWrapper}>
+            <Text style={styles.pressText}>S</Text>
+            <Text style={styles.pressText}>S</Text>
+            <Text style={styles.pressText}>E</Text>
+            <Text style={styles.pressText}>R</Text>
+            <Text style={styles.pressText}>P</Text>
+          </View>
+        </TouchableOpacity>
+      )}
 
 
 
@@ -218,7 +221,7 @@ const StockProducts = [
           },
         ]}
       >
-       
+
         {/* Toggle Arrow - Only visible when collapsed (icons only) */}
         {isCollapsed && (
           <TouchableOpacity
@@ -262,9 +265,9 @@ const StockProducts = [
         {!isPressState && (
           <>
             <View style={styles.menuContainer}>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[
-                  styles.navItem, 
+                  styles.navItem,
                   isExpanded && styles.navItemExpanded,
                   selectedItem === "Dashboard" && isExpanded && styles.navItemSelected
                 ]}
@@ -274,9 +277,9 @@ const StockProducts = [
                 {isExpanded && <Text style={styles.navText}>Dashboard</Text>}
               </TouchableOpacity>
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[
-                  styles.navItem, 
+                  styles.navItem,
                   isExpanded && styles.navItemExpanded,
                   selectedItem === "Stock" && isExpanded && styles.navItemSelected
                 ]}
@@ -286,9 +289,9 @@ const StockProducts = [
                 {isExpanded && <Text style={styles.navText}>Stock</Text>}
               </TouchableOpacity>
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[
-                  styles.navItem, 
+                  styles.navItem,
                   isExpanded && styles.navItemExpanded,
                   selectedItem === "Sales" && isExpanded && styles.navItemSelected
                 ]}
@@ -298,9 +301,9 @@ const StockProducts = [
                 {isExpanded && <Text style={styles.navText}>Sales</Text>}
               </TouchableOpacity>
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[
-                  styles.navItem, 
+                  styles.navItem,
                   isExpanded && styles.navItemExpanded,
                   selectedItem === "Reports" && isExpanded && styles.navItemSelected
                 ]}
@@ -310,9 +313,9 @@ const StockProducts = [
                 {isExpanded && <Text style={styles.navText}>Reports</Text>}
               </TouchableOpacity>
 
-                <TouchableOpacity 
+              <TouchableOpacity
                 style={[
-                  styles.navItem, 
+                  styles.navItem,
                   isExpanded && styles.navItemExpanded,
                   selectedItem === "debtors" && isExpanded && styles.navItemSelected
                 ]}
@@ -322,9 +325,9 @@ const StockProducts = [
                 {isExpanded && <Text style={styles.navText}>Debtors</Text>}
               </TouchableOpacity>
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[
-                  styles.navItem, 
+                  styles.navItem,
                   isExpanded && styles.navItemExpanded,
                   selectedItem === "Profile" && isExpanded && styles.navItemSelected
                 ]}
@@ -340,15 +343,15 @@ const StockProducts = [
 
             {/* Utility Items */}
             <View style={styles.utilityContainer}>
-              {/* <TouchableOpacity 
+              <TouchableOpacity
                 style={[styles.navItem, isExpanded && styles.navItemExpanded]}
-                onPress={() => handleNavItemPress("Help")}
+                onPress={() => setHelpModalVisible(true)}
               >
                 <Ionicons name="help-circle-outline" size={22} color="#fff" />
                 {isExpanded && <Text style={styles.navText}>Help</Text>}
-              </TouchableOpacity> */}
+              </TouchableOpacity>
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[styles.navItem, isExpanded && styles.navItemExpanded]}
                 onPress={() => setShowLogoutModal(true)}
               >
@@ -392,7 +395,7 @@ const StockProducts = [
 
       {/* CONTENT */}
       <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0 }}>
-        <KeyboardAvoidingView 
+        <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
@@ -404,400 +407,423 @@ const StockProducts = [
             }}
             style={darkMode && styles.darkScrollView}
             showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[MAIN]} />
+            }
           >
-          {/* HEADER */}
-          <View style={styles.header}>
-            {navigation?.canGoBack() && (
-              <TouchableOpacity 
-                onPress={() => navigation.goBack()}
-                style={styles.backButton}
-              >
-                <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
-              </TouchableOpacity>
-            )}
-            <View style={styles.logoContainer}>
-              <Image
-                source={require("../assets/images/stock.png")}
-                style={{ width: 36, height: 36 }}
-              />
-              <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
-            </View>
-            <Ionicons name="search" size={22} color={darkMode ? "#fff" : "#000"} style={{right:10}} />
-          </View>
-
-          {/* TABS */}
-                    <View style={styles.tabs}>
-                      {["Daily", "Weekly", "Monthly", "Annually"].map((tab) => (
-                        <TouchableOpacity
-                          key={tab}
-                          onPress={() => setSelectedTab(tab)}
-                          style={[
-                            styles.tab,
-                            selectedTab === tab && styles.activeTab,
-                          ]}
-                        >
-                          <Text
-                            style={[
-                              styles.tabText,
-                              selectedTab === tab && styles.activeTabText,
-                            ]}
-                          >
-                            {tab}
-                          </Text>
-                        </TouchableOpacity>
-                      ))}
-                    </View>
-
-          {/* TITLE */}
-          <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Your Dashboard</Text>
-
-          {/* DASHBOARD CARDS - SINGLE BG */}
-          <View style={styles.cardsContainer}>
-            {[
-              { label: "Total Sales", value: "200,000 FRW", btn: "Reload" },
-              { label: "Total Profit", value: "50,000 FRW", btn: "View more" },
-              { label: darkMode ? "Purchase Costs" : "Total Stock", value: "150,000 FRW", btn: "Graph" },
-            ].map((c, i) => (
-              <View key={i} style={styles.card}>
-                <Text style={styles.cardLabel}>{c.label}</Text>
-                <Text style={styles.cardValue}>{c.value}</Text>
-                <View style={styles.cardBtn}>
-                 <TouchableOpacity>
-                  <Text style={styles.cardBtnText}>{c.btn}</Text>
+            {/* HEADER */}
+            <View style={[styles.header, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                {navigation?.canGoBack() && (
+                  <TouchableOpacity
+                    onPress={() => navigation.goBack()}
+                    style={styles.backButton}
+                  >
+                    <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
                   </TouchableOpacity>
+                )}
+                <View style={styles.logoContainer}>
+                  <Image
+                    source={require("../assets/images/stock.png")}
+                    style={{ width: 36, height: 36 }}
+                  />
+                  <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
+                </View>
+              </View>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <TouchableOpacity onPress={() => setHelpModalVisible(true)} style={{ marginRight: 15 }}>
+                  <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
+                </TouchableOpacity>
+                <Ionicons name="search" size={22} color={darkMode ? "#fff" : "#000"} />
+              </View>
+            </View>
+
+            {/* TABS */}
+            <View style={styles.tabs}>
+              {["Daily", "Weekly", "Monthly", "Annually"].map((tab) => (
+                <TouchableOpacity
+                  key={tab}
+                  onPress={() => setSelectedTab(tab)}
+                  style={[
+                    styles.tab,
+                    selectedTab === tab && styles.activeTab,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.tabText,
+                      selectedTab === tab && styles.activeTabText,
+                    ]}
+                  >
+                    {tab}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            {/* TITLE */}
+            <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Your Dashboard</Text>
+
+            {/* DASHBOARD CARDS - SINGLE BG */}
+            <View style={styles.cardsContainer}>
+              {[
+                { label: "Total Sales (Today)", value: metrics ? `${metrics.totalSalesToday.toLocaleString()} FRW` : "Loading...", btn: "Reload" },
+                { label: "Total Profit (Today)", value: metrics ? `${metrics.totalProfitToday.toLocaleString()} FRW` : "Loading...", btn: "View more" },
+                { label: darkMode ? "Purchase Costs" : "Total Stock Value", value: metrics ? `${metrics.totalStockValue.toLocaleString()} FRW` : "Loading...", btn: "Graph" },
+              ].map((c, i) => (
+                <View key={i} style={styles.card}>
+                  <Text style={styles.cardLabel}>{c.label}</Text>
+                  <Text style={styles.cardValue}>{c.value}</Text>
+                  <View style={styles.cardBtn}>
+                    <TouchableOpacity onPress={c.btn === 'Reload' ? fetchDashboardData : undefined}>
+                      <Text style={styles.cardBtnText}>{c.btn}</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))}
+            </View>
+
+            {/* TRANSACTIONS */}
+            <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Recent transactions</Text>
+            {transactions.length === 0 && !loading && (
+              <Text style={[{ marginLeft: 20 }, darkMode && styles.darkText]}>No recent transactions</Text>
+            )}
+            {transactions.map((t, i) => (
+              <View key={i} style={[styles.transaction, darkMode && styles.darkTransaction]}>
+                <Ionicons name={t.icon} size={24} color={MAIN} />
+                <View style={{ flex: 1, marginLeft: 10 }}>
+                  <Text style={[styles.transTitle, darkMode && styles.darkText]}>{t.txt}</Text>
+                  <Text style={[styles.transDate, darkMode && { color: "#aaa" }]}>{t.date}</Text>
+                </View>
+                <Text
+                  style={[
+                    styles.transPrice,
+                    t.price.startsWith("-") ? { color: "red" } : { color: "green" },
+                  ]}
+                >
+                  {t.price}
+                </Text>
+              </View>
+            ))}
+
+            {/* ALERTS */}
+            <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Alerts</Text>
+            {[
+              { title: "Low Stock", text: metrics ? `${metrics.lowStockCount} products are low on stock` : "Checking..." },
+              { title: "Expiration", text: metrics ? `${metrics.expiringBatchesCount} batches expire within 2 days` : "Checking..." },
+            ].map((a, i) => (
+              <View key={i} style={[styles.alert, darkMode && styles.darkAlert]}>
+                <Ionicons name="warning-outline" size={22} color="red" />
+                <View style={{ marginLeft: 10 }}>
+                  <Text style={styles.alertTitle}>{a.title}</Text>
+                  <Text style={[styles.alertText, darkMode && { color: "#aaa" }]}>{a.text}</Text>
                 </View>
               </View>
             ))}
-          </View>
 
-          {/* TRANSACTIONS */}
-          <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Recent transactions</Text>
-          {[
-            { txt: "Sold 30kg of potatoes", date: "24th Dec 2025", price: "+260,000 FRW", icon: "checkmark-circle" },
-            { txt: "Bought 2 tons of kiwi", date: "20th Dec 2025", price: "-360,000 FRW", icon: "cart" },
-            { txt: "50% expired stock", date: "15th Dec 2025", price: "-160,000 FRW", icon: "business" },
-          ].map((t, i) => (
-            <View key={i} style={[styles.transaction, darkMode && styles.darkTransaction]}>
-              <Ionicons name={t.icon} size={24} color={MAIN} />
-              <View style={{ flex: 1, marginLeft: 10 }}>
-                <Text style={[styles.transTitle, darkMode && styles.darkText]}>{t.txt}</Text>
-                <Text style={[styles.transDate, darkMode && { color: "#aaa" }]}>{t.date}</Text>
-              </View>
-              <Text
-                style={[
-                  styles.transPrice,
-                  t.price.startsWith("-") ? { color: "red" } : { color: "green" },
-                ]}
+            {/* BOTTOM BUTTONS */}
+            <View style={styles.bottomBtns}>
+              <TouchableOpacity style={styles.actionBtn}
+                onPress={() => navigation.navigate("Stock")}
               >
-                {t.price}
-              </Text>
-            </View>
-          ))}
+                <Text style={styles.actionText}>Record a sale</Text>
+              </TouchableOpacity>
 
-          {/* ALERTS */}
-          <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Alerts</Text>
-          {[
-            { title: "Low Stock", text: "80% of your stock has been sold please\nrefill your stock" },
-            { title: "Expiration", text: "20% of your products are about to expire.\nPlease put them to sell" },
-          ].map((a, i) => (
-            <View key={i} style={[styles.alert, darkMode && styles.darkAlert]}>
-              <Ionicons name="warning-outline" size={22} color="red" />
-              <View style={{ marginLeft: 10 }}>
-                <Text style={styles.alertTitle}>{a.title}</Text>
-                <Text style={[styles.alertText, darkMode && { color: "#aaa" }]}>{a.text}</Text>
-              </View>
-            </View>
-          ))}
-
-          {/* BOTTOM BUTTONS */}
-          <View style={styles.bottomBtns}>
-            <TouchableOpacity style={styles.actionBtn}
-              onPress={() => setRecordSaleVisible(true)}
-             >
-              <Text style={styles.actionText}>Record a sale</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={[styles.actionBtnOutline, darkMode && styles.darkActionBtnOutline]}
-                   onPress={() => setAddStockVisible(true)}
+              <TouchableOpacity style={[styles.actionBtnOutline, darkMode && styles.darkActionBtnOutline]}
+                onPress={() => navigation.navigate("Stock")}
               >
-              <Text style={[styles.actionTextOutline, darkMode && styles.darkActionTextOutline]}>Add a product</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
+                <Text style={[styles.actionTextOutline, darkMode && styles.darkActionTextOutline]}>Add a product</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
 
-         {/* ================= ADD STOCK MODAL ================= */}
-        <Modal visible={addStockVisible} transparent animationType="slide">
-          <View style={formStyles.overlay}>
-            <TouchableOpacity 
-              style={StyleSheet.absoluteFill}
-              activeOpacity={1}
-              onPress={() => setAddStockVisible(false)}
-            />
-            <KeyboardAvoidingView 
-              style={formStyles.modalContainer}
-              behavior={Platform.OS === "ios" ? "padding" : "height"}
+      {/* ================= ADD STOCK MODAL ================= */}
+      <Modal visible={addStockVisible} transparent animationType="slide">
+        <View style={formStyles.overlay}>
+          <TouchableOpacity
+            style={StyleSheet.absoluteFill}
+            activeOpacity={1}
+            onPress={() => setAddStockVisible(false)}
+          />
+          <KeyboardAvoidingView
+            style={formStyles.modalContainer}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+          >
+            <ScrollView
+              contentContainerStyle={formStyles.scrollContent}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
             >
-              <ScrollView 
-                contentContainerStyle={formStyles.scrollContent}
-                showsVerticalScrollIndicator={false}
-                keyboardShouldPersistTaps="handled"
-              >
-                <View style={[formStyles.card, darkMode && formStyles.darkCard]}>
-        
-              {/* Header */}
-              <View style={[formStyles.header, darkMode && { borderBottomColor: "#444" }]}>
-                <Text style={[formStyles.title, darkMode && styles.darkText]}>Add to Stock</Text>
-                <TouchableOpacity onPress={() => setAddStockVisible(false)}>
-                  <Ionicons name="close" size={22} color={darkMode ? "#fff" : "#333"} />
+              <View style={[formStyles.card, darkMode && formStyles.darkCard]}>
+
+                {/* Header */}
+                <View style={[formStyles.header, darkMode && { borderBottomColor: "#444" }]}>
+                  <Text style={[formStyles.title, darkMode && styles.darkText]}>Add to Stock</Text>
+                  <TouchableOpacity onPress={() => setAddStockVisible(false)}>
+                    <Ionicons name="close" size={22} color={darkMode ? "#fff" : "#333"} />
+                  </TouchableOpacity>
+                </View>
+
+                {/* Body */}
+                <View style={formStyles.body}>
+
+                  {/* LEFT SIDE */}
+                  <View style={formStyles.left}>
+
+                    <Text style={[formStyles.staticLabel, darkMode && { color: "#aaa" }]}>Product Name</Text>
+                    <Text style={[formStyles.staticValue, darkMode && styles.darkText]}>
+                      {selectedProduct?.TextHead}
+                    </Text>
+
+                    <Text style={[formStyles.staticLabel, darkMode && { color: "#aaa" }]}>Category</Text>
+                    <Text style={[formStyles.staticValue, darkMode && styles.darkText]}>
+                      {selectedProduct?.subText}
+                    </Text>
+
+                    <FormInput
+                      label="Quantity purchased"
+                      placeholder="Ex: 54kg"
+                      value={formData.quantity}
+                      onChangeText={(v) => handleChange("quantity", v)}
+                      inputStyle={formStyles.input}
+                      darkMode={darkMode}
+                    />
+
+                    <FormInput
+                      label="Purchase price per unit"
+                      placeholder="Ex: 200 RWF"
+                      value={formData.price}
+                      onChangeText={(v) => handleChange("price", v)}
+                      inputStyle={formStyles.input}
+                      darkMode={darkMode}
+                    />
+
+                    <FormInput
+                      label="Purchase Date"
+                      placeholder="Ex: 15 June 2025"
+                      value={formData.purchaseDate}
+                      onChangeText={(v) => handleChange("purchaseDate", v)}
+                      inputStyle={formStyles.input}
+                      darkMode={darkMode}
+                    />
+
+                    <FormInput
+                      label="Expiry Date"
+                      placeholder="Ex: 15 September 2025"
+                      value={formData.expiryDate}
+                      onChangeText={(v) => handleChange("expiryDate", v)}
+                      inputStyle={formStyles.input}
+                      darkMode={darkMode}
+                    />
+
+                  </View>
+
+                  {/* RIGHT SIDE */}
+                  <View style={formStyles.right}>
+                    <Image
+                      source={selectedProduct?.Image}
+                      style={formStyles.image}
+                    />
+
+                    <FormInput
+                      label="Description (Optional)"
+                      placeholder="Key notes about the product..."
+                      multiline
+                      value={formData.description}
+                      onChangeText={(v) => handleChange("description", v)}
+                      inputStyle={formStyles.descriptionInput}
+                      darkMode={darkMode}
+                    />
+
+                  </View>
+
+                </View>
+
+                {/* Button */}
+                <TouchableOpacity style={formStyles.addButton}>
+                  <Text style={formStyles.addText}>ADD</Text>
                 </TouchableOpacity>
+
               </View>
-        
-              {/* Body */}
-              <View style={formStyles.body}>
-        
-                {/* LEFT SIDE */}
-                <View style={formStyles.left}>
-        
-                  <Text style={[formStyles.staticLabel, darkMode && { color: "#aaa" }]}>Product Name</Text>
-                  <Text style={[formStyles.staticValue, darkMode && styles.darkText]}>
-                    {selectedProduct?.TextHead}
-                  </Text>
-        
-                  <Text style={[formStyles.staticLabel, darkMode && { color: "#aaa" }]}>Category</Text>
-                  <Text style={[formStyles.staticValue, darkMode && styles.darkText]}>
-                    {selectedProduct?.subText}
-                  </Text>
-        
-                  <FormInput
-                    label="Quantity purchased"
-                    placeholder="Ex: 54kg"
-                    value={formData.quantity}
-                    onChangeText={(v) => handleChange("quantity", v)}
-                    inputStyle={formStyles.input}
-                    darkMode={darkMode}
-                  />
-        
-                  <FormInput
-                    label="Purchase price per unit"
-                    placeholder="Ex: 200 RWF"
-                    value={formData.price}
-                    onChangeText={(v) => handleChange("price", v)}
-                    inputStyle={formStyles.input}
-                    darkMode={darkMode}
-                  />
-        
-                  <FormInput
-                    label="Purchase Date"
-                    placeholder="Ex: 15 June 2025"
-                    value={formData.purchaseDate}
-                    onChangeText={(v) => handleChange("purchaseDate", v)}
-                    inputStyle={formStyles.input}
-                    darkMode={darkMode}
-                  />
-        
-                  <FormInput
-                    label="Expiry Date"
-                    placeholder="Ex: 15 September 2025"
-                    value={formData.expiryDate}
-                    onChangeText={(v) => handleChange("expiryDate", v)}
-                    inputStyle={formStyles.input}
-                    darkMode={darkMode}
-                  />
-        
-                </View>
-        
-                {/* RIGHT SIDE */}
-                <View style={formStyles.right}>
-                  <Image
-                    source={selectedProduct?.Image}
-                    style={formStyles.image}
-                  />
-        
-                  <FormInput
-                    label="Description (Optional)"
-                    placeholder="Key notes about the product..."
-                    multiline
-                    value={formData.description}
-                    onChangeText={(v) => handleChange("description", v)}
-                    inputStyle={formStyles.descriptionInput}
-                    darkMode={darkMode}
-                  />
-        
-                </View>
-        
-              </View>
-        
-              {/* Button */}
-              <TouchableOpacity style={formStyles.addButton}>
-                <Text style={formStyles.addText}>ADD</Text>
-              </TouchableOpacity>
-        
-                </View>
-              </ScrollView>
-            </KeyboardAvoidingView>
-          </View>
-        </Modal>
-        
-        {/* ================= SALES RECORD MODAL ================= */}
-        <Modal visible={recordSaleVisible} transparent animationType="slide">
-          <View style={saleStyles.overlay}>
-            <TouchableOpacity 
-              style={StyleSheet.absoluteFill}
-              activeOpacity={1}
-              onPress={() => setRecordSaleVisible(false)}
-            />
-            <KeyboardAvoidingView 
-              style={saleStyles.modalContainer}
-              behavior={Platform.OS === "ios" ? "padding" : "height"}
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </View>
+      </Modal>
+
+      {/* ================= SALES RECORD MODAL ================= */}
+      <Modal visible={recordSaleVisible} transparent animationType="slide">
+        <View style={saleStyles.overlay}>
+          <TouchableOpacity
+            style={StyleSheet.absoluteFill}
+            activeOpacity={1}
+            onPress={() => setRecordSaleVisible(false)}
+          />
+          <KeyboardAvoidingView
+            style={saleStyles.modalContainer}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+          >
+            <ScrollView
+              contentContainerStyle={saleStyles.scrollContent}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
             >
-              <ScrollView 
-                contentContainerStyle={saleStyles.scrollContent}
-                showsVerticalScrollIndicator={false}
-                keyboardShouldPersistTaps="handled"
+              <View style={[saleStyles.card, darkMode && saleStyles.darkCard]}>
+
+                {/* Header */}
+                <View style={[saleStyles.header, darkMode && { borderBottomColor: "#444" }]}>
+                  <Text style={[saleStyles.title, darkMode && styles.darkText]}>Product Details</Text>
+                  <TouchableOpacity onPress={() => setRecordSaleVisible(false)}>
+                    <Ionicons name="close" size={22} color={darkMode ? "#fff" : "#333"} />
+                  </TouchableOpacity>
+                </View>
+
+                {/* Body */}
+                <View style={saleStyles.body}>
+
+                  {/* LEFT */}
+                  <View style={saleStyles.left}>
+                    <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Product Name</Text>
+                    <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.TextHead}</Text>
+
+                    <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Category</Text>
+                    <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.subText}</Text>
+
+                    <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Remaining stock</Text>
+                    <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.kilos}</Text>
+
+                    <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Purchase date</Text>
+                    <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.PurchaseDate}</Text>
+
+                    <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Expiry date</Text>
+                    <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.ExpiryDate}</Text>
+                  </View>
+
+                  {/* RIGHT */}
+                  <View style={saleStyles.right}>
+                    <Image
+                      source={selectedProduct?.Image}
+                      style={saleStyles.image}
+                    />
+
+                    <Text style={[saleStyles.descTitle, darkMode && styles.darkText]}>Description</Text>
+                    <Text style={[saleStyles.description, darkMode && { color: "#aaa" }]}>
+                      {selectedProduct?.description || "No description available."}
+                    </Text>
+                  </View>
+
+                </View>
+
+                {/* SALE FORM */}
+                <Text style={[saleStyles.sectionTitle, darkMode && styles.darkText]}>Record a sale</Text>
+
+                <View style={saleStyles.formRow}>
+                  <View style={saleStyles.formInputWrapper}>
+                    <FormInput
+                      label="Quantity sold"
+                      placeholder="Ex: 54kg"
+                      value={saleData.quantity}
+                      onChangeText={(v) => handleSaleChange("quantity", v)}
+                      inputStyle={saleStyles.input}
+                      labelStyle={{
+                        fontFamily: "Poppins_400Regular",
+                        color: "#93d81aff"
+                      }}
+                      darkMode={darkMode}
+                    />
+                  </View>
+
+                  <View style={saleStyles.formInputWrapper}>
+                    <FormInput
+                      label="Unit Selling Price"
+                      placeholder="Ex: 200 RWF"
+                      value={saleData.unitPrice}
+                      onChangeText={(v) => handleSaleChange("unitPrice", v)}
+                      inputStyle={saleStyles.input}
+                      darkMode={darkMode}
+                    />
+                  </View>
+                </View>
+
+                <FormInput
+                  label="Total Price"
+                  placeholder="0 RWF"
+                  value={saleData.totalPrice}
+                  onChangeText={(v) => handleSaleChange("totalPrice", v)}
+                  inputStyle={saleStyles.input}
+                  darkMode={darkMode}
+                />
+
+                {/* BUTTON */}
+                <TouchableOpacity style={saleStyles.recordButton}>
+                  <Text style={saleStyles.recordText}>RECORD</Text>
+                </TouchableOpacity>
+
+              </View>
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </View>
+      </Modal>
+
+      {/* LOGOUT MODAL */}
+      <Modal
+        transparent
+        animationType="fade"
+        visible={showLogoutModal}
+        onRequestClose={() => setShowLogoutModal(false)}
+      >
+        <View style={styles.logoutOverlay}>
+          <View style={styles.logoutModalCard}>
+            <Ionicons
+              name="warning-outline"
+              size={38}
+              color="#0A2A3F"
+              style={{ marginBottom: 10 }}
+            />
+
+            <Text style={styles.logoutModalText}>
+              Are you sure about logging out?
+            </Text>
+
+            <View style={styles.logoutModalButtons}>
+              <TouchableOpacity
+                style={styles.logoutYesButton}
+                onPress={() => {
+                  setShowLogoutModal(false);
+                  logout();
+                }}
               >
-                <View style={[saleStyles.card, darkMode && saleStyles.darkCard]}>
-        
-              {/* Header */}
-              <View style={[saleStyles.header, darkMode && { borderBottomColor: "#444" }]}>
-                <Text style={[saleStyles.title, darkMode && styles.darkText]}>Product Details</Text>
-                <TouchableOpacity onPress={() => setRecordSaleVisible(false)}>
-                  <Ionicons name="close" size={22} color={darkMode ? "#fff" : "#333"} />
-                </TouchableOpacity>
-              </View>
-        
-              {/* Body */}
-              <View style={saleStyles.body}>
-        
-                {/* LEFT */}
-                <View style={saleStyles.left}>
-                  <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Product Name</Text>
-                  <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.TextHead}</Text>
-        
-                  <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Category</Text>
-                  <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.subText}</Text>
-        
-                  <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Remaining stock</Text>
-                  <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.kilos}</Text>
-        
-                  <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Purchase date</Text>
-                  <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.PurchaseDate}</Text>
-        
-                  <Text style={[saleStyles.label, darkMode && { color: "#aaa" }]}>Expiry date</Text>
-                  <Text style={[saleStyles.value, darkMode && styles.darkText]}>{selectedProduct?.ExpiryDate}</Text>
-                </View>
-        
-                {/* RIGHT */}
-                <View style={saleStyles.right}>
-                  <Image
-                    source={selectedProduct?.Image}
-                    style={saleStyles.image}
-                  />
-        
-                  <Text style={[saleStyles.descTitle, darkMode && styles.darkText]}>Description</Text>
-                  <Text style={[saleStyles.description, darkMode && { color: "#aaa" }]}>
-                    {selectedProduct?.description || "No description available."}
-                  </Text>
-                </View>
-        
-              </View>
-        
-              {/* SALE FORM */}
-              <Text style={[saleStyles.sectionTitle, darkMode && styles.darkText]}>Record a sale</Text>
-        
-              <View style={saleStyles.formRow}>
-                <View style={saleStyles.formInputWrapper}>
-                  <FormInput
-                    label="Quantity sold"
-                    placeholder="Ex: 54kg"
-                    value={saleData.quantity}
-                    onChangeText={(v) => handleSaleChange("quantity", v)}
-                    inputStyle={saleStyles.input}
-                    labelStyle={{
-                      fontFamily:"Poppins_400Regular",
-                      color:"#93d81aff"
-                    }}
-                    darkMode={darkMode}
-                  />
-                </View>
-        
-                <View style={saleStyles.formInputWrapper}>
-                  <FormInput
-                    label="Unit Selling Price"
-                    placeholder="Ex: 200 RWF"
-                    value={saleData.unitPrice}
-                    onChangeText={(v) => handleSaleChange("unitPrice", v)}
-                    inputStyle={saleStyles.input}
-                    darkMode={darkMode}
-                  />
-                </View>
-              </View>
-        
-              <FormInput
-                label="Total Price"
-                placeholder="0 RWF"
-                value={saleData.totalPrice}
-                onChangeText={(v) => handleSaleChange("totalPrice", v)}
-                inputStyle={saleStyles.input}
-                darkMode={darkMode}
-              />
-        
-              {/* BUTTON */}
-              <TouchableOpacity style={saleStyles.recordButton}>
-                <Text style={saleStyles.recordText}>RECORD</Text>
+                <Text style={styles.logoutYesText}>YES</Text>
               </TouchableOpacity>
-        
-                </View>
-              </ScrollView>
-            </KeyboardAvoidingView>
-          </View>
-        </Modal>
 
-        {/* LOGOUT MODAL */}
-        <Modal
-          transparent
-          animationType="fade"
-          visible={showLogoutModal}
-          onRequestClose={() => setShowLogoutModal(false)}
-        >
-          <View style={styles.logoutOverlay}>
-            <View style={styles.logoutModalCard}>
-              <Ionicons
-                name="warning-outline"
-                size={38}
-                color="#0A2A3F"
-                style={{ marginBottom: 10 }}
-              />
-
-              <Text style={styles.logoutModalText}>
-                Are you sure about logging out?
-              </Text>
-
-              <View style={styles.logoutModalButtons}>
-                <TouchableOpacity
-                  style={styles.logoutYesButton}
-                  onPress={() => {
-                    setShowLogoutModal(false);
-                    if (navigation) {
-                      navigation.navigate("Login");
-                    }
-                  }}
-                >
-                  <Text style={styles.logoutYesText}>YES</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.logoutNoButton}
-                  onPress={() => setShowLogoutModal(false)}
-                >
-                  <Text style={styles.logoutNoText}>NO</Text>
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity
+                style={styles.logoutNoButton}
+                onPress={() => setShowLogoutModal(false)}
+              >
+                <Text style={styles.logoutNoText}>NO</Text>
+              </TouchableOpacity>
             </View>
           </View>
-        </Modal>
-      </View>
+        </View>
+      </Modal>
+      {/* ================= HELP MODAL ================= */}
+      <Modal visible={helpModalVisible} transparent animationType="fade">
+        <View style={styles.overlay}>
+          <View style={[styles.helpModalCard, darkMode && { backgroundColor: '#2a2a3e' }]}>
+            <Ionicons name="help-circle-outline" size={48} color={darkMode ? "#4a9eff" : "#0A2A3F"} style={{ marginBottom: 15 }} />
+            <Text style={[styles.helpModalTitle, darkMode && styles.darkText]}>Need Help?</Text>
+            <Text style={[styles.helpModalText, darkMode && { color: '#aaa' }]}>
+              Any problem? Text us via SMS or WhatsApp on +250792050511
+            </Text>
+            <TouchableOpacity style={styles.helpModalButton} onPress={() => setHelpModalVisible(false)}>
+              <Text style={styles.helpModalButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+    </View>
   );
 }
 
@@ -834,38 +860,38 @@ const FormInput = ({
 
 
 const styles = StyleSheet.create({
-  container: { flex: 1, flexDirection: "row", position:"relative" },
+  container: { flex: 1, flexDirection: "row", position: "relative" },
 
- floatingPress: {
-  position: "absolute",
-  left: 0,
-  top: "45%",
-  width: 34,
-  height: 60,              // ✅ small height
-  backgroundColor: MAIN,
-  borderTopRightRadius: 10,
-  borderBottomRightRadius: 10,
-  justifyContent: "center",
-  alignItems: "center",
-  zIndex: 100,
-  elevation: 6,
-},
-
-
-pressTextWrapper: {
-  justifyContent: "center",
-  alignItems: "center",
-},
-
-pressText: {
-  color: "#fff",
-  fontSize: 11,
-  fontFamily: "Poppins_600SemiBold",
-  lineHeight: 12,
-},
+  floatingPress: {
+    position: "absolute",
+    left: 0,
+    top: "45%",
+    width: 34,
+    height: 60,              // ✅ small height
+    backgroundColor: MAIN,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 100,
+    elevation: 6,
+  },
 
 
-    
+  pressTextWrapper: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  pressText: {
+    color: "#fff",
+    fontSize: 11,
+    fontFamily: "Poppins_600SemiBold",
+    lineHeight: 12,
+  },
+
+
+
   overlay: {
     position: "absolute",
     top: 0,
@@ -905,7 +931,7 @@ pressText: {
     letterSpacing: 2,
     textAlign: "center",
     includeFontPadding: false,
-     transform: [{ rotate: "-90deg" }],
+    transform: [{ rotate: "-90deg" }],
   },
   arrowButton: {
     marginBottom: 25,
@@ -934,7 +960,7 @@ pressText: {
     color: "#000",
     marginLeft: 10,
   },
-   stockText: {
+  stockText: {
     fontFamily: "Poppins_700Bold",
     fontSize: 18,
     color: "#fff",
@@ -1026,7 +1052,7 @@ pressText: {
     padding: 8,
     marginRight: 8,
   },
- tabs: {
+  tabs: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 20,
@@ -1052,7 +1078,7 @@ pressText: {
   activeTabText: {
     color: "#fff",
   },
-  tab: { 
+  tab: {
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 5,
@@ -1060,13 +1086,13 @@ pressText: {
   darkActiveTab: {
     backgroundColor: "#4a9eff",
   },
-  tabText: { 
-    fontFamily: "Poppins_500Medium", 
+  tabText: {
+    fontFamily: "Poppins_500Medium",
     color: MAIN,
   },
-  sectionTitle: { 
-    fontFamily: "Poppins_700Bold", 
-    fontSize: 16, 
+  sectionTitle: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 16,
     marginVertical: 12,
     color: "#000",
   },
@@ -1088,7 +1114,7 @@ pressText: {
   cardLabel: { color: "#fff", fontSize: 11, fontFamily: "Poppins_400Regular" },
   cardValue: { color: "#fff", fontFamily: "Poppins_400Regular", marginVertical: 6, fontSize: 12 },
   cardBtn: { backgroundColor: "#fff", borderRadius: 10, paddingVertical: 4 },
-  cardBtnText: { color: MAIN, textAlign: "center", fontSize: 11,fontFamily:"Poppins_400Regular" },
+  cardBtnText: { color: MAIN, textAlign: "center", fontSize: 11, fontFamily: "Poppins_400Regular" },
   transaction: {
     flexDirection: "row",
     alignItems: "center",
@@ -1096,13 +1122,13 @@ pressText: {
     padding: 12,
     borderRadius: 12,
     marginBottom: 8,
-    fontFamily:"Poppins_400Regular"
+    fontFamily: "Poppins_400Regular"
   },
   darkTransaction: {
     backgroundColor: "#2a2a3e",
   },
   transTitle: { fontFamily: "Poppins_600SemiBold", fontSize: 13, color: "#000" },
-  transDate: { fontSize: 11, color: "#777",fontFamily:"Poppins_400Regular" },
+  transDate: { fontSize: 11, color: "#777", fontFamily: "Poppins_400Regular" },
   transPrice: { fontFamily: "Poppins_600SemiBold" },
   alert: {
     flexDirection: "row",
@@ -1118,7 +1144,7 @@ pressText: {
     borderColor: "#444",
   },
   alertTitle: { fontFamily: "Poppins_600SemiBold", color: "red" },
-  alertText: { fontSize: 11.5, color: "#555",fontFamily:"Poppins_400Regular" },
+  alertText: { fontSize: 11.5, color: "#555", fontFamily: "Poppins_400Regular" },
   bottomBtns: { flexDirection: "row", justifyContent: "space-between", marginTop: 15 },
   actionBtn: { backgroundColor: MAIN, padding: 12, borderRadius: 12, width: "48%" },
   actionBtnOutline: { borderWidth: 1, borderColor: MAIN, padding: 12, borderRadius: 12, width: "48%" },
@@ -1326,8 +1352,8 @@ const saleStyles = StyleSheet.create({
     width: "93%",
     maxHeight: "90%",
   },
-  formInputWrapper:{
-     fontFamily:"Poppins_400Regular",
+  formInputWrapper: {
+    fontFamily: "Poppins_400Regular",
   },
   input: {
     height: 48,
@@ -1338,7 +1364,7 @@ const saleStyles = StyleSheet.create({
     fontSize: 16,
     color: "#000",
     backgroundColor: "#FAFAFA",
-    fontFamily:"Poppins_400Regular",
+    fontFamily: "Poppins_400Regular",
   },
   scrollContent: {
     paddingVertical: 20,
@@ -1406,8 +1432,8 @@ const saleStyles = StyleSheet.create({
     height: 110,
     borderRadius: 10,
     marginBottom: 8,
-    borderColor:"#dededeff",
-    borderWidth:2,
+    borderColor: "#dededeff",
+    borderWidth: 2,
   },
 
   descTitle: {
@@ -1434,8 +1460,8 @@ const saleStyles = StyleSheet.create({
     gap: 10,
   },
 
-  formLabel:{
-      fontFamily:"Poppins_400Regular",
+  formLabel: {
+    fontFamily: "Poppins_400Regular",
   },
 
 
@@ -1459,8 +1485,54 @@ const saleStyles = StyleSheet.create({
     letterSpacing: 1,
   },
 
-formLabel:{
-  color:"#093"
-}
+  formLabel: {
+    color: "#093"
+  },
+
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  helpModalCard: {
+    width: "80%",
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 25,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  helpModalTitle: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 20,
+    color: "#0A2A3F",
+    marginBottom: 10,
+  },
+  helpModalText: {
+    fontFamily: "Poppins_400Regular",
+    fontSize: 14,
+    color: "#555",
+    textAlign: "center",
+    marginBottom: 20,
+    lineHeight: 22,
+  },
+  helpModalButton: {
+    backgroundColor: "#0A2A3F",
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+    width: '100%',
+  },
+  helpModalButtonText: {
+    color: "#fff",
+    fontFamily: "Poppins_600SemiBold",
+    fontSize: 15,
+    textAlign: "center",
+  },
 
 });
