@@ -94,11 +94,14 @@ export default function SalesScreen({ navigation }) {
         value2: `${s.unit_selling_price}`,
         label3: "Total Price",
         value3: `${Number(s.total_price).toLocaleString()} FRW`,
-        label4: "Profit",
-        value4: `${Number(s.profit).toLocaleString()} FRW`,
+        label4: s.profit < 0 ? "Loss" : "Profit",
+        value4: `${Number(Math.abs(s.profit)).toLocaleString()} FRW`,
+        value4Color: s.profit < 0 ? "#FF4444" : undefined,
         label5: "Date of Sale",
         value5: new Date(s.created_at).toLocaleDateString(),
-        description: `Profit Margin: ${((s.profit / s.total_price) * 100).toFixed(1)}%.`
+        description: s.profit < 0
+          ? `Loss Margin: ${Math.abs((s.profit / s.total_price) * 100).toFixed(1)}%.`
+          : `Profit Margin: ${((s.profit / s.total_price) * 100).toFixed(1)}%.`
       }));
 
       setSales(processed);
@@ -454,7 +457,7 @@ export default function SalesScreen({ navigation }) {
                       <View style={styles.labelColumn}>
                         <View style={styles.labelRow}>
                           <Text style={[styles.label, darkMode && { color: "#aaa" }]}>{item.label4}</Text>
-                          <Text style={[styles.value, darkMode && styles.darkText]}>{item.value4}</Text>
+                          <Text style={[styles.value, darkMode && styles.darkText, item.value4Color && { color: item.value4Color }]}>{item.value4}</Text>
                         </View>
                         <View style={styles.labelRow}>
                           <Text style={[styles.label, darkMode && { color: "#aaa" }]}>{item.label5}</Text>
@@ -566,7 +569,12 @@ export default function SalesScreen({ navigation }) {
                 <Detail label="Quantity Sold" value={selectedSale?.value1} darkMode={darkMode} />
                 <Detail label="Unit Price" value={selectedSale?.value2} darkMode={darkMode} />
                 <Detail label="Total Price" value={selectedSale?.value3} darkMode={darkMode} />
-                <Detail label="Profit" value={selectedSale?.value4} darkMode={darkMode} />
+                <Detail
+                  label={selectedSale?.label4}
+                  value={selectedSale?.value4}
+                  valueColor={selectedSale?.value4Color}
+                  darkMode={darkMode}
+                />
                 <Detail label="Date of Sale" value={selectedSale?.value5} darkMode={darkMode} />
               </View>
 
@@ -590,10 +598,10 @@ export default function SalesScreen({ navigation }) {
 }
 
 /* Small reusable component */
-const Detail = ({ label, value, darkMode }) => (
+const Detail = ({ label, value, valueColor, darkMode }) => (
   <View style={{ marginBottom: 10 }}>
     <Text style={[styles.detailLabel, darkMode && { color: "#aaa" }]}>{label}</Text>
-    <Text style={[styles.detailValue, darkMode && styles.darkText]}>{value}</Text>
+    <Text style={[styles.detailValue, darkMode && styles.darkText, valueColor && { color: valueColor }]}>{value}</Text>
   </View>
 );
 

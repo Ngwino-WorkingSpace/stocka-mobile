@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   ScrollView,
   Modal,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
   RefreshControl,
@@ -25,6 +24,7 @@ import {
 import { api } from "../src/services/api";
 import { useAuth } from "../src/context/AuthContext";
 import { useFocusEffect } from '@react-navigation/native';
+import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
 
 const MAIN = "#09364D";
 
@@ -42,6 +42,7 @@ const getRouteName = (itemName) => {
 };
 
 export default function ProfileScreen({ navigation }) {
+  const insets = useSafeAreaInsets();
   const { logout } = useAuth();
   // Sidebar states: "press" (minimal), "collapsed" (icons only), "expanded" (full)
   const [sidebarState, setSidebarState] = useState("press");
@@ -52,8 +53,6 @@ export default function ProfileScreen({ navigation }) {
   const [profile, setProfile] = useState({
     name: "",
     phone: "",
-    password: "********",
-    dob: "",
   });
 
   const fetchProfile = async () => {
@@ -353,6 +352,7 @@ export default function ProfileScreen({ navigation }) {
             }
           >
             {/* Header */}
+            {/* Header */}
             <View style={[styles.headerRow, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, marginBottom: 20 }]}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 {navigation?.canGoBack() && (
@@ -368,9 +368,11 @@ export default function ProfileScreen({ navigation }) {
                   <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
                 </View>
               </View>
-              <TouchableOpacity onPress={() => setHelpModalVisible(true)}>
-                <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
-              </TouchableOpacity>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <TouchableOpacity onPress={() => setHelpModalVisible(true)} style={{ marginRight: 15 }}>
+                  <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
+                </TouchableOpacity>
+              </View>
             </View>
 
             <Text style={[styles.title, darkMode && styles.darkText]}>Profile info</Text>
@@ -407,18 +409,13 @@ export default function ProfileScreen({ navigation }) {
               darkMode={darkMode}
             />
 
-            <ProfileInput
-              label="Password"
-              value={profile.password}
-              editable={false}
-              secureTextEntry
-              darkMode={darkMode}
-            />
+
 
             <ProfileInput
-              label="Date of joining"
-              value={profile.dob}
-              editable={false}
+              label="Email"
+              value={profile.email}
+              editable={editable}
+              onChangeText={(v) => setProfile({ ...profile, email: v })}
               darkMode={darkMode}
             />
 
@@ -492,7 +489,7 @@ export default function ProfileScreen({ navigation }) {
         </View>
       </Modal>
 
-    </View>
+    </View >
   );
 }
 
@@ -504,23 +501,45 @@ const ProfileInput = ({
   onChangeText,
   secureTextEntry,
   darkMode,
-}) => (
-  <View style={styles.inputWrapper}>
-    <Text style={[styles.label, darkMode && styles.darkText]}>{label}</Text>
-    <TextInput
-      value={value}
-      editable={editable}
-      onChangeText={onChangeText}
-      secureTextEntry={secureTextEntry}
-      style={[
-        styles.input,
-        !editable && styles.disabledInput,
-        darkMode && styles.darkInput,
-        darkMode && !editable && { color: "#aaa" },
-      ]}
-    />
-  </View>
-);
+}) => {
+  const [isVisible, setIsVisible] = useState(!secureTextEntry);
+
+  const toggleVisibility = () => setIsVisible(!isVisible);
+
+  // If it's a password field (secureTextEntry is true), we use the internal isVisible state
+  // If undefined/false, it's just a normal input so it's "visible" (secure=false)
+  const isSecure = secureTextEntry ? !isVisible : false;
+
+  return (
+    <View style={styles.inputWrapper}>
+      <Text style={[styles.label, darkMode && styles.darkText]}>{label}</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <TextInput
+          value={value}
+          editable={editable}
+          onChangeText={onChangeText}
+          secureTextEntry={isSecure}
+          style={[
+            styles.input,
+            !editable && styles.disabledInput,
+            darkMode && styles.darkInput,
+            darkMode && !editable && { color: "#aaa" },
+            { flex: 1 }
+          ]}
+        />
+        {secureTextEntry && (
+          <TouchableOpacity onPress={toggleVisibility} style={{ marginLeft: -35, padding: 5 }}>
+            <Ionicons
+              name={isVisible ? "eye" : "eye-off"}
+              size={20}
+              color={darkMode ? "#aaa" : "#555"}
+            />
+          </TouchableOpacity>
+        )}
+      </View>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   mainContainer: {

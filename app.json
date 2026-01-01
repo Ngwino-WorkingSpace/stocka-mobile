@@ -4,12 +4,12 @@
     "slug": "Stocka",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/stockaLogo.png",
+    "icon": "./assets/images/tradewise.png",
     "scheme": "stocka",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/Stocka.png",
+      "image": "./assets/images/stocka.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -18,7 +18,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/stockaLogo.png",
+        "foregroundImage": "./assets/images/tradewise.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
@@ -40,15 +40,15 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "4dadb81c-5917-45f9-bebc-9079adbda778"
+        "projectId": "eb5a68d9-c17e-481d-88ac-17d887722c59"
       }
     },
-    "owner": "titine",
+    "owner": "divin_d1",
     "runtimeVersion": {
       "policy": "appVersion"
     },
     "updates": {
-      "url": "https://u.expo.dev/4dadb81c-5917-45f9-bebc-9079adbda778"
+      "url": "https://u.expo.dev/<new_project_id>"
     }
   }
 }

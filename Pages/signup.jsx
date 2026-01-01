@@ -13,6 +13,8 @@ import {
   ScrollView,
 } from "react-native";
 
+
+import { Ionicons } from "@expo/vector-icons";
 import {
   useFonts,
   Poppins_400Regular,
@@ -27,6 +29,7 @@ export default function SignupScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [recoveryPin, setRecoveryPin] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
 
@@ -120,14 +123,26 @@ export default function SignupScreen({ navigation }) {
               keyboardType="numeric"
             />
 
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              placeholderTextColor="#107EBA"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-            />
+            <View style={styles.passwordContainer}>
+              <TextInput
+                style={styles.passwordInput}
+                placeholder="Password"
+                placeholderTextColor="#107EBA"
+                secureTextEntry={!showPassword}
+                value={password}
+                onChangeText={setPassword}
+              />
+              <TouchableOpacity
+                onPress={() => setShowPassword(!showPassword)}
+                style={styles.eyeIcon}
+              >
+                <Ionicons
+                  name={showPassword ? "eye" : "eye-off"}
+                  size={20}
+                  color="#107EBA"
+                />
+              </TouchableOpacity>
+            </View>
 
             <Text style={styles.signinText}>
               Already have an account?{" "}
@@ -209,6 +224,36 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 5,
     elevation: 5,
+  },
+
+  passwordContainer: {
+    width: "100%",
+    backgroundColor: "#09364D",
+    borderRadius: 10,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: "#0F4461",
+    flexDirection: "row",
+    alignItems: "center",
+    shadowColor: "#0A5E8C",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+
+  passwordInput: {
+    flex: 1,
+    paddingVertical: 16,
+    paddingHorizontal: 15,
+    color: "#107EBA",
+    fontSize: 16,
+    fontFamily: "Poppins_400Regular",
+  },
+
+  eyeIcon: {
+    padding: 10,
+    marginRight: 5,
   },
 
   button: {

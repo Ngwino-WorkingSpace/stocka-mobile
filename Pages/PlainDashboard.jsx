@@ -434,7 +434,6 @@ export default function PlainDashboardScreen({ navigation }) {
                 <TouchableOpacity onPress={() => setHelpModalVisible(true)} style={{ marginRight: 15 }}>
                   <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
                 </TouchableOpacity>
-                <Ionicons name="search" size={22} color={darkMode ? "#fff" : "#000"} />
               </View>
             </View>
 
@@ -466,21 +465,41 @@ export default function PlainDashboardScreen({ navigation }) {
 
             {/* DASHBOARD CARDS - SINGLE BG */}
             <View style={styles.cardsContainer}>
-              {[
-                { label: "Total Sales (Today)", value: metrics ? `${metrics.totalSalesToday.toLocaleString()} FRW` : "Loading...", btn: "Reload" },
-                { label: "Total Profit (Today)", value: metrics ? `${metrics.totalProfitToday.toLocaleString()} FRW` : "Loading...", btn: "View more" },
-                { label: darkMode ? "Purchase Costs" : "Total Stock Value", value: metrics ? `${metrics.totalStockValue.toLocaleString()} FRW` : "Loading...", btn: "Graph" },
-              ].map((c, i) => (
-                <View key={i} style={styles.card}>
-                  <Text style={styles.cardLabel}>{c.label}</Text>
-                  <Text style={styles.cardValue}>{c.value}</Text>
-                  <View style={styles.cardBtn}>
-                    <TouchableOpacity onPress={c.btn === 'Reload' ? fetchDashboardData : undefined}>
-                      <Text style={styles.cardBtnText}>{c.btn}</Text>
-                    </TouchableOpacity>
+              {(() => {
+                const profitDiff = metrics ? Number(metrics.totalProfitToday) : 0;
+                const isLoss = profitDiff < 0;
+
+                return [
+                  {
+                    label: "Total Sales (Today)",
+                    value: metrics ? `${metrics.totalSalesToday.toLocaleString()} FRW` : "Loading...",
+                    btn: "Reload"
+                  },
+                  {
+                    label: isLoss ? "Total Loss (Today)" : "Total Profit (Today)",
+                    value: metrics ? `${Math.abs(profitDiff).toLocaleString()} FRW` : "Loading...",
+                    valueColor: isLoss ? "red" : "#fff",
+                    btn: "Reload"
+                  },
+                  {
+                    label: darkMode ? "Purchase Costs" : "Total Stock Value",
+                    value: metrics ? `${metrics.totalStockValue.toLocaleString()} FRW` : "Loading...",
+                    btn: "Reload"
+                  },
+                ].map((c, i) => (
+                  <View key={i} style={styles.card}>
+                    <Text style={styles.cardLabel}>{c.label}</Text>
+                    <Text style={[styles.cardValue, c.valueColor && { color: c.valueColor }]}>{c.value}</Text>
+                    {c.btn && (
+                      <View style={styles.cardBtn}>
+                        <TouchableOpacity onPress={c.btn === 'Reload' ? fetchDashboardData : undefined}>
+                          <Text style={styles.cardBtnText}>{c.btn}</Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
                   </View>
-                </View>
-              ))}
+                ));
+              })()}
             </View>
 
             {/* TRANSACTIONS */}

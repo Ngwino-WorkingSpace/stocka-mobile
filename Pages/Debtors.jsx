@@ -1230,6 +1230,14 @@ const styles = StyleSheet.create({
   },
 
   addText: { color: "#fff", fontSize: 12, fontFamily: "Poppins_400Regular" },
+
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+
   modalBox: {
     width: "90%",
     backgroundColor: "#fff",
