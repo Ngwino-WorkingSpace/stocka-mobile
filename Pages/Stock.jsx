@@ -159,7 +159,7 @@ export default function StockScreen({ navigation }) {
         const isLow = g.kilosRaw <= g.lowStockThreshold;
         return {
           ...g,
-          kilos: `${g.kilosRaw} kg`,
+          kilos: `${g.kilosRaw}`,
           ViewText: g.minExpiry ? `Expires ${g.minExpiry.toLocaleDateString()}` : (g.kilosRaw > 0 ? "No expiry" : "No Stock"),
           PurchaseDate: g.batches.length > 0 ? "Multiple batches" : "N/A",
           ExpiryDate: g.minExpiry ? g.minExpiry.toLocaleDateString() : "N/A",
@@ -555,12 +555,7 @@ export default function StockScreen({ navigation }) {
                       <Text style={[styles.productExpiry, darkMode && { color: "#ff6b6b" }]}>{item.ViewText}</Text>
                     </View>
                   )}
-                  {item.isLowStock && (
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <Ionicons name="warning" size={18} color="red" />
-                      <Text style={{ fontSize: 12, color: "red", marginLeft: 4, fontFamily: "Poppins_600SemiBold" }}>Low Stock</Text>
-                    </View>
-                  )}
+
                 </View>
 
                 <TouchableOpacity
@@ -622,7 +617,7 @@ export default function StockScreen({ navigation }) {
                 <Detail label="Remaining Stock" value={selectedProduct?.kilos} darkMode={darkMode} />
 
                 {/* Low Stock Warning */}
-                {(selectedProduct?.kilosNumber !== undefined && selectedProduct?.lowStockThreshold !== undefined && selectedProduct.kilosNumber <= selectedProduct.lowStockThreshold) && (
+                {selectedProduct?.isLowStock && (
                   <View style={styles.warningWrapper}>
                     <Ionicons name="warning" size={16} color="#FF4444" />
                     <Text style={[styles.productExpiry, { color: "#FF4444", marginLeft: 5 }]}>Low Stock</Text>
@@ -632,7 +627,7 @@ export default function StockScreen({ navigation }) {
                 <Detail label="Selling Price" value={selectedProduct?.price} darkMode={darkMode} />
                 <Detail label="Cost Price" value={selectedProduct?.costPrice} darkMode={darkMode} />
                 <Detail label="Expiry" value={selectedProduct?.expiry} darkMode={darkMode} />
-                <Detail label="Low Stock Threshold" value={`${selectedProduct?.lowStockThreshold} kg`} darkMode={darkMode} />
+                <Detail label="Low Stock Threshold" value={selectedProduct?.lowStockThreshold} darkMode={darkMode} />
               </View>
 
               {/* Right */}
