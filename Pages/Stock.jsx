@@ -405,10 +405,17 @@ export default function StockScreen({ navigation }) {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[MAIN]} />
           }
         >
-          <View style={styles.headerRow}>
-            <View style={styles.logoContainerHeader}>
-              <Image source={require("../assets/images/stock.png")} style={{ width: 36, height: 36 }} />
-              <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
+          <View style={[styles.headerRow, { justifyContent: 'space-between', alignItems: 'center', marginTop: 12, marginBottom: 20 }]}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              {navigation?.canGoBack() && (
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                  <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
+                </TouchableOpacity>
+              )}
+              <View style={styles.logoContainerHeader}>
+                <Image source={require("../assets/images/stock.png")} style={{ width: 36, height: 36 }} />
+                <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
+              </View>
             </View>
             <TouchableOpacity onPress={() => setHelpModalVisible(true)}>
               <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
@@ -480,9 +487,9 @@ export default function StockScreen({ navigation }) {
 
       {/* ================= HELP MODAL ================= */}
       <Modal visible={helpModalVisible} transparent animationType="fade">
-        <View style={styles.overlay}>
+        <View style={styles.helpOverlay}>
           <View style={[styles.helpModalCard, darkMode && { backgroundColor: '#2a2a3e' }]}>
-            <Ionicons name="help-circle-outline" size={48} color={darkMode ? "#4a9eff" : "#0A2A3F"} style={{ marginBottom: 15 }} />
+            <Ionicons name="help-circle-outline" size={48} color={darkMode ? "#4a9eff" : MAIN} style={{ marginBottom: 15 }} />
             <Text style={[styles.helpModalTitle, darkMode && styles.darkText]}>Need Help?</Text>
             <Text style={[styles.helpModalText, darkMode && { color: '#aaa' }]}>
               Any problem? Text us via SMS or WhatsApp on +250792050511
@@ -547,9 +554,9 @@ export default function StockScreen({ navigation }) {
       </Modal>
 
       {/* ================= CREATE NEW PRODUCT MODAL ================= */}
-      <Modal 
-        visible={addNewProductVisible} 
-        transparent 
+      <Modal
+        visible={addNewProductVisible}
+        transparent
         animationType="slide"
         onShow={() => {
           // Ensure categories are loaded when modal opens
@@ -596,23 +603,23 @@ export default function StockScreen({ navigation }) {
                     </Text>
                   ) : (
                     categoriesList.map((cat) => (
-                    <TouchableOpacity
-                      key={cat.id}
-                      onPress={() => setNewProductData({ ...newProductData, categoryId: cat.id })}
-                      style={{
-                        paddingHorizontal: 12,
-                        paddingVertical: 6,
-                        borderRadius: 20,
-                        backgroundColor: newProductData.categoryId === cat.id ? MAIN : (darkMode ? "#2a2a3e" : "#fff"),
-                        marginRight: 8,
-                        borderWidth: 1,
-                        borderColor: newProductData.categoryId === cat.id ? MAIN : "#ddd"
-                      }}
-                    >
-                      <Text style={{ color: newProductData.categoryId === cat.id ? "#fff" : (darkMode ? "#fff" : "#333"), fontSize: 12 }}>
-                        {cat.category_name}
-                      </Text>
-                    </TouchableOpacity>
+                      <TouchableOpacity
+                        key={cat.id}
+                        onPress={() => setNewProductData({ ...newProductData, categoryId: cat.id })}
+                        style={{
+                          paddingHorizontal: 12,
+                          paddingVertical: 6,
+                          borderRadius: 20,
+                          backgroundColor: newProductData.categoryId === cat.id ? MAIN : (darkMode ? "#2a2a3e" : "#fff"),
+                          marginRight: 8,
+                          borderWidth: 1,
+                          borderColor: newProductData.categoryId === cat.id ? MAIN : "#ddd"
+                        }}
+                      >
+                        <Text style={{ color: newProductData.categoryId === cat.id ? "#fff" : (darkMode ? "#fff" : "#333"), fontSize: 12 }}>
+                          {cat.category_name}
+                        </Text>
+                      </TouchableOpacity>
                     ))
                   )}
                 </ScrollView>
@@ -1123,6 +1130,10 @@ const styles = StyleSheet.create({
     padding: 8,
     marginRight: 8,
   },
+  logoContainerHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   logoContainer: { flexDirection: "row", alignItems: "center" },
   stockaText: { fontFamily: "Poppins_700Bold", fontSize: 22, color: MAIN, marginLeft: 10 },
 
@@ -1493,7 +1504,52 @@ const formStyles = StyleSheet.create({
     paddingTop: 12,
     color: "#000",
   },
-
+  /* Help Modal Styles */
+  helpOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  helpModalCard: {
+    width: "80%",
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 25,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  helpModalTitle: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 20,
+    color: MAIN,
+    marginBottom: 10,
+  },
+  helpModalText: {
+    fontFamily: "Poppins_400Regular",
+    fontSize: 14,
+    color: "#555",
+    textAlign: "center",
+    marginBottom: 20,
+    lineHeight: 22,
+  },
+  helpModalButton: {
+    backgroundColor: MAIN,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+    width: "100%",
+  },
+  helpModalButtonText: {
+    color: "#fff",
+    fontFamily: "Poppins_600SemiBold",
+    fontSize: 15,
+    textAlign: "center",
+  },
 });
 
 
@@ -1630,40 +1686,6 @@ const saleStyles = StyleSheet.create({
     letterSpacing: 1,
   },
 
-  /* Help Modal Styles */
-  helpModalCard: {
-    width: "80%",
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    padding: 25,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-    elevation: 10,
-  },
-  helpModalTitle: {
-    fontFamily: "Poppins_700Bold",
-    fontSize: 20,
-    color: "#0A2A3F",
-    marginBottom: 10,
-  },
-  helpModalText: {
-    fontFamily: "Poppins_400Regular",
-    fontSize: 14,
-    color: "#555",
-    textAlign: "center",
-    marginBottom: 20,
-    lineHeight: 22,
-  },
-  helpModalButton: {
-    backgroundColor: "#0A2A3F",
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 10,
-    width: '100%',
-  },
   helpModalButtonText: {
     color: "#fff",
     fontFamily: "Poppins_600SemiBold",

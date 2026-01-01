@@ -377,8 +377,8 @@ export default function SalesScreen({ navigation }) {
             }
           >
             <View style={{ padding: 15 }}>
-              {/* Header with back button */}
-              <View style={[styles.headerRow, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
+              {/* Header */}
+              <View style={[styles.headerRow, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, marginBottom: 20 }]}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   {navigation?.canGoBack() && (
                     <TouchableOpacity
@@ -388,7 +388,10 @@ export default function SalesScreen({ navigation }) {
                       <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
                     </TouchableOpacity>
                   )}
-                  <Text style={[styles.headerText, darkMode && styles.darkText]}>Sales List</Text>
+                  <View style={styles.logoContainerHeader}>
+                    <Image source={require("../assets/images/stock.png")} style={{ width: 36, height: 36 }} />
+                    <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
+                  </View>
                 </View>
                 <TouchableOpacity onPress={() => setHelpModalVisible(true)}>
                   <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
@@ -524,9 +527,9 @@ export default function SalesScreen({ navigation }) {
 
       {/* ================= HELP MODAL ================= */}
       <Modal visible={helpModalVisible} transparent animationType="fade">
-        <View style={styles.overlay}>
+        <View style={styles.helpOverlay}>
           <View style={[styles.helpModalCard, darkMode && { backgroundColor: '#2a2a3e' }]}>
-            <Ionicons name="help-circle-outline" size={48} color={darkMode ? "#4a9eff" : "#0A2A3F"} style={{ marginBottom: 15 }} />
+            <Ionicons name="help-circle-outline" size={48} color={darkMode ? "#4a9eff" : MAIN} style={{ marginBottom: 15 }} />
             <Text style={[styles.helpModalTitle, darkMode && styles.darkText]}>Need Help?</Text>
             <Text style={[styles.helpModalText, darkMode && { color: '#aaa' }]}>
               Any problem? Text us via SMS or WhatsApp on +250792050511
@@ -770,6 +773,16 @@ const styles = StyleSheet.create({
     padding: 8,
     marginRight: 8,
   },
+  logoContainerHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  stockaText: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 22,
+    color: MAIN,
+    marginLeft: 10,
+  },
   tabs: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -964,7 +977,7 @@ const styles = StyleSheet.create({
   helpModalTitle: {
     fontFamily: "Poppins_700Bold",
     fontSize: 20,
-    color: "#0A2A3F",
+    color: MAIN,
     marginBottom: 10,
   },
   helpModalText: {
@@ -976,7 +989,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   helpModalButton: {
-    backgroundColor: "#0A2A3F",
+    backgroundColor: MAIN,
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 10,
@@ -988,7 +1001,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     textAlign: "center",
   },
-  overlay: {
+  helpOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.45)",
     justifyContent: "center",

@@ -352,16 +352,24 @@ export default function ProfileScreen({ navigation }) {
             }
           >
             {/* Header */}
-            <View style={styles.header}>
-              {navigation?.canGoBack() && (
-                <TouchableOpacity
-                  onPress={() => navigation.goBack()}
-                  style={styles.backButton}
-                >
-                  <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
-                </TouchableOpacity>
-              )}
-              <Text style={[styles.logo, darkMode && styles.darkText]}>Stocka</Text>
+            <View style={[styles.headerRow, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, marginBottom: 20 }]}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                {navigation?.canGoBack() && (
+                  <TouchableOpacity
+                    onPress={() => navigation.goBack()}
+                    style={styles.backButton}
+                  >
+                    <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
+                  </TouchableOpacity>
+                )}
+                <View style={styles.logoContainerHeader}>
+                  <Image source={require("../assets/images/stock.png")} style={{ width: 36, height: 36 }} />
+                  <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
+                </View>
+              </View>
+              <TouchableOpacity onPress={() => setHelpModalVisible(true)}>
+                <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
+              </TouchableOpacity>
             </View>
 
             <Text style={[styles.title, darkMode && styles.darkText]}>Profile info</Text>
@@ -459,6 +467,22 @@ export default function ProfileScreen({ navigation }) {
                 <Text style={styles.noText}>NO</Text>
               </TouchableOpacity>
             </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* ================= HELP MODAL ================= */}
+      <Modal visible={helpModalVisible} transparent animationType="fade">
+        <View style={styles.helpOverlay}>
+          <View style={[styles.helpModalCard, darkMode && { backgroundColor: '#2a2a3e' }]}>
+            <Ionicons name="help-circle-outline" size={48} color={darkMode ? "#4a9eff" : MAIN} style={{ marginBottom: 15 }} />
+            <Text style={[styles.helpModalTitle, darkMode && styles.darkText]}>Need Help?</Text>
+            <Text style={[styles.helpModalText, darkMode && { color: '#aaa' }]}>
+              Any problem? Text us via SMS or WhatsApp on +250792050511
+            </Text>
+            <TouchableOpacity style={styles.helpModalButton} onPress={() => setHelpModalVisible(false)}>
+              <Text style={styles.helpModalButtonText}>Close</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -823,6 +847,12 @@ const styles = StyleSheet.create({
   },
 
   /* Help Modal Styles */
+  helpOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   helpModalCard: {
     width: "80%",
     backgroundColor: "#fff",
@@ -838,7 +868,7 @@ const styles = StyleSheet.create({
   helpModalTitle: {
     fontFamily: "Poppins_700Bold",
     fontSize: 20,
-    color: "#0A2A3F",
+    color: MAIN,
     marginBottom: 10,
   },
   helpModalText: {
@@ -850,11 +880,11 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   helpModalButton: {
-    backgroundColor: "#0A2A3F",
+    backgroundColor: MAIN,
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 10,
-    width: '100%',
+    width: "100%",
   },
   helpModalButtonText: {
     color: "#fff",

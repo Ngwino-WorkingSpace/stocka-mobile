@@ -481,9 +481,9 @@ export default function ReportsScreen({ navigation }) {
 
       {/* ================= HELP MODAL ================= */}
       <Modal visible={helpModalVisible} transparent animationType="fade">
-        <View style={styles.overlay}>
+        <View style={styles.helpOverlay}>
           <View style={[styles.helpModalCard, darkMode && { backgroundColor: '#2a2a3e' }]}>
-            <Ionicons name="help-circle-outline" size={48} color={darkMode ? "#4a9eff" : "#0A2A3F"} style={{ marginBottom: 15 }} />
+            <Ionicons name="help-circle-outline" size={48} color={darkMode ? "#4a9eff" : MAIN} style={{ marginBottom: 15 }} />
             <Text style={[styles.helpModalTitle, darkMode && styles.darkText]}>Need Help?</Text>
             <Text style={[styles.helpModalText, darkMode && { color: '#aaa' }]}>
               Any problem? Text us via SMS or WhatsApp on +250792050511
@@ -676,9 +676,8 @@ const styles = StyleSheet.create({
   themeToggleKnobActive: {
     backgroundColor: "#fff",
   },
-  header: {
+  headerRow: {
     flexDirection: "row",
-    justifyContent: "flex-start",
     alignItems: "center",
     marginBottom: 15,
   },
@@ -905,6 +904,12 @@ const styles = StyleSheet.create({
     color: "#0A2A3F",
   },
   /* Help Modal Styles */
+  helpOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   helpModalCard: {
     width: "80%",
     backgroundColor: "#fff",
@@ -920,7 +925,7 @@ const styles = StyleSheet.create({
   helpModalTitle: {
     fontFamily: "Poppins_700Bold",
     fontSize: 20,
-    color: "#0A2A3F",
+    color: MAIN,
     marginBottom: 10,
   },
   helpModalText: {
@@ -932,23 +937,17 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   helpModalButton: {
-    backgroundColor: "#0A2A3F",
+    backgroundColor: MAIN,
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 10,
-    width: '100%',
+    width: "100%",
   },
   helpModalButtonText: {
     color: "#fff",
     fontFamily: "Poppins_600SemiBold",
     fontSize: 15,
     textAlign: "center",
-  },
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.45)",
-    justifyContent: "center",
-    alignItems: "center",
   },
 });
 

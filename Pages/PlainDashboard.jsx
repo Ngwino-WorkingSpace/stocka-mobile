@@ -412,7 +412,7 @@ export default function PlainDashboardScreen({ navigation }) {
             }
           >
             {/* HEADER */}
-            <View style={[styles.header, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
+            <View style={[styles.headerRow, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, marginBottom: 20 }]}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 {navigation?.canGoBack() && (
                   <TouchableOpacity
@@ -422,7 +422,7 @@ export default function PlainDashboardScreen({ navigation }) {
                     <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
                   </TouchableOpacity>
                 )}
-                <View style={styles.logoContainer}>
+                <View style={styles.logoContainerHeader}>
                   <Image
                     source={require("../assets/images/stock.png")}
                     style={{ width: 36, height: 36 }}
@@ -809,9 +809,9 @@ export default function PlainDashboardScreen({ navigation }) {
       </Modal>
       {/* ================= HELP MODAL ================= */}
       <Modal visible={helpModalVisible} transparent animationType="fade">
-        <View style={styles.overlay}>
+        <View style={styles.helpOverlay}>
           <View style={[styles.helpModalCard, darkMode && { backgroundColor: '#2a2a3e' }]}>
-            <Ionicons name="help-circle-outline" size={48} color={darkMode ? "#4a9eff" : "#0A2A3F"} style={{ marginBottom: 15 }} />
+            <Ionicons name="help-circle-outline" size={48} color={darkMode ? "#4a9eff" : MAIN} style={{ marginBottom: 15 }} />
             <Text style={[styles.helpModalTitle, darkMode && styles.darkText]}>Need Help?</Text>
             <Text style={[styles.helpModalText, darkMode && { color: '#aaa' }]}>
               Any problem? Text us via SMS or WhatsApp on +250792050511
@@ -954,12 +954,6 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     justifyContent: "flex-start",
   },
-  stockaText: {
-    fontFamily: "Poppins_700Bold",
-    fontSize: 18,
-    color: "#000",
-    marginLeft: 10,
-  },
   stockText: {
     fontFamily: "Poppins_700Bold",
     fontSize: 18,
@@ -1042,15 +1036,24 @@ const styles = StyleSheet.create({
   themeToggleKnobActive: {
     backgroundColor: "#fff",
   },
-  header: {
+  headerRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 15,
   },
   backButton: {
     padding: 8,
     marginRight: 8,
+  },
+  logoContainerHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  stockaText: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 22,
+    color: MAIN,
+    marginLeft: 10,
   },
   tabs: {
     flexDirection: "row",
@@ -1203,6 +1206,52 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins_500Medium",
     fontSize: 12,
     color: "#0A2A3F",
+  },
+  /* Help Modal Styles */
+  helpOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  helpModalCard: {
+    width: "80%",
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 25,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  helpModalTitle: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 20,
+    color: MAIN,
+    marginBottom: 10,
+  },
+  helpModalText: {
+    fontFamily: "Poppins_400Regular",
+    fontSize: 14,
+    color: "#555",
+    textAlign: "center",
+    marginBottom: 20,
+    lineHeight: 22,
+  },
+  helpModalButton: {
+    backgroundColor: MAIN,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+    width: "100%",
+  },
+  helpModalButtonText: {
+    color: "#fff",
+    fontFamily: "Poppins_600SemiBold",
+    fontSize: 15,
+    textAlign: "center",
   },
 });
 
@@ -1494,39 +1543,6 @@ const saleStyles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.45)",
     justifyContent: "center",
     alignItems: "center",
-  },
-  helpModalCard: {
-    width: "80%",
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    padding: 25,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-    elevation: 10,
-  },
-  helpModalTitle: {
-    fontFamily: "Poppins_700Bold",
-    fontSize: 20,
-    color: "#0A2A3F",
-    marginBottom: 10,
-  },
-  helpModalText: {
-    fontFamily: "Poppins_400Regular",
-    fontSize: 14,
-    color: "#555",
-    textAlign: "center",
-    marginBottom: 20,
-    lineHeight: 22,
-  },
-  helpModalButton: {
-    backgroundColor: "#0A2A3F",
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 10,
-    width: '100%',
   },
   helpModalButtonText: {
     color: "#fff",
