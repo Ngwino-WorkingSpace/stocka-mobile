@@ -20,6 +20,7 @@ import {
 } from "@expo-google-fonts/poppins";
 
 import { api } from "../src/services/api";
+import Toast from 'react-native-toast-message';
 
 export default function ForgotPasswordScreen({ navigation }) {
   const [Phonenumber, setPhonenumber] = useState("");
@@ -36,7 +37,7 @@ export default function ForgotPasswordScreen({ navigation }) {
 
   const handleVerify = async () => {
     if (!Phonenumber || !recoveryPin) {
-      alert("Please enter both phone number and recovery code");
+      Toast.show({ type: 'error', text1: 'Missing Fields', text2: 'Please enter both phone number and recovery code' });
       return;
     }
 
@@ -55,11 +56,11 @@ export default function ForgotPasswordScreen({ navigation }) {
           recoveryToken: res.token
         });
       } else {
-        alert(res.error || res.message || "Verification failed");
+        Toast.show({ type: 'error', text1: 'Verification Failed', text2: res.error || res.message || "Verification failed" });
       }
     } catch (e) {
       setLoading(false);
-      alert("Error: " + e.message);
+      Toast.show({ type: 'error', text1: 'Error', text2: e.message || "An error occurred" });
     }
   };
 
@@ -69,11 +70,13 @@ export default function ForgotPasswordScreen({ navigation }) {
 
       <KeyboardAvoidingView
         style={styles.contentWrapper}
-        behavior={Platform.OS === "ios" ? "padding" : null}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
           <View style={styles.content}>
             <Image

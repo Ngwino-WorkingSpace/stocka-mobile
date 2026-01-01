@@ -506,9 +506,13 @@ export default function SalesScreen({ navigation }) {
             <View style={styles.logoutModalButtons}>
               <TouchableOpacity
                 style={styles.logoutYesButton}
-                onPress={() => {
+                onPress={async () => {
                   setShowLogoutModal(false);
-                  logout();
+                  await logout();
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Login' }],
+                  });
                 }}
               >
                 <Text style={styles.logoutYesText}>YES</Text>
@@ -543,7 +547,7 @@ export default function SalesScreen({ navigation }) {
 
       {/* ================= SALES DETAILS MODAL ================= */}
       <Modal visible={!!selectedSale} transparent animationType="fade">
-        <View style={styles.overlay}>
+        <View style={styles.modalOverlay}>
           <View style={[styles.detailsCard, darkMode && styles.darkDetailsCard]}>
             {/* Header */}
             <View style={styles.detailsHeader}>
@@ -631,6 +635,12 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: "rgba(9, 54, 77, 0.3)",
     zIndex: 5,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(9,54,77,0.25)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   sidebar: {
     position: "absolute",

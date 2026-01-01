@@ -452,9 +452,13 @@ export default function ProfileScreen({ navigation }) {
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 style={styles.yesButton}
-                onPress={() => {
+                onPress={async () => {
                   setShowLogoutModal(false);
-                  logout();
+                  await logout();
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Login' }],
+                  });
                 }}
               >
                 <Text style={styles.yesText}>YES</Text>

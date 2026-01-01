@@ -75,7 +75,6 @@ export default function StockScreen({ navigation }) {
   const [searchText, setSearchText] = useState("");
   const [categoryVisible, setCategoryVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [helpModalVisible, setHelpModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [addStockVisible, setAddStockVisible] = useState(false);
 
@@ -390,7 +389,6 @@ export default function StockScreen({ navigation }) {
             <View style={styles.divider} />
 
             <View style={styles.utilityContainer}>
-              <NavItem icon="help-circle-outline" label="Help" expanded={isExpanded} onPress={() => setHelpModalVisible(true)} />
               <NavItem icon="log-out-outline" label="Logout" expanded={isExpanded} onPress={() => setShowLogoutModal(true)} />
             </View>
           </>
@@ -417,9 +415,6 @@ export default function StockScreen({ navigation }) {
                 <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
               </View>
             </View>
-            <TouchableOpacity onPress={() => setHelpModalVisible(true)}>
-              <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
-            </TouchableOpacity>
           </View>
 
           <View style={styles.searchCategoryContainer}>
@@ -482,22 +477,6 @@ export default function StockScreen({ navigation }) {
               </TouchableOpacity>
             )}
           />
-        </View>
-      </Modal>
-
-      {/* ================= HELP MODAL ================= */}
-      <Modal visible={helpModalVisible} transparent animationType="fade">
-        <View style={styles.helpOverlay}>
-          <View style={[styles.helpModalCard, darkMode && { backgroundColor: '#2a2a3e' }]}>
-            <Ionicons name="help-circle-outline" size={48} color={darkMode ? "#4a9eff" : MAIN} style={{ marginBottom: 15 }} />
-            <Text style={[styles.helpModalTitle, darkMode && styles.darkText]}>Need Help?</Text>
-            <Text style={[styles.helpModalText, darkMode && { color: '#aaa' }]}>
-              Any problem? Text us via SMS or WhatsApp on +250792050511
-            </Text>
-            <TouchableOpacity style={styles.helpModalButton} onPress={() => setHelpModalVisible(false)}>
-              <Text style={styles.helpModalButtonText}>Close</Text>
-            </TouchableOpacity>
-          </View>
         </View>
       </Modal>
 
@@ -868,9 +847,13 @@ export default function StockScreen({ navigation }) {
             <View style={styles.logoutModalButtons}>
               <TouchableOpacity
                 style={styles.logoutYesButton}
-                onPress={() => {
+                onPress={async () => {
                   setShowLogoutModal(false);
-                  logout();
+                  await logout();
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Login' }],
+                  });
                 }}
               >
                 <Text style={styles.logoutYesText}>YES</Text>
@@ -1504,52 +1487,6 @@ const formStyles = StyleSheet.create({
     paddingTop: 12,
     color: "#000",
   },
-  /* Help Modal Styles */
-  helpOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.45)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  helpModalCard: {
-    width: "80%",
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    padding: 25,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-    elevation: 10,
-  },
-  helpModalTitle: {
-    fontFamily: "Poppins_700Bold",
-    fontSize: 20,
-    color: MAIN,
-    marginBottom: 10,
-  },
-  helpModalText: {
-    fontFamily: "Poppins_400Regular",
-    fontSize: 14,
-    color: "#555",
-    textAlign: "center",
-    marginBottom: 20,
-    lineHeight: 22,
-  },
-  helpModalButton: {
-    backgroundColor: MAIN,
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 10,
-    width: "100%",
-  },
-  helpModalButtonText: {
-    color: "#fff",
-    fontFamily: "Poppins_600SemiBold",
-    fontSize: 15,
-    textAlign: "center",
-  },
 });
 
 
@@ -1684,13 +1621,6 @@ const saleStyles = StyleSheet.create({
     fontFamily: "Poppins_600SemiBold",
     fontSize: 16,
     letterSpacing: 1,
-  },
-
-  helpModalButtonText: {
-    color: "#fff",
-    fontFamily: "Poppins_600SemiBold",
-    fontSize: 15,
-    textAlign: "center",
   },
 
 });

@@ -37,11 +37,13 @@ export default function LastOTPScreen({ navigation }) {
 
       <KeyboardAvoidingView
         style={styles.contentWrapper}
-        behavior={Platform.OS === "ios" ? "padding" : null}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
           <View style={styles.content}>
             <View style={styles.congzIcon}>

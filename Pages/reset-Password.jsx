@@ -20,6 +20,7 @@ import {
 } from "@expo-google-fonts/poppins";
 
 import { api } from "../src/services/api";
+import Toast from 'react-native-toast-message';
 
 export default function ResetPasswordScreen({ navigation, route }) {
   const { phoneNumber, otp } = route.params || {};
@@ -36,8 +37,14 @@ export default function ResetPasswordScreen({ navigation, route }) {
   if (!fontsLoaded) return null;
 
   const handleReset = async () => {
-    if (!newPassword || !confirmPassword) { alert("Please enter passwords"); return; }
-    if (newPassword !== confirmPassword) { alert("Passwords do not match"); return; }
+    if (!newPassword || !confirmPassword) { 
+      Toast.show({ type: 'error', text1: 'Missing Fields', text2: 'Please enter passwords' }); 
+      return; 
+    }
+    if (newPassword !== confirmPassword) { 
+      Toast.show({ type: 'error', text1: 'Password Mismatch', text2: 'Passwords do not match' }); 
+      return; 
+    }
 
     try {
       setLoading(true);
@@ -48,13 +55,14 @@ export default function ResetPasswordScreen({ navigation, route }) {
       setLoading(false);
 
       if (res && (res.message || res.success || res.status === 200)) {
+        Toast.show({ type: 'success', text1: 'Success', text2: 'Password reset successfully' });
         navigation.navigate("lastOTP");
       } else {
-        alert("Reset failed: " + (res.message || "Unknown error"));
+        Toast.show({ type: 'error', text1: 'Reset Failed', text2: res.message || "Unknown error" });
       }
     } catch (e) {
       setLoading(false);
-      alert("Error: " + e.message);
+      Toast.show({ type: 'error', text1: 'Error', text2: e.message || "An error occurred" });
     }
   };
 
@@ -64,11 +72,13 @@ export default function ResetPasswordScreen({ navigation, route }) {
 
       <KeyboardAvoidingView
         style={styles.contentWrapper}
-        behavior={Platform.OS === "ios" ? "padding" : null}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
           <View style={styles.content}>
             <Image

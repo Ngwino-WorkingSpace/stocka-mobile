@@ -864,9 +864,13 @@ export default function DebtorsScreen({ navigation }) {
             <View style={paymentStyles.logoutModalButtons}>
               <TouchableOpacity
                 style={paymentStyles.logoutYesButton}
-                onPress={() => {
+                onPress={async () => {
                   setShowLogoutModal(false);
-                  logout();
+                  await logout();
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Login' }],
+                  });
                 }}
               >
                 <Text style={paymentStyles.logoutYesText}>YES</Text>

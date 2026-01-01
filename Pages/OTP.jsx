@@ -20,6 +20,7 @@ import {
 } from "@expo-google-fonts/poppins";
 
 import { api } from "../src/services/api";
+import Toast from 'react-native-toast-message';
 
 export default function OTPScreen({ navigation, route }) {
   const { phoneNumber } = route.params || {};
@@ -35,8 +36,14 @@ export default function OTPScreen({ navigation, route }) {
   if (!fontsLoaded) return null;
 
   const handleVerify = async () => {
-    if (!otp || otp.length < 5) { alert("Please enter valid OTP"); return; }
-    if (!phoneNumber) { alert("Phone number missing"); return; }
+    if (!otp || otp.length < 5) { 
+      Toast.show({ type: 'error', text1: 'Invalid OTP', text2: 'Please enter valid OTP' }); 
+      return; 
+    }
+    if (!phoneNumber) { 
+      Toast.show({ type: 'error', text1: 'Missing Field', text2: 'Phone number missing' }); 
+      return; 
+    }
 
     try {
       setLoading(true);
@@ -50,11 +57,11 @@ export default function OTPScreen({ navigation, route }) {
       if (res && (res.message || res.success || res.status === 200)) {
         navigation.navigate("reset-Password", { phoneNumber, otp });
       } else {
-        alert("Invalid OTP");
+        Toast.show({ type: 'error', text1: 'Invalid OTP', text2: 'The OTP you entered is incorrect' });
       }
     } catch (e) {
       setLoading(false);
-      alert("Error: " + e.message);
+      Toast.show({ type: 'error', text1: 'Error', text2: e.message || "An error occurred" });
     }
   };
 
@@ -64,11 +71,13 @@ export default function OTPScreen({ navigation, route }) {
 
       <KeyboardAvoidingView
         style={styles.contentWrapper}
-        behavior={Platform.OS === "ios" ? "padding" : null}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
           <View style={styles.content}>
             <Image

@@ -460,9 +460,13 @@ export default function ReportsScreen({ navigation }) {
             <View style={styles.logoutModalButtons}>
               <TouchableOpacity
                 style={styles.logoutYesButton}
-                onPress={() => {
+                onPress={async () => {
                   setShowLogoutModal(false);
-                  logout();
+                  await logout();
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Login' }],
+                  });
                 }}
               >
                 <Text style={styles.logoutYesText}>YES</Text>

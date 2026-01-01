@@ -19,6 +19,7 @@ import {
   Poppins_500Medium,
   Poppins_600SemiBold,
 } from "@expo-google-fonts/poppins";
+import Toast from 'react-native-toast-message';
 
 export default function SignupScreen({ navigation }) {
   const [fullname, setFullname] = useState("");
@@ -39,7 +40,7 @@ export default function SignupScreen({ navigation }) {
 
   const handleRegister = async () => {
     if (!fullname || !password || !phoneNumber || !recoveryPin) {
-      alert("Please fill in all required fields");
+      Toast.show({ type: 'error', text1: 'Missing Fields', text2: 'Please fill in all required fields' });
       return;
     }
 
@@ -54,10 +55,10 @@ export default function SignupScreen({ navigation }) {
     setLoading(false);
 
     if (result.success) {
-      alert("Registration successful! Please login.");
+      Toast.show({ type: 'success', text1: 'Success', text2: 'Registration successful! Please login.' });
       navigation.navigate("Login");
     } else {
-      alert(result.error);
+      Toast.show({ type: 'error', text1: 'Registration Failed', text2: result.error || "Registration failed" });
     }
   };
 
