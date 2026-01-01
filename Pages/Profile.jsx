@@ -42,6 +42,7 @@ const getRouteName = (itemName) => {
 };
 
 export default function ProfileScreen({ navigation }) {
+  const { logout } = useAuth();
   // Sidebar states: "press" (minimal), "collapsed" (icons only), "expanded" (full)
   const [sidebarState, setSidebarState] = useState("press");
   const [darkMode, setDarkMode] = useState(false);
