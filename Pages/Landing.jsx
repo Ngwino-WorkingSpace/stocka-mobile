@@ -3,19 +3,19 @@ import React from "react";
 import {View, Text, StyleSheet,Image, TouchableOpacity} from "react-native";
 import {
   useFonts,
-  Poppins_400Regular,
-  Poppins_500Medium,
-  Poppins_600SemiBold,
-  Poppins_700Bold,
-} from "@expo-google-fonts/poppins";
+  Urbanist_400Regular,
+  Urbanist_500Medium,
+  Urbanist_600SemiBold,
+  Urbanist_700Bold,
+} from "@expo-google-fonts/urbanist";
 
 export default function LandingScreen({navigation}){
 
  const [fontsLoaded] = useFonts({
-    Poppins_400Regular,
-    Poppins_500Medium,
-    Poppins_600SemiBold,
-    Poppins_700Bold,
+    Urbanist_400Regular,
+    Urbanist_500Medium,
+    Urbanist_600SemiBold,
+    Urbanist_700Bold,
   });
 
   if (!fontsLoaded) return null;
@@ -54,13 +54,13 @@ const styles = StyleSheet.create({
     fontSize: 28,
     color: "#FFFFFF",
     fontWeight: "bold",
-    fontFamily:"Poppins_700Bold",
+    fontFamily:"Urbanist_700Bold",
   },
   subtitle: {
     fontSize: 16,
-    color: "#DCEAF1",
+    color: "#FFFFFF",
     marginTop: 8,
-     fontFamily:"Poppins_400Regular",
+     fontFamily:"Urbanist_400Regular",
   },
   GetStarted: {
   alignItems: "center",
@@ -77,7 +77,7 @@ getStartedBtn: {
 },
 
 getStartedText: {
-  fontFamily: "Poppins_600SemiBold",
+  fontFamily: "Urbanist_600SemiBold",
   fontSize: 16,
   color: "#fff",
 },
@@ -89,6 +89,10 @@ getStartedText: {
     fontSize: 23,
     color: '#fff',
     fontWeight:"600", // your color
-     fontFamily:"Poppins_400Regular",
+     fontFamily:"Urbanist_400Regular",
   },
 });
+
+
+
+

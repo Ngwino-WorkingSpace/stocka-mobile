@@ -13,11 +13,11 @@ import {
   StyleSheet
 } from 'react-native';
 import {
-  Poppins_400Regular,
-  Poppins_500Medium,
-  Poppins_600SemiBold,
-  Poppins_700Bold,
-} from '@expo-google-fonts/poppins';
+  Urbanist_400Regular,
+  Urbanist_500Medium,
+  Urbanist_600SemiBold,
+  Urbanist_700Bold,
+} from '@expo-google-fonts/urbanist';
 
 // Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
@@ -33,10 +33,10 @@ export default function RootLayout() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const [fontsLoaded, fontError] = useFonts({
-    Poppins_400Regular,
-    Poppins_500Medium,
-    Poppins_600SemiBold,
-    Poppins_700Bold,
+    Urbanist_400Regular,
+    Urbanist_500Medium,
+    Urbanist_600SemiBold,
+    Urbanist_700Bold,
   });
 
   useEffect(() => {
@@ -112,7 +112,7 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   splashContainer: {
     flex: 1,
-    backgroundColor: '#09364D', // Theme color
+    backgroundColor: '#09111E', // Theme color
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   splashText: {
     marginTop: 20,
     color: '#fff',
-    fontFamily: 'Poppins_700Bold', // Make sure fonts are loaded or use system font as backup? 
+    fontFamily: 'Urbanist_700Bold', // Make sure fonts are loaded or use system font as backup? 
     // Wait, if fonts aren't loaded this might error. Safer to use system font here or wait for fonts inside prepare.
     // Actually the splash is showing WHILE fonts are loading. So we shouldn't rely on custom fonts yet unless we are sure.
     // I will use a safe font here.
@@ -131,4 +131,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   }
 });
+
+
+
+
 

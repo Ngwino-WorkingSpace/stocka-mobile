@@ -17,10 +17,10 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import {
   useFonts,
-  Poppins_400Regular,
-  Poppins_500Medium,
-  Poppins_600SemiBold,
-} from "@expo-google-fonts/poppins";
+  Urbanist_400Regular,
+  Urbanist_500Medium,
+  Urbanist_600SemiBold,
+} from "@expo-google-fonts/urbanist";
 import Toast from 'react-native-toast-message';
 
 export default function SignupScreen({ navigation }) {
@@ -34,9 +34,9 @@ export default function SignupScreen({ navigation }) {
   const { register } = useAuth();
 
   const [fontsLoaded] = useFonts({
-    Poppins_400Regular,
-    Poppins_500Medium,
-    Poppins_600SemiBold,
+    Urbanist_400Regular,
+    Urbanist_500Medium,
+    Urbanist_600SemiBold,
   });
 
   if (!fontsLoaded) return null;
@@ -91,7 +91,7 @@ export default function SignupScreen({ navigation }) {
             <TextInput
               style={styles.input}
               placeholder="Fullname"
-              placeholderTextColor="#107EBA"
+              placeholderTextColor="rgba(255, 255, 255, 0.4)"
               value={fullname}
               onChangeText={setFullname}
             />
@@ -99,7 +99,7 @@ export default function SignupScreen({ navigation }) {
             <TextInput
               style={styles.input}
               placeholder="Phone number"
-              placeholderTextColor="#107EBA"
+              placeholderTextColor="rgba(255, 255, 255, 0.4)"
               keyboardType="phone-pad"
               value={phoneNumber}
               onChangeText={setPhoneNumber}
@@ -108,7 +108,7 @@ export default function SignupScreen({ navigation }) {
             <TextInput
               style={styles.input}
               placeholder="Email (Optional)"
-              placeholderTextColor="#107EBA"
+              placeholderTextColor="rgba(255, 255, 255, 0.4)"
               keyboardType="email-address"
               value={email}
               onChangeText={setEmail}
@@ -117,7 +117,7 @@ export default function SignupScreen({ navigation }) {
             <TextInput
               style={styles.input}
               placeholder="Recovery Pin"
-              placeholderTextColor="#107EBA"
+              placeholderTextColor="rgba(255, 255, 255, 0.4)"
               value={recoveryPin}
               onChangeText={setRecoveryPin}
               keyboardType="numeric"
@@ -127,7 +127,7 @@ export default function SignupScreen({ navigation }) {
               <TextInput
                 style={styles.passwordInput}
                 placeholder="Password"
-                placeholderTextColor="#107EBA"
+                placeholderTextColor="rgba(255, 255, 255, 0.4)"
                 secureTextEntry={!showPassword}
                 value={password}
                 onChangeText={setPassword}
@@ -139,7 +139,7 @@ export default function SignupScreen({ navigation }) {
                 <Ionicons
                   name={showPassword ? "eye" : "eye-off"}
                   size={20}
-                  color="#107EBA"
+                  color="#fff"
                 />
               </TouchableOpacity>
             </View>
@@ -203,52 +203,41 @@ const styles = StyleSheet.create({
     fontSize: 15, // was 16
     textAlign: "center",
     marginBottom: 10,
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
   },
 
   input: {
     width: "100%",
-    backgroundColor: "#09364D",
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     paddingVertical: 16,
     paddingHorizontal: 15,
-    borderRadius: 10,
-    color: "#107EBA",
+    borderRadius: 12,
+    color: "#fff",
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: "#0F4461",
-    fontSize: 16, // was 17
-    fontFamily: "Poppins_400Regular",
-
-    shadowColor: "#0A5E8C",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    elevation: 5,
+    borderColor: "rgba(255, 255, 255, 0.1)",
+    fontSize: 16,
+    fontFamily: "Urbanist_400Regular",
   },
 
   passwordContainer: {
     width: "100%",
-    backgroundColor: "#09364D",
-    borderRadius: 10,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    borderRadius: 12,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: "#0F4461",
+    borderColor: "rgba(255, 255, 255, 0.1)",
     flexDirection: "row",
     alignItems: "center",
-    shadowColor: "#0A5E8C",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    elevation: 5,
   },
 
   passwordInput: {
     flex: 1,
     paddingVertical: 16,
     paddingHorizontal: 15,
-    color: "#107EBA",
+    color: "#fff",
     fontSize: 16,
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
   },
 
   eyeIcon: {
@@ -260,21 +249,15 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#1E90FF",
     paddingVertical: 18,
-    borderRadius: 10,
+    borderRadius: 12,
     alignItems: "center",
     marginTop: 10,
-
-    shadowColor: "#0A5E8C",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    elevation: 5,
   },
 
   buttonText: {
     color: "#fff",
     fontSize: 17, // was 18
-    fontFamily: "Poppins_600SemiBold",
+    fontFamily: "Urbanist_600SemiBold",
   },
 
   signinText: {
@@ -282,11 +265,15 @@ const styles = StyleSheet.create({
     fontSize: 15, // was 16
     margin: 5,
     alignSelf: "flex-start",
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
   },
 
   highlighted: {
     color: "#1E90FF",
-    fontFamily: "Poppins_600SemiBold",
+    fontFamily: "Urbanist_600SemiBold",
   },
 });
+
+
+
+

@@ -21,7 +21,7 @@ import OTPScreen from "../../Pages/OTP.jsx";
 import ResetPasswordScreen from "../../Pages/reset-Password.jsx";
 import LastOTPScreen from "../../Pages/lastOTP.jsx";
 
-import { AuthProvider, useAuth } from '../../src/context/AuthContext';
+import { AuthProvider, useAuth } from '../../src/context/AuthContext.js';
 
 const Stack = createNativeStackNavigator();
 
@@ -31,7 +31,7 @@ function AppNavigator() {
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
-        <ActivityIndicator size="large" color="#09364D" />
+        <ActivityIndicator size="large" color="#09111E" />
       </View>
     );
   }
@@ -75,3 +75,7 @@ export default function MainScreen() {
     </GestureHandlerRootView>
   );
 }
+
+
+
+

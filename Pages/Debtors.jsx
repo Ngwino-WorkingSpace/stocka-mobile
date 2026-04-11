@@ -18,14 +18,14 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import {
   useFonts,
-  Poppins_400Regular,
-  Poppins_500Medium,
-  Poppins_600SemiBold,
-  Poppins_700Bold,
-} from "@expo-google-fonts/poppins";
+  Urbanist_400Regular,
+  Urbanist_500Medium,
+  Urbanist_600SemiBold,
+  Urbanist_700Bold,
+} from "@expo-google-fonts/urbanist";
 
 const { width } = Dimensions.get("window");
-const MAIN = "#09364D";
+const MAIN = "#09111E";
 
 // Helper function to map display names to route names
 const getRouteName = (itemName) => {
@@ -296,7 +296,7 @@ export default function DebtorsScreen({ navigation }) {
 
 
   return (
-    <View style={[styles.mainContainer, { backgroundColor: darkMode ? "#1a1a2e" : "#fff" }]}>
+    <View style={[styles.mainContainer, { backgroundColor: darkMode ? "#09111E" : "#fff" }]}>
       {/* FLOATING PRESS HANDLE */}
       {isPressState && (
         <TouchableOpacity
@@ -506,13 +506,13 @@ export default function DebtorsScreen({ navigation }) {
       </View>
 
       {/* CONTENT */}
-      <View style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0, backgroundColor: darkMode ? "#1a1a2e" : "#fff", paddingTop: insets.top, paddingBottom: insets.bottom }}>
+      <View style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0, backgroundColor: darkMode ? "#09111E" : "#fff", paddingTop: insets.top, paddingBottom: insets.bottom }}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
           <ScrollView
-            contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 16, backgroundColor: darkMode ? "#1a1a2e" : "#fff" }}
+            contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 16, backgroundColor: darkMode ? "#09111E" : "#fff" }}
             style={darkMode && styles.darkScrollView}
             showsVerticalScrollIndicator={false}
             refreshControl={
@@ -730,7 +730,7 @@ export default function DebtorsScreen({ navigation }) {
               style={{ marginTop: 15, alignSelf: 'center', padding: 5 }}
               onPress={handleDeleteDebtor}
             >
-              <Text style={{ color: "red", fontSize: 13, fontFamily: "Poppins_500Medium" }}>Delete Person</Text>
+              <Text style={{ color: "red", fontSize: 13, fontFamily: "Urbanist_500Medium" }}>Delete Person</Text>
             </TouchableOpacity>
 
           </View>
@@ -881,7 +881,7 @@ export default function DebtorsScreen({ navigation }) {
             <Ionicons
               name="warning-outline"
               size={38}
-              color="#0A2A3F"
+              color="#09111E"
               style={{ marginBottom: 10 }}
             />
 
@@ -918,7 +918,7 @@ export default function DebtorsScreen({ navigation }) {
       {/* ================= HELP MODAL ================= */}
       <Modal visible={helpModalVisible} transparent animationType="fade">
         <View style={styles.helpOverlay}>
-          <View style={[styles.helpModalCard, darkMode && { backgroundColor: '#2a2a3e' }]}>
+          <View style={[styles.helpModalCard, darkMode && { backgroundColor: '#121d2b' }]}>
             <Ionicons name="help-circle-outline" size={48} color={darkMode ? "#4a9eff" : MAIN} style={{ marginBottom: 15 }} />
             <Text style={[styles.helpModalTitle, darkMode && styles.darkText]}>Need Help?</Text>
             <Text style={[styles.helpModalText, darkMode && { color: '#aaa' }]}>
@@ -948,16 +948,16 @@ const styles = StyleSheet.create({
     borderLeftColor: MAIN,
   },
   darkSummaryCard: {
-    backgroundColor: "#2a2a3e",
+    backgroundColor: "#121d2b",
     borderLeftColor: "#4a9eff",
   },
   summaryLabel: {
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
     fontSize: 12,
     color: "#555",
   },
   summaryValue: {
-    fontFamily: "Poppins_700Bold",
+    fontFamily: "Urbanist_700Bold",
     fontSize: 20,
     color: MAIN,
   },
@@ -992,7 +992,7 @@ const styles = StyleSheet.create({
   pressText: {
     color: "#fff",
     fontSize: 11,
-    fontFamily: "Poppins_600SemiBold",
+    fontFamily: "Urbanist_600SemiBold",
     lineHeight: 12,
     transform: [{ rotate: "-90deg" }],
   },
@@ -1002,7 +1002,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(9, 54, 77, 0.3)",
+    backgroundColor: "rgba(9, 17, 30, 0.3)",
     zIndex: 5,
   },
   sidebar: {
@@ -1038,7 +1038,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   stockText: {
-    fontFamily: "Poppins_700Bold",
+    fontFamily: "Urbanist_700Bold",
     fontSize: 18,
     color: "#fff",
     marginLeft: 10,
@@ -1068,7 +1068,7 @@ const styles = StyleSheet.create({
   },
   navText: {
     color: "#fff",
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
     marginLeft: 15,
     fontSize: 14,
   },
@@ -1113,7 +1113,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: "#09364D",
+    backgroundColor: "#09111E",
     alignSelf: "center",
   },
   themeToggleKnobActive: {
@@ -1123,35 +1123,35 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   darkScrollView: {
-    backgroundColor: "#1a1a2e",
+    backgroundColor: "#09111E",
   },
   darkTabs: {
-    backgroundColor: "#2a2a3e",
+    backgroundColor: "#121d2b",
   },
   darkCard: {
-    backgroundColor: "#2a2a3e",
+    backgroundColor: "#121d2b",
   },
   darkAvatar: {
-    backgroundColor: "#1a1a2e",
+    backgroundColor: "#09111E",
   },
   darkModalBox: {
-    backgroundColor: "#2a2a3e",
+    backgroundColor: "#121d2b",
   },
   darkModalInput: {
-    backgroundColor: "#1a1a2e",
+    backgroundColor: "#09111E",
     color: "#fff",
   },
   darkInfoModal: {
-    backgroundColor: "#2a2a3e",
+    backgroundColor: "#121d2b",
   },
   darkCloseIcon: {
-    backgroundColor: "#1a1a2e",
+    backgroundColor: "#09111E",
   },
   darkAvatarBox: {
-    backgroundColor: "#1a1a2e",
+    backgroundColor: "#09111E",
   },
   darkTypeBadge: {
-    backgroundColor: "#1a1a2e",
+    backgroundColor: "#09111E",
     color: "#fff",
   },
 
@@ -1169,7 +1169,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   stockaText: {
-    fontFamily: "Poppins_700Bold",
+    fontFamily: "Urbanist_700Bold",
     fontSize: 22,
     color: MAIN,
     marginLeft: 10,
@@ -1184,13 +1184,13 @@ const styles = StyleSheet.create({
   tab: { flex: 1, paddingVertical: 12, alignItems: "center" },
   activeTab: { backgroundColor: MAIN, borderRadius: 12 },
 
-  tabText: { fontFamily: "Poppins_500Medium", fontSize: 14, color: "#333" },
+  tabText: { fontFamily: "Urbanist_500Medium", fontSize: 14, color: "#333" },
   activeTabText: { color: "#fff" },
 
   sectionTitle: {
     marginTop: 20,
     fontSize: 16,
-    fontFamily: "Poppins_600SemiBold",
+    fontFamily: "Urbanist_600SemiBold",
   },
 
   searchRow: {
@@ -1205,7 +1205,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 12,
     height: 42,
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
     color: "#000",
   },
 
@@ -1218,7 +1218,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 
-  sortText: { color: "#fff", fontSize: 12, fontFamily: "Poppins_400Regular", },
+  sortText: { color: "#fff", fontSize: 12, fontFamily: "Urbanist_400Regular", },
 
   card: {
     flexDirection: "row",
@@ -1240,9 +1240,9 @@ const styles = StyleSheet.create({
 
   cardText: { flex: 1, marginLeft: 12 },
 
-  name: { fontSize: 13, fontFamily: "Poppins_600SemiBold" },
+  name: { fontSize: 13, fontFamily: "Urbanist_600SemiBold" },
   phone: { fontSize: 11, color: "#666" },
-  amount: { fontSize: 12, fontFamily: "Poppins_600SemiBold" },
+  amount: { fontSize: 12, fontFamily: "Urbanist_600SemiBold" },
 
   addBtn: {
     position: "absolute",
@@ -1257,7 +1257,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
 
-  addText: { color: "#fff", fontSize: 12, fontFamily: "Poppins_400Regular" },
+  addText: { color: "#fff", fontSize: 12, fontFamily: "Urbanist_400Regular" },
 
   modalOverlay: {
     flex: 1,
@@ -1275,7 +1275,7 @@ const styles = StyleSheet.create({
   },
 
   modalTitle: {
-    fontFamily: "Poppins_600SemiBold",
+    fontFamily: "Urbanist_600SemiBold",
     fontSize: 16,
     marginBottom: 16,
     textAlign: "center",
@@ -1287,7 +1287,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     height: 44,
     marginBottom: 12,
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
     color: "#000",
   },
 
@@ -1304,7 +1304,7 @@ const styles = StyleSheet.create({
 
   cancelText: {
     color: "#777",
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
   },
 
   saveBtn: {
@@ -1316,7 +1316,7 @@ const styles = StyleSheet.create({
 
   saveText: {
     color: "#fff",
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
   },
 
   /* ===== INFO MODAL ===== */
@@ -1337,7 +1337,7 @@ const styles = StyleSheet.create({
   },
 
   infoTitle: {
-    fontFamily: "Poppins_600SemiBold",
+    fontFamily: "Urbanist_600SemiBold",
     fontSize: 16,
     color: "#111",
     marginBottom: 18,
@@ -1350,14 +1350,14 @@ const styles = StyleSheet.create({
   },
 
   infoLabel: {
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
     fontSize: 11,
     color: "#6B7280",
     marginTop: 8,
   },
 
   infoValue: {
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
     fontSize: 13,
     color: "#111",
   },
@@ -1369,7 +1369,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 8,
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
     fontSize: 11,
     color: "#0B3A53",
   },
@@ -1398,7 +1398,7 @@ const styles = StyleSheet.create({
   },
 
   secondaryText: {
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
     fontSize: 12,
     color: "#0B3A53",
   },
@@ -1411,7 +1411,7 @@ const styles = StyleSheet.create({
   },
 
   primaryText: {
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
     fontSize: 12,
     color: "#FFFFFF",
   },
@@ -1450,13 +1450,13 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   helpModalTitle: {
-    fontFamily: "Poppins_700Bold",
+    fontFamily: "Urbanist_700Bold",
     fontSize: 20,
     color: MAIN,
     marginBottom: 10,
   },
   helpModalText: {
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
     fontSize: 14,
     color: "#555",
     textAlign: "center",
@@ -1472,7 +1472,7 @@ const styles = StyleSheet.create({
   },
   helpModalButtonText: {
     color: "#fff",
-    fontFamily: "Poppins_600SemiBold",
+    fontFamily: "Urbanist_600SemiBold",
     fontSize: 15,
     textAlign: "center",
   },
@@ -1507,7 +1507,7 @@ const paymentStyles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 20,
     textAlign: "center",
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
   },
   infoRow: {
     flexDirection: "row",
@@ -1522,7 +1522,7 @@ const paymentStyles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "500",
     color: "#555",
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
   },
   value: {
     fontSize: 16,
@@ -1546,7 +1546,7 @@ const paymentStyles = StyleSheet.create({
     fontWeight: "500",
     color: "#555",
     marginBottom: 5,
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
   },
   input: {
     borderWidth: 1,
@@ -1554,11 +1554,11 @@ const paymentStyles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     fontSize: 16,
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
     color: "#000",
   },
   updateButton: {
-    backgroundColor: "#09364D",
+    backgroundColor: "#09111E",
     paddingVertical: 12,
     borderRadius: 5,
     alignItems: "center",
@@ -1583,7 +1583,7 @@ const paymentStyles = StyleSheet.create({
     alignItems: "center",
   },
   logoutModalText: {
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
     fontSize: 13,
     marginVertical: 10,
     textAlign: "center",
@@ -1593,7 +1593,7 @@ const paymentStyles = StyleSheet.create({
     marginTop: 14,
   },
   logoutYesButton: {
-    backgroundColor: "#0A2A3F",
+    backgroundColor: "#09111E",
     paddingVertical: 10,
     paddingHorizontal: 30,
     borderRadius: 8,
@@ -1601,20 +1601,23 @@ const paymentStyles = StyleSheet.create({
   },
   logoutYesText: {
     color: "#fff",
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
     fontSize: 12,
   },
   logoutNoButton: {
     borderWidth: 1,
-    borderColor: "#0A2A3F",
+    borderColor: "#09111E",
     paddingVertical: 10,
     paddingHorizontal: 30,
     borderRadius: 8,
   },
   logoutNoText: {
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
     fontSize: 12,
-    color: "#0A2A3F",
+    color: "#09111E",
   },
 
 });
+
+
+

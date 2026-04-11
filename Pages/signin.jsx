@@ -17,10 +17,10 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import {
   useFonts,
-  Poppins_400Regular,
-  Poppins_500Medium,
-  Poppins_600SemiBold,
-} from "@expo-google-fonts/poppins";
+  Urbanist_400Regular,
+  Urbanist_500Medium,
+  Urbanist_600SemiBold,
+} from "@expo-google-fonts/urbanist";
 import Toast from 'react-native-toast-message';
 
 export default function SignInScreen({ navigation }) {
@@ -31,9 +31,9 @@ export default function SignInScreen({ navigation }) {
   const { login } = useAuth();
 
   const [fontsLoaded] = useFonts({
-    Poppins_400Regular,
-    Poppins_500Medium,
-    Poppins_600SemiBold,
+    Urbanist_400Regular,
+    Urbanist_500Medium,
+    Urbanist_600SemiBold,
   });
 
   if (!fontsLoaded) return null;
@@ -97,7 +97,7 @@ export default function SignInScreen({ navigation }) {
             <TextInput
               style={styles.input}
               placeholder="Phone number"
-              placeholderTextColor="#107EBA"
+              placeholderTextColor="rgba(255, 255, 255, 0.4)"
               value={phoneNumber}
               onChangeText={setPhoneNumber}
               keyboardType="phone-pad"
@@ -107,7 +107,7 @@ export default function SignInScreen({ navigation }) {
               <TextInput
                 style={styles.passwordInput}
                 placeholder="Password"
-                placeholderTextColor="#107EBA"
+                placeholderTextColor="rgba(255, 255, 255, 0.4)"
                 secureTextEntry={!showPassword}
                 value={password}
                 onChangeText={setPassword}
@@ -119,7 +119,7 @@ export default function SignInScreen({ navigation }) {
                 <Ionicons
                   name={showPassword ? "eye" : "eye-off"}
                   size={20}
-                  color="#107EBA"
+                  color="#fff"
                 />
               </TouchableOpacity>
             </View>
@@ -189,52 +189,41 @@ const styles = StyleSheet.create({
     fontSize: 15, // was 16
     textAlign: "center",
     marginBottom: 20,
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
   },
 
   input: {
     width: "100%",
-    backgroundColor: "#09364D",
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     paddingVertical: 16,
     paddingHorizontal: 15,
-    borderRadius: 10,
-    color: "#107EBA",
+    borderRadius: 12,
+    color: "#fff",
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: "#0F4461",
-    fontSize: 16, // was 17
-    fontFamily: "Poppins_400Regular",
-
-    shadowColor: "#0A5E8C",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    elevation: 5,
+    borderColor: "rgba(255, 255, 255, 0.1)",
+    fontSize: 16,
+    fontFamily: "Urbanist_400Regular",
   },
 
   passwordContainer: {
     width: "100%",
-    backgroundColor: "#09364D",
-    borderRadius: 10,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    borderRadius: 12,
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: "#0F4461",
+    borderColor: "rgba(255, 255, 255, 0.1)",
     flexDirection: "row",
     alignItems: "center",
-    shadowColor: "#0A5E8C",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    elevation: 5,
   },
 
   passwordInput: {
     flex: 1,
     paddingVertical: 16,
     paddingHorizontal: 15,
-    color: "#107EBA",
+    color: "#fff",
     fontSize: 16,
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
   },
 
   eyeIcon: {
@@ -260,7 +249,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     fontSize: 17, // was 18
-    fontFamily: "Poppins_600SemiBold",
+    fontFamily: "Urbanist_600SemiBold",
   },
 
   signinText: {
@@ -269,12 +258,12 @@ const styles = StyleSheet.create({
     textAlign: "left",
     marginTop: 20,
     alignSelf: "flex-start",
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
   },
 
   highlighted: {
     color: "#1E90FF",
-    fontFamily: "Poppins_600SemiBold",
+    fontFamily: "Urbanist_600SemiBold",
   },
 
   forgot: {
@@ -283,7 +272,11 @@ const styles = StyleSheet.create({
     textAlign: "right",      // align to the right if needed
     fontWeight: "500",       // medium weight
     marginTop: 10,           // spacing from input fields above
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
   }
 
 });
+
+
+
+

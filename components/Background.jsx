@@ -148,7 +148,7 @@ export default function Background() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#09364D",
+    backgroundColor: "#09111E",
     position: "absolute",
   top: 0,
   left: 0,
@@ -178,3 +178,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
 });
+
+
+
+

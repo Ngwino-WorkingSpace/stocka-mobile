@@ -4,19 +4,19 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   useFonts,
-  Poppins_400Regular,
-  Poppins_500Medium,
-  Poppins_600SemiBold,
-  Poppins_700Bold,
-} from "@expo-google-fonts/poppins";
+  Urbanist_400Regular,
+  Urbanist_500Medium,
+  Urbanist_600SemiBold,
+  Urbanist_700Bold,
+} from "@expo-google-fonts/urbanist";
 
 export default function LandingScreen({navigation}) {
 
   const [fontsLoaded] = useFonts({
-    Poppins_400Regular,
-    Poppins_500Medium,
-    Poppins_600SemiBold,
-    Poppins_700Bold,
+    Urbanist_400Regular,
+    Urbanist_500Medium,
+    Urbanist_600SemiBold,
+    Urbanist_700Bold,
   });
 
   if (!fontsLoaded) return null;
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 25,
-    color: "#DCEAF1",
+    color: "#FFFFFF",
     marginBottom: 5,
   },
   title: {
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontWeight: "bold",
     marginBottom: 15,
-    fontFamily:"Poppins_700Bold",
+    fontFamily:"Urbanist_700Bold",
   },
   paragraph: {
     fontSize: 14,
@@ -94,13 +94,13 @@ const styles = StyleSheet.create({
     textAlign: "center",  // centers text horizontally
     marginBottom: 10,
     letterSpacing:0.1,
-    fontFamily:"Poppins_400Regular",
+    fontFamily:"Urbanist_400Regular",
   },
   button: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "left",
-    backgroundColor: "#09364D",
+    backgroundColor: "#09111E",
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 30,
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "600",
     marginRight: 8,
-    fontFamily:"Poppins_400Regular",
+    fontFamily:"Urbanist_400Regular",
   },
   bottomText: {
     position: "absolute",
@@ -121,6 +121,10 @@ const styles = StyleSheet.create({
     fontSize: 21,
     color: "#fff",
     fontWeight: "600",
-    fontFamily:"Poppins_400Regular",
+    fontFamily:"Urbanist_400Regular",
   },
 });
+
+
+
+

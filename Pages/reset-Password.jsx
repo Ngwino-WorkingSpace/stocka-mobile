@@ -14,10 +14,10 @@ import {
 
 import {
   useFonts,
-  Poppins_400Regular,
-  Poppins_500Medium,
-  Poppins_600SemiBold,
-} from "@expo-google-fonts/poppins";
+  Urbanist_400Regular,
+  Urbanist_500Medium,
+  Urbanist_600SemiBold,
+} from "@expo-google-fonts/urbanist";
 
 import { api } from "../src/services/api";
 import Toast from 'react-native-toast-message';
@@ -29,9 +29,9 @@ export default function ResetPasswordScreen({ navigation, route }) {
   const [loading, setLoading] = useState(false);
 
   const [fontsLoaded] = useFonts({
-    Poppins_400Regular,
-    Poppins_500Medium,
-    Poppins_600SemiBold,
+    Urbanist_400Regular,
+    Urbanist_500Medium,
+    Urbanist_600SemiBold,
   });
 
   if (!fontsLoaded) return null;
@@ -158,12 +158,12 @@ const styles = StyleSheet.create({
     fontSize: 15, // was 16
     textAlign: "center",
     marginBottom: 20,
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
   },
 
   input: {
     width: "100%",
-    backgroundColor: "#09364D",
+    backgroundColor: "#09111E",
     paddingVertical: 16,
     paddingHorizontal: 15,
     borderRadius: 10,
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#0F4461",
     fontSize: 16, // was 17
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
 
     shadowColor: "#0A5E8C",
     shadowOffset: { width: 0, height: 4 },
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     fontSize: 17, // was 18
-    fontFamily: "Poppins_600SemiBold",
+    fontFamily: "Urbanist_600SemiBold",
   },
 
   signinText: {
@@ -208,12 +208,12 @@ const styles = StyleSheet.create({
     textAlign: "left",
     marginTop: 20,
     alignSelf: "flex-start",
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
   },
 
   highlighted: {
     color: "#1E90FF",
-    fontFamily: "Poppins_600SemiBold",
+    fontFamily: "Urbanist_600SemiBold",
   },
 
   forgot: {
@@ -222,7 +222,11 @@ const styles = StyleSheet.create({
     textAlign: "right",      // align to the right if needed
     fontWeight: "500",       // medium weight
     marginTop: 10,           // spacing from input fields above
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
   }
 
 });
+
+
+
+

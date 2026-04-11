@@ -15,11 +15,11 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import {
   useFonts,
-  Poppins_400Regular,
-  Poppins_500Medium,
-  Poppins_600SemiBold,
-  Poppins_700Bold,
-} from "@expo-google-fonts/poppins";
+  Urbanist_400Regular,
+  Urbanist_500Medium,
+  Urbanist_600SemiBold,
+  Urbanist_700Bold,
+} from "@expo-google-fonts/urbanist";
 
 import { api } from "../src/services/api";
 import { useAuth } from "../src/context/AuthContext";
@@ -27,7 +27,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../src/context/ThemeContext';
 
-const MAIN = "#09364D";
+const MAIN = "#09111E";
 
 // Helper function to map display names to route names
 const getRouteName = (itemName) => {
@@ -89,10 +89,10 @@ export default function ProfileScreen({ navigation }) {
   }, []);
 
   const [fontsLoaded] = useFonts({
-    Poppins_400Regular,
-    Poppins_500Medium,
-    Poppins_600SemiBold,
-    Poppins_700Bold,
+    Urbanist_400Regular,
+    Urbanist_500Medium,
+    Urbanist_600SemiBold,
+    Urbanist_700Bold,
   });
 
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -126,7 +126,7 @@ export default function ProfileScreen({ navigation }) {
   const isExpanded = sidebarState === "expanded";
 
   return (
-    <View style={[styles.mainContainer, { backgroundColor: darkMode ? "#1a1a2e" : "#fff" }]}>
+    <View style={[styles.mainContainer, { backgroundColor: darkMode ? "#09111E" : "#fff" }]}>
 
       {/* FLOATING PRESS HANDLE */}
       {isPressState && (
@@ -340,7 +340,7 @@ export default function ProfileScreen({ navigation }) {
       </View>
 
       {/* CONTENT */}
-      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0, backgroundColor: darkMode ? "#1a1a2e" : "#fff" }}>
+      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0, backgroundColor: darkMode ? "#09111E" : "#fff" }}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -441,7 +441,7 @@ export default function ProfileScreen({ navigation }) {
             <Ionicons
               name="warning-outline"
               size={38}
-              color="#0A2A3F"
+              color="#09111E"
               style={{ marginBottom: 10 }}
             />
 
@@ -478,7 +478,7 @@ export default function ProfileScreen({ navigation }) {
       {/* ================= HELP MODAL ================= */}
       <Modal visible={helpModalVisible} transparent animationType="fade">
         <View style={styles.helpOverlay}>
-          <View style={[styles.helpModalCard, darkMode && { backgroundColor: '#2a2a3e' }]}>
+          <View style={[styles.helpModalCard, darkMode && { backgroundColor: '#121d2b' }]}>
             <Ionicons name="help-circle-outline" size={48} color={darkMode ? "#4a9eff" : MAIN} style={{ marginBottom: 15 }} />
             <Text style={[styles.helpModalTitle, darkMode && styles.darkText]}>Need Help?</Text>
             <Text style={[styles.helpModalText, darkMode && { color: '#aaa' }]}>
@@ -570,7 +570,7 @@ const styles = StyleSheet.create({
   pressText: {
     color: "#fff",
     fontSize: 11,
-    fontFamily: "Poppins_600SemiBold",
+    fontFamily: "Urbanist_600SemiBold",
     lineHeight: 12,
     transform: [{ rotate: "-90deg" }],
   },
@@ -581,7 +581,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(9, 54, 77, 0.3)",
+    backgroundColor: "rgba(9, 17, 30, 0.3)",
     zIndex: 5,
   },
   sidebar: {
@@ -617,7 +617,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   stockText: {
-    fontFamily: "Poppins_700Bold",
+    fontFamily: "Urbanist_700Bold",
     fontSize: 18,
     color: "#fff",
     marginLeft: 10,
@@ -647,7 +647,7 @@ const styles = StyleSheet.create({
   },
   navText: {
     color: "#fff",
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
     marginLeft: 15,
     fontSize: 14,
   },
@@ -692,7 +692,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: "#09364D",
+    backgroundColor: "#09111E",
     alignSelf: "center",
   },
   themeToggleKnobActive: {
@@ -704,7 +704,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   darkContainer: {
-    backgroundColor: "#1a1a2e",
+    backgroundColor: "#09111E",
   },
   header: {
     flexDirection: "row",
@@ -716,30 +716,30 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   logo: {
-    fontFamily: "Poppins_600SemiBold",
+    fontFamily: "Urbanist_600SemiBold",
     fontSize: 18,
   },
   darkText: {
     color: "#fff",
   },
   darkScrollView: {
-    backgroundColor: "#1a1a2e",
+    backgroundColor: "#09111E",
   },
   darkAvatar: {
-    backgroundColor: "#2a2a3e",
+    backgroundColor: "#121d2b",
   },
   darkInput: {
-    backgroundColor: "#2a2a3e",
+    backgroundColor: "#121d2b",
     color: "#fff",
   },
   darkGrayButton: {
-    backgroundColor: "#2a2a3e",
+    backgroundColor: "#121d2b",
   },
   darkGrayText: {
     color: "#fff",
   },
   title: {
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
     fontSize: 14,
     marginBottom: 20,
     color: "#000",
@@ -763,7 +763,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     right: "35%",
-    backgroundColor: "#0A2A3F",
+    backgroundColor: "#09111E",
     padding: 6,
     borderRadius: 6,
   },
@@ -773,7 +773,7 @@ const styles = StyleSheet.create({
   },
 
   label: {
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
     fontSize: 12,
     marginBottom: 6,
   },
@@ -783,7 +783,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 14,
     borderRadius: 10,
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
     color: "#000",
   },
 
@@ -800,12 +800,12 @@ const styles = StyleSheet.create({
   },
 
   grayText: {
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
     fontSize: 12,
   },
 
   logoutButton: {
-    backgroundColor: "#0A2A3F",
+    backgroundColor: "#09111E",
     padding: 14,
     borderRadius: 10,
     alignItems: "center",
@@ -814,7 +814,7 @@ const styles = StyleSheet.create({
 
   logoutText: {
     color: "#fff",
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
     fontSize: 12,
   },
   overlay: {
@@ -833,7 +833,7 @@ const styles = StyleSheet.create({
   },
 
   modalText: {
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
     fontSize: 13,
     marginVertical: 10,
     textAlign: "center",
@@ -845,7 +845,7 @@ const styles = StyleSheet.create({
   },
 
   yesButton: {
-    backgroundColor: "#0A2A3F",
+    backgroundColor: "#09111E",
     paddingVertical: 10,
     paddingHorizontal: 30,
     borderRadius: 8,
@@ -854,22 +854,22 @@ const styles = StyleSheet.create({
 
   yesText: {
     color: "#fff",
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
     fontSize: 12,
   },
 
   noButton: {
     borderWidth: 1,
-    borderColor: "#0A2A3F",
+    borderColor: "#09111E",
     paddingVertical: 10,
     paddingHorizontal: 30,
     borderRadius: 8,
   },
 
   noText: {
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
     fontSize: 12,
-    color: "#0A2A3F",
+    color: "#09111E",
   },
 
   /* Help Modal Styles */
@@ -892,13 +892,13 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   helpModalTitle: {
-    fontFamily: "Poppins_700Bold",
+    fontFamily: "Urbanist_700Bold",
     fontSize: 20,
     color: MAIN,
     marginBottom: 10,
   },
   helpModalText: {
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
     fontSize: 14,
     color: "#555",
     textAlign: "center",
@@ -914,7 +914,7 @@ const styles = StyleSheet.create({
   },
   helpModalButtonText: {
     color: "#fff",
-    fontFamily: "Poppins_600SemiBold",
+    fontFamily: "Urbanist_600SemiBold",
     fontSize: 15,
     textAlign: "center",
   },
@@ -925,3 +925,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
+
+
+
+

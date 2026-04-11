@@ -16,14 +16,14 @@ import {
 } from "react-native";
 import {
   useFonts,
-  Poppins_400Regular,
-  Poppins_500Medium,
-  Poppins_600SemiBold,
-  Poppins_700Bold,
-} from "@expo-google-fonts/poppins";
+  Urbanist_400Regular,
+  Urbanist_500Medium,
+  Urbanist_600SemiBold,
+  Urbanist_700Bold,
+} from "@expo-google-fonts/urbanist";
 import { Ionicons } from "@expo/vector-icons";
 
-const MAIN = "#09364D";
+const MAIN = "#09111E";
 
 // Helper function to map display names to route names
 const getRouteName = (itemName) => {
@@ -68,10 +68,10 @@ export default function StockScreen({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
 
   const [fontsLoaded] = useFonts({
-    Poppins_400Regular,
-    Poppins_500Medium,
-    Poppins_600SemiBold,
-    Poppins_700Bold,
+    Urbanist_400Regular,
+    Urbanist_500Medium,
+    Urbanist_600SemiBold,
+    Urbanist_700Bold,
   });
 
   const [searchText, setSearchText] = useState("");
@@ -402,7 +402,7 @@ export default function StockScreen({ navigation }) {
 
 
   return (
-    <View style={[styles.container, { backgroundColor: darkMode ? "#1a1a2e" : "#fff", paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+    <View style={[styles.container, { backgroundColor: darkMode ? "#09111E" : "#fff", paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       {/* FLOATING PRESS HANDLE */}
       {isPressState && (
         <TouchableOpacity
@@ -577,7 +577,7 @@ export default function StockScreen({ navigation }) {
       {/* ================= CATEGORY MODAL ================= */}
       <Modal visible={categoryVisible} transparent animationType="fade">
         <TouchableOpacity style={styles.modalOverlay} onPress={() => setCategoryVisible(false)} />
-        <View style={[styles.modalContainer, darkMode && { backgroundColor: '#2a2a3e' }]}>
+        <View style={[styles.modalContainer, darkMode && { backgroundColor: '#121d2b' }]}>
           <FlatList
             data={categories}
             keyExtractor={(item) => item}
@@ -660,12 +660,12 @@ export default function StockScreen({ navigation }) {
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 15, borderTopWidth: 1, borderTopColor: '#eee', paddingTop: 15 }}>
               <TouchableOpacity onPress={() => handleEditProduct(selectedProduct)} style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Ionicons name="create-outline" size={20} color={MAIN} />
-                <Text style={{ marginLeft: 5, color: MAIN, fontFamily: "Poppins_500Medium" }}>Edit Product</Text>
+                <Text style={{ marginLeft: 5, color: MAIN, fontFamily: "Urbanist_500Medium" }}>Edit Product</Text>
               </TouchableOpacity>
 
               <TouchableOpacity onPress={() => handleDeleteProduct(selectedProduct.id)} style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Ionicons name="trash-outline" size={20} color="red" />
-                <Text style={{ marginLeft: 5, color: "red", fontFamily: "Poppins_500Medium" }}>Delete Product</Text>
+                <Text style={{ marginLeft: 5, color: "red", fontFamily: "Urbanist_500Medium" }}>Delete Product</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -716,7 +716,7 @@ export default function StockScreen({ navigation }) {
               />
 
               <Text style={[styles.detailLabel, { marginBottom: 5 }, darkMode && { color: "#aaa" }]}>Category</Text>
-              <View style={{ backgroundColor: darkMode ? "#1a1a2e" : "#F2F2F2", borderRadius: 8, marginBottom: 12, borderWidth: darkMode ? 1 : 0, borderColor: "#444" }}>
+              <View style={{ backgroundColor: darkMode ? "#09111E" : "#F2F2F2", borderRadius: 8, marginBottom: 12, borderWidth: darkMode ? 1 : 0, borderColor: "#444" }}>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ padding: 10 }}>
                   {categoriesList.length === 0 ? (
                     <Text style={{ color: darkMode ? "#aaa" : "#666", fontSize: 12, padding: 10 }}>
@@ -731,7 +731,7 @@ export default function StockScreen({ navigation }) {
                           paddingHorizontal: 12,
                           paddingVertical: 6,
                           borderRadius: 20,
-                          backgroundColor: newProductData.categoryId === cat.id ? MAIN : (darkMode ? "#2a2a3e" : "#fff"),
+                          backgroundColor: newProductData.categoryId === cat.id ? MAIN : (darkMode ? "#121d2b" : "#fff"),
                           marginRight: 8,
                           borderWidth: 1,
                           borderColor: newProductData.categoryId === cat.id ? MAIN : "#ddd"
@@ -978,7 +978,7 @@ export default function StockScreen({ navigation }) {
             <Ionicons
               name="warning-outline"
               size={38}
-              color="#0A2A3F"
+              color="#09111E"
               style={{ marginBottom: 10 }}
             />
 
@@ -1054,7 +1054,7 @@ const FormInput = ({
         styles.formInput,
         multiline && styles.formTextarea,
         inputStyle,
-        darkMode && { backgroundColor: "#1a1a2e", color: "#fff", borderColor: "#444" },
+        darkMode && { backgroundColor: "#09111E", color: "#fff", borderColor: "#444" },
       ]}
       placeholderTextColor={darkMode ? "#aaa" : "#999"}
       multiline={multiline}
@@ -1074,22 +1074,22 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   darkScrollView: {
-    backgroundColor: "#1a1a2e",
+    backgroundColor: "#09111E",
   },
   darkText: {
     color: "#fff",
   },
   darkProductCard: {
-    backgroundColor: "#2a2a3e",
+    backgroundColor: "#121d2b",
   },
   darkModalContainer: {
-    backgroundColor: "#2a2a3e",
+    backgroundColor: "#121d2b",
   },
   darkModalItem: {
-    backgroundColor: "#2a2a3e",
+    backgroundColor: "#121d2b",
   },
   darkDetailsCard: {
-    backgroundColor: "#2a2a3e",
+    backgroundColor: "#121d2b",
   },
   floatingPress: {
     position: "absolute",
@@ -1111,7 +1111,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(9, 54, 77, 0.3)",
+    backgroundColor: "rgba(9, 17, 30, 0.3)",
     zIndex: 5,
   },
   sidebar: {
@@ -1139,7 +1139,7 @@ const styles = StyleSheet.create({
   pressText: {
     color: "#fff",
     fontSize: 11,
-    fontFamily: "Poppins_600SemiBold",
+    fontFamily: "Urbanist_600SemiBold",
     lineHeight: 12,
     transform: [{ rotate: "-90deg" }],
   },
@@ -1165,7 +1165,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   stockText: {
-    fontFamily: "Poppins_700Bold",
+    fontFamily: "Urbanist_700Bold",
     fontSize: 18,
     color: "#fff",
     marginLeft: 10,
@@ -1195,7 +1195,7 @@ const styles = StyleSheet.create({
   },
   navText: {
     color: "#fff",
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
     marginLeft: 15,
     fontSize: 14,
   },
@@ -1240,7 +1240,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: "#09364D",
+    backgroundColor: "#09111E",
     alignSelf: "center",
   },
   themeToggleKnobActive: {
@@ -1260,41 +1260,41 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logoContainer: { flexDirection: "row", alignItems: "center" },
-  stockaText: { fontFamily: "Poppins_700Bold", fontSize: 22, color: MAIN, marginLeft: 10 },
+  stockaText: { fontFamily: "Urbanist_700Bold", fontSize: 22, color: MAIN, marginLeft: 10 },
 
   searchCategoryContainer: { flexDirection: "row", marginBottom: 20 },
-  searchInput: { flex: 1, backgroundColor: "#F0F0F0", borderRadius: 8, padding: 10, marginRight: 10, fontFamily: "Poppins_400Regular", color: "#000" },
+  searchInput: { flex: 1, backgroundColor: "#F0F0F0", borderRadius: 8, padding: 10, marginRight: 10, fontFamily: "Urbanist_400Regular", color: "#000" },
 
   categoryDropdown: { flexDirection: "row", backgroundColor: MAIN, padding: 10, borderRadius: 8 },
-  categoryText: { color: "#fff", marginRight: 5, fontFamily: "Poppins_400Regular" },
+  categoryText: { color: "#fff", marginRight: 5, fontFamily: "Urbanist_400Regular" },
 
   modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.2)" },
   modalContainer: { position: "absolute", top: 100, right: 20, backgroundColor: "#fff", borderRadius: 10, width: 160 },
 
   modalItem: { padding: 12 },
-  modalText: { fontFamily: "Poppins_500Medium" },
+  modalText: { fontFamily: "Urbanist_500Medium" },
 
-  title: { fontFamily: "Poppins_700Bold", fontSize: 18, marginBottom: 12 },
+  title: { fontFamily: "Urbanist_700Bold", fontSize: 18, marginBottom: 12 },
 
   productCard: { flexDirection: "row", backgroundColor: "#F5F5F5", padding: 12, borderRadius: 12, marginBottom: 12 },
   productImage: { width: 80, height: 80, borderRadius: 8 },
 
-  productName: { fontFamily: "Poppins_600SemiBold", fontSize: 16 },
-  productCategory: { fontSize: 12, color: "#555", fontFamily: "Poppins_400Regular" },
-  productKilos: { fontSize: 12, color: "#555", fontFamily: "Poppins_400Regular" },
+  productName: { fontFamily: "Urbanist_600SemiBold", fontSize: 16 },
+  productCategory: { fontSize: 12, color: "#555", fontFamily: "Urbanist_400Regular" },
+  productKilos: { fontSize: 12, color: "#555", fontFamily: "Urbanist_400Regular" },
 
   warningWrapper: { flexDirection: "row", alignItems: "center", marginVertical: 4 },
-  productExpiry: { fontSize: 12, color: "red", marginLeft: 6, fontFamily: "Poppins_400Regular" },
+  productExpiry: { fontSize: 12, color: "red", marginLeft: 6, fontFamily: "Urbanist_400Regular" },
 
   viewButton: { backgroundColor: MAIN, padding: 8, borderRadius: 8, marginTop: 4, alignSelf: "flex-start" },
-  viewButtonText: { color: "#fff", fontSize: 12, fontFamily: "Poppins_400Regular" },
+  viewButtonText: { color: "#fff", fontSize: 12, fontFamily: "Urbanist_400Regular" },
 
   /* ===== MODAL ===== */
-  overlay: { flex: 1, backgroundColor: "rgba(9,54,77,0.25)", justifyContent: "center", alignItems: "center" },
+  overlay: { flex: 1, backgroundColor: "rgba(9,17,30,0.25)", justifyContent: "center", alignItems: "center" },
   detailsCard: { width: "90%", backgroundColor: "#fff", borderRadius: 16, padding: 20 },
 
   detailsHeader: { flexDirection: "row", justifyContent: "space-between", marginBottom: 15 },
-  detailsTitle: { fontFamily: "Poppins_700Bold", fontSize: 18 },
+  detailsTitle: { fontFamily: "Urbanist_700Bold", fontSize: 18 },
 
   detailsContent: { flexDirection: "row" },
   detailsLeft: { flex: 1 },
@@ -1302,18 +1302,18 @@ const styles = StyleSheet.create({
 
   detailsImage: { width: 120, height: 120, borderRadius: 10, marginBottom: 10, borderColor: "#e1dedeff", borderWidth: 2 },
 
-  descriptionText: { fontSize: 12, color: "#555", textAlign: "left", fontFamily: "Poppins_400Regular" },
+  descriptionText: { fontSize: 12, color: "#555", textAlign: "left", fontFamily: "Urbanist_400Regular" },
 
-  detailLabel: { fontSize: 12, color: "#777", fontFamily: "Poppins_400Regular" },
-  detailValue: { fontFamily: "Poppins_500Medium", color: "#000" },
+  detailLabel: { fontSize: 12, color: "#777", fontFamily: "Urbanist_400Regular" },
+  detailValue: { fontFamily: "Urbanist_500Medium", color: "#000" },
 
   detailsActions: { flexDirection: "row", justifyContent: "space-between", marginTop: 20 },
 
   actionButton: { backgroundColor: MAIN, padding: 10, borderRadius: 8, flex: 1, marginRight: 8 },
-  actionText: { color: "#fff", textAlign: "center", fontFamily: "Poppins_400Regular" },
+  actionText: { color: "#fff", textAlign: "center", fontFamily: "Urbanist_400Regular" },
 
   actionButtonOutline: { borderWidth: 1, borderColor: MAIN, padding: 10, borderRadius: 8, flex: 1 },
-  actionTextOutline: { color: MAIN, textAlign: "center", fontFamily: "Poppins_400Regular" },
+  actionTextOutline: { color: MAIN, textAlign: "center", fontFamily: "Urbanist_400Regular" },
 
   addStockCard: {
     width: "85%",
@@ -1327,13 +1327,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     marginBottom: 12,
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
   },
 
   /* ===== ADD STOCK MODAL ===== */
   addOverlay: {
     flex: 1,
-    backgroundColor: "rgba(9,54,77,0.35)",
+    backgroundColor: "rgba(9,17,30,0.35)",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -1353,7 +1353,7 @@ const styles = StyleSheet.create({
   },
 
   addTitle: {
-    fontFamily: "Poppins_700Bold",
+    fontFamily: "Urbanist_700Bold",
     fontSize: 18,
     color: MAIN,
   },
@@ -1370,14 +1370,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#555",
     marginBottom: 4,
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
   },
 
   formInput: {
     backgroundColor: "#F2F2F2",
     borderRadius: 8,
     padding: 10,
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
     color: "#000",
   },
 
@@ -1402,7 +1402,7 @@ const styles = StyleSheet.create({
   addPrimaryText: {
     color: "#fff",
     textAlign: "center",
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
   },
 
   addSecondaryBtn: {
@@ -1416,7 +1416,7 @@ const styles = StyleSheet.create({
   addSecondaryText: {
     color: MAIN,
     textAlign: "center",
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
   },
 
   addProductButton: {
@@ -1425,7 +1425,7 @@ const styles = StyleSheet.create({
   },
 
   productButton: {
-    backgroundColor: "#09364D",
+    backgroundColor: "#09111E",
     paddingVertical: 12,
     borderRadius: 12,
     alignItems: "center",
@@ -1444,7 +1444,7 @@ const styles = StyleSheet.create({
   addText: {
     color: "#fff",
     fontSize: 16,
-    fontFamily: "Poppins_600SemiBold",
+    fontFamily: "Urbanist_600SemiBold",
   },
   logoutOverlay: {
     flex: 1,
@@ -1461,7 +1461,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logoutModalText: {
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
     fontSize: 13,
     marginVertical: 10,
     textAlign: "center",
@@ -1471,7 +1471,7 @@ const styles = StyleSheet.create({
     marginTop: 14,
   },
   logoutYesButton: {
-    backgroundColor: "#0A2A3F",
+    backgroundColor: "#09111E",
     paddingVertical: 10,
     paddingHorizontal: 30,
     borderRadius: 8,
@@ -1479,20 +1479,20 @@ const styles = StyleSheet.create({
   },
   logoutYesText: {
     color: "#fff",
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
     fontSize: 12,
   },
   logoutNoButton: {
     borderWidth: 1,
-    borderColor: "#0A2A3F",
+    borderColor: "#09111E",
     paddingVertical: 10,
     paddingHorizontal: 30,
     borderRadius: 8,
   },
   logoutNoText: {
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
     fontSize: 12,
-    color: "#0A2A3F",
+    color: "#09111E",
   },
 
 });
@@ -1500,7 +1500,7 @@ const styles = StyleSheet.create({
 const formStyles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(9,54,77,0.5)",
+    backgroundColor: "rgba(9,17,30,0.5)",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -1523,7 +1523,7 @@ const formStyles = StyleSheet.create({
     elevation: 10,
   },
   darkCard: {
-    backgroundColor: "#2a2a3e",
+    backgroundColor: "#121d2b",
   },
 
   header: {
@@ -1537,9 +1537,9 @@ const formStyles = StyleSheet.create({
   },
 
   title: {
-    fontFamily: "Poppins_700Bold",
+    fontFamily: "Urbanist_700Bold",
     fontSize: 20,
-    color: "#09364D",
+    color: "#09111E",
   },
 
   body: {
@@ -1570,11 +1570,11 @@ const formStyles = StyleSheet.create({
     fontSize: 12,
     color: "#777",
     marginTop: 6,
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
   },
 
   staticValue: {
-    fontFamily: "Poppins_600SemiBold",
+    fontFamily: "Urbanist_600SemiBold",
     marginBottom: 6,
   },
 
@@ -1586,7 +1586,7 @@ const formStyles = StyleSheet.create({
     fontSize: 12,
     color: "#333",
     marginBottom: 4,
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
   },
 
   input: {
@@ -1595,7 +1595,7 @@ const formStyles = StyleSheet.create({
     borderRadius: 10,
     padding: 12,
     fontSize: 14,
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
     color: "#333",
     backgroundColor: "#FAFAFA",
   },
@@ -1606,11 +1606,11 @@ const formStyles = StyleSheet.create({
   },
 
   addButton: {
-    backgroundColor: "#09364D",
+    backgroundColor: "#09111E",
     padding: 16,
     borderRadius: 12,
     marginTop: 16,
-    shadowColor: "#09364D",
+    shadowColor: "#09111E",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -1620,7 +1620,7 @@ const formStyles = StyleSheet.create({
   addText: {
     color: "#fff",
     textAlign: "center",
-    fontFamily: "Poppins_600SemiBold",
+    fontFamily: "Urbanist_600SemiBold",
     fontSize: 16,
     letterSpacing: 1,
   },
@@ -1636,7 +1636,7 @@ const formStyles = StyleSheet.create({
 const saleStyles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(9,54,77,0.5)",
+    backgroundColor: "rgba(9,17,30,0.5)",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -1659,7 +1659,7 @@ const saleStyles = StyleSheet.create({
     elevation: 10,
   },
   darkCard: {
-    backgroundColor: "#2a2a3e",
+    backgroundColor: "#121d2b",
   },
 
   header: {
@@ -1673,9 +1673,9 @@ const saleStyles = StyleSheet.create({
   },
 
   title: {
-    fontFamily: "Poppins_700Bold",
+    fontFamily: "Urbanist_700Bold",
     fontSize: 20,
-    color: "#09364D",
+    color: "#09111E",
   },
 
   body: {
@@ -1695,12 +1695,12 @@ const saleStyles = StyleSheet.create({
   label: {
     fontSize: 11,
     color: "#777",
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
   },
 
   value: {
     fontSize: 13,
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "Urbanist_500Medium",
     marginBottom: 8,
   },
 
@@ -1716,18 +1716,18 @@ const saleStyles = StyleSheet.create({
 
   descTitle: {
     fontSize: 12,
-    fontFamily: "Poppins_600SemiBold",
+    fontFamily: "Urbanist_600SemiBold",
     marginBottom: 4,
   },
 
   description: {
     fontSize: 11,
     color: "#555",
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Urbanist_400Regular",
   },
 
   sectionTitle: {
-    fontFamily: "Poppins_600SemiBold",
+    fontFamily: "Urbanist_600SemiBold",
     fontSize: 14,
     marginVertical: 10,
   },
@@ -1748,11 +1748,11 @@ const saleStyles = StyleSheet.create({
   },
 
   recordButton: {
-    backgroundColor: "#09364D",
+    backgroundColor: "#09111E",
     paddingVertical: 16,
     borderRadius: 12,
     marginTop: 16,
-    shadowColor: "#09364D",
+    shadowColor: "#09111E",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -1762,11 +1762,15 @@ const saleStyles = StyleSheet.create({
   recordText: {
     color: "#fff",
     textAlign: "center",
-    fontFamily: "Poppins_600SemiBold",
+    fontFamily: "Urbanist_600SemiBold",
     fontSize: 16,
     letterSpacing: 1,
   },
 
 });
+
+
+
+
 
 
