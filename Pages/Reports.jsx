@@ -350,7 +350,7 @@ export default function ReportsScreen({ navigation }) {
             <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Sales Report (Top Items)</Text>
             <View style={styles.salesReportContainer}>
               {salesReport.length === 0 ? (
-                <Text style={{ color: '#999', marginVertical: 10 }}>No sales recorded for this period.</Text>
+                <Text style={{ color: '#999', marginVertical: 10, fontFamily: "Urbanist_400Regular" }}>No sales recorded for this period.</Text>
               ) : (
                 salesReport.map((item, index) => (
                   <View key={index} style={[styles.salesItem, darkMode && styles.darkSalesItem]}>
@@ -390,7 +390,7 @@ export default function ReportsScreen({ navigation }) {
                   <Text style={{ fontSize: 10, color: '#aaa' }}>{topProducts[2].quantity} sold</Text>
                 </View>
               )}
-              {topProducts.length === 0 && <Text style={{ color: '#999' }}>No data available</Text>}
+              {topProducts.length === 0 && <Text style={{ color: '#999', fontFamily: "Urbanist_400Regular" }}>No data available</Text>}
             </View>
 
             {/* STOCK REPORT SECTION */}

@@ -229,7 +229,7 @@ export default function SalesScreen({ navigation }) {
         {!isPressState && (
           <View style={[styles.logoContainerSidebar, isExpanded && styles.logoContainerExpanded]}>
             <Image
-              source={require("../assets/images/stock.png")}
+              source={require("../assets/images/Fstocka.png")}
               style={{ width: 36, height: 36 }}
             />
             {isExpanded && <Text style={styles.stockText}>Stocka</Text>}

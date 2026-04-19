@@ -511,7 +511,7 @@ export default function PlainDashboardScreen({ navigation }) {
             {/* TRANSACTIONS */}
             <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Recent transactions</Text>
             {transactions.length === 0 && !loading && (
-              <Text style={[{ marginLeft: 20 }, darkMode && styles.darkText]}>No recent transactions</Text>
+              <Text style={[{ marginLeft: 20 , fontFamily: "Urbanist_400Regular" }, darkMode && styles.darkText]}>No recent transactions</Text>
             )}
             {transactions.map((t, i) => (
               <View key={i} style={[styles.transaction, darkMode && styles.darkTransaction]}>
@@ -1130,6 +1130,7 @@ const styles = StyleSheet.create({
   },
   darkText: {
     color: "#fff",
+    fontFamily: "Urbanist_400Regular",
   },
   darkScrollView: {
     backgroundColor: "#09111E",

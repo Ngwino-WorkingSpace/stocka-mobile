@@ -539,7 +539,7 @@ export default function StockScreen({ navigation }) {
           <Text style={[styles.title, darkMode && styles.darkText]}>Products in Stock</Text>
 
           {filteredProducts.filter(p => p.TextHead.toLowerCase().includes(searchText.toLowerCase())).length === 0 ? (
-            <Text style={{ textAlign: 'center', marginTop: 20, color: darkMode ? '#aaa' : '#666' }}>No products found</Text>
+            <Text style={{ textAlign: 'center', marginTop: 20, fontFamily: "Urbanist_400Regular", color: darkMode ? '#aaa' : '#666' }}>No products found</Text>
           ) : filteredProducts.filter(p => p.TextHead.toLowerCase().includes(searchText.toLowerCase())).map((item) => (
             <View key={item.id} style={[styles.productCard, darkMode && styles.darkProductCard]}>
               <Image source={item.Image} style={styles.productImage} />
@@ -702,7 +702,7 @@ export default function StockScreen({ navigation }) {
                 ) : (
                   <View style={{ width: 100, height: 100, borderRadius: 10, backgroundColor: '#f0f0f0', justifyContent: 'center', alignItems: 'center' }}>
                     <Ionicons name="camera-outline" size={40} color={MAIN} />
-                    <Text style={{ fontSize: 10, color: MAIN }}>Add Picture</Text>
+                    <Text style={{ fontSize: 12, color: MAIN , fontFamily: "Urbanist_400Regular" }}>Add Picture</Text>
                   </View>
                 )}
               </TouchableOpacity>
@@ -737,7 +737,7 @@ export default function StockScreen({ navigation }) {
                           borderColor: newProductData.categoryId === cat.id ? MAIN : "#ddd"
                         }}
                       >
-                        <Text style={{ color: newProductData.categoryId === cat.id ? "#fff" : (darkMode ? "#fff" : "#333"), fontSize: 12 }}>
+                        <Text style={{ color: newProductData.categoryId === cat.id ? "#fff" : (darkMode ? "#fff" : "#333"), fontSize: 12, fontFamily: "Urbanist_400Regular" }}>
                           {cat.category_name}
                         </Text>
                       </TouchableOpacity>

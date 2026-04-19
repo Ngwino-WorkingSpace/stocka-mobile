@@ -201,7 +201,7 @@ export default function ProfileScreen({ navigation }) {
               source={require("../assets/images/stock.png")}
               style={{ width: 36, height: 36 }}
             />
-            {isExpanded && <Text style={styles.stockText}>Stocka</Text>}
+            {isExpanded && <Text style={{ fontFamily: "Urbanist_400Regular", color: "#fff" }}>Stocka</Text>}
           </View>
         )}
 
@@ -265,7 +265,7 @@ export default function ProfileScreen({ navigation }) {
                 ]}
                 onPress={() => handleNavItemPress("debtors")}
               >
-                <Ionicons name="document-text-outline" size={22} color="#fff" />
+                <Ionicons name="wallet-outline" size={22} color="#fff" />
                 {isExpanded && <Text style={styles.navText}>Debtors</Text>}
               </TouchableOpacity>
 
@@ -365,9 +365,9 @@ export default function ProfileScreen({ navigation }) {
                     <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
                   </TouchableOpacity>
                 )}
-                <View style={styles.logoContainerHeader}>
-                  <Image source={require("../assets/images/stock.png")} style={{ width: 36, height: 36 }} />
-                  <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Image source={require("../assets/images/stock.png")} style={{ width: 20, height: 20 }} />
+                  <Text style={[{ fontFamily: "Urbanist_700Bold" , fontSize: 16}, darkMode && styles.darkText]}>Stocka</Text>
                 </View>
               </View>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -611,6 +611,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 5,
     width: "100%",
+    fontFamily: "Urbanist_400Regular",
   },
   logoContainerExpanded: {
     paddingLeft: 10,
