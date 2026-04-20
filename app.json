@@ -9,7 +9,7 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/stocka.png",
+      "image": "./assets/images/ppl.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -28,7 +28,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/stockaLogo.png"
+      "favicon": "./assets/images/ppl.png"
     },
     "plugins": [
       "expo-router",

@@ -80,7 +80,7 @@ export default function ForgotPasswordScreen({ navigation }) {
         >
           <View style={styles.content}>
             <Image
-              source={require("../assets/images/stocka.png")}
+              source={require("../assets/images/ppl.png")}
               style={styles.logo}
             />
 

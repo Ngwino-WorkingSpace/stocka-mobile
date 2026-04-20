@@ -27,7 +27,7 @@ export default function LandingScreen({navigation}) {
       {/* Centered content */}
       <View style={styles.centeredContent}>
         <Image
-          source={require("../assets/images/stockaLogo.png")}
+          source={require("../assets/images/ppl.png")}
           style={styles.logo}
         />
 
@@ -79,6 +79,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     color: "#FFFFFF",
     marginBottom: 5,
+    fontFamily:"Urbanist_400Regular",
   },
   title: {
     fontSize: 55,

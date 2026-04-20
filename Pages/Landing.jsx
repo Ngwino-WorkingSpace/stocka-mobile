@@ -23,7 +23,10 @@ export default function LandingScreen({navigation}){
         <View style={styles.container}>
           <Background/>
            <View style={styles.content}>
-            <Image source={require("../assets/images/stocka.png")}/>
+                 <View style={styles.logoContainer}>
+                   <Image source={require("../assets/images/ppl.png")}  style={styles.logo}/>
+                   <Text style={styles.title}>Stocka</Text>
+                 </View>
             <View style={styles.GetStarted}>
   <TouchableOpacity style={styles.getStartedBtn}
     onPress={()=> navigation.navigate("Welcome")}
@@ -64,7 +67,6 @@ const styles = StyleSheet.create({
   },
   GetStarted: {
   alignItems: "center",
-  marginTop: 20,
 },
 
 getStartedBtn: {
@@ -91,8 +93,20 @@ getStartedText: {
     fontWeight:"600", // your color
      fontFamily:"Urbanist_400Regular",
   },
+  logoContainer:{
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 13,
+  },
+  logo: {
+    width: 70,
+    height: 70,
+  },
+  title:{
+    fontSize: 30,
+    color: "#fff",
+    marginLeft: 2,
+    fontFamily:"Urbanist_700Bold",
+  }
 });
-
-
-
 

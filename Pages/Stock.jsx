@@ -455,7 +455,7 @@ export default function StockScreen({ navigation }) {
         {!isPressState && (
           <>
             <View style={[styles.logoContainerSidebar, isExpanded && styles.logoContainerExpanded]}>
-              <Image source={require("../assets/images/stock.png")} style={{ width: 36, height: 36 }} />
+              <Image source={require("../assets/images/ppl.png")} style={{ width: 36, height: 36 }} />
               {isExpanded && <Text style={styles.stockText}>Stocka</Text>}
             </View>
 
@@ -522,7 +522,7 @@ export default function StockScreen({ navigation }) {
                 </TouchableOpacity>
               )}
               <View style={styles.logoContainerHeader}>
-                <Image source={require("../assets/images/stock.png")} style={{ width: 36, height: 36 }} />
+                <Image source={require("../assets/images/ppl.png")} style={{ width: 36, height: 36 }} />
                 <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
               </View>
             </View>
@@ -1210,10 +1210,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   themeToggleContainer: {
-    position: "absolute",
     bottom: 0,
-    left: 10,
-    right: 10,
   },
   themeToggle: {
     flexDirection: "row",
@@ -1223,7 +1220,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   themeToggleSwitch: {
-    width: 50,
     height: 28,
     borderRadius: 14,
     backgroundColor: "#fff",
@@ -1234,7 +1230,6 @@ const styles = StyleSheet.create({
   },
   themeToggleSwitchActive: {
     backgroundColor: "#4a9eff",
-    justifyContent: "flex-end",
   },
   themeToggleKnob: {
     width: 24,

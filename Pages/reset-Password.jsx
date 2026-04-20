@@ -82,7 +82,7 @@ export default function ResetPasswordScreen({ navigation, route }) {
         >
           <View style={styles.content}>
             <Image
-              source={require("../assets/images/stocka.png")}
+              source={require("../assets/images/ppl.png")}
               style={styles.logo}
             />
 

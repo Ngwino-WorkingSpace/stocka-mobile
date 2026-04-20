@@ -260,7 +260,7 @@ export default function PlainDashboardScreen({ navigation }) {
         {!isPressState && (
           <View style={[styles.logoContainer, isExpanded && styles.logoContainerExpanded]}>
             <Image
-              source={require("../assets/images/stock.png")}
+              source={require("../assets/images/ppl.png")}
               style={{ width: 36, height: 36 }}
             />
             {isExpanded && <Text style={styles.stockText}>Stocka</Text>}
@@ -430,7 +430,7 @@ export default function PlainDashboardScreen({ navigation }) {
                 )}
                 <View style={styles.logoContainerHeader}>
                   <Image
-                    source={require("../assets/images/stock.png")}
+                    source={require("../assets/images/ppl.png")}
                     style={{ width: 36, height: 36 }}
                   />
                   <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
