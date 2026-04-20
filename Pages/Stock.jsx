@@ -455,7 +455,7 @@ export default function StockScreen({ navigation }) {
         {!isPressState && (
           <>
             <View style={[styles.logoContainerSidebar, isExpanded && styles.logoContainerExpanded]}>
-              <Image source={require("../assets/images/ppl.png")} style={{ width: 36, height: 36 }} />
+              <Image source={require("../assets/images/ppl.png")} style={{ width: 36, height: 36,tintColor:"#fff"}} />
               {isExpanded && <Text style={styles.stockText}>Stocka</Text>}
             </View>
 

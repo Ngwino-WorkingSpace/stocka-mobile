@@ -80,11 +80,11 @@ export default function RootLayout() {
         <Animated.View style={{ opacity: fadeAnim }}>
           <Image
             source={require('../assets/images/ppl.png')}
-            style={styles.splashLogo}
+            style={[styles.splashLogo, { tintColor: "#fff" }]}
             resizeMode="contain"
           />
         </Animated.View>
-        {/* <Text style={styles.splashText}>Stocka</Text> */}
+        <Text style={styles.splashText}>STOCKA</Text>
       </View>
     );
   }
