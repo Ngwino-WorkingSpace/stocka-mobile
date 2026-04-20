@@ -29,6 +29,7 @@ export default function LandingScreen({navigation}) {
         <Image
           source={require("../assets/images/ppl.png")}
           style={styles.logo}
+          tintColor="#fff"
         />
 
         <Text style={styles.subtitle}>Welcome to</Text>
@@ -125,7 +126,6 @@ const styles = StyleSheet.create({
     fontFamily:"Urbanist_400Regular",
   },
   logo:{
-    tintColor:"#fff",
     width: 70,
     height: 70,
   }

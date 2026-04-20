@@ -199,7 +199,8 @@ export default function ProfileScreen({ navigation }) {
           <View style={[styles.logoContainer, isExpanded && styles.logoContainerExpanded]}>
             <Image
               source={require("../assets/images/ppl.png")}
-              style={{ width: 36, height: 36,tintColor:"#fff"}}
+              style={{ width: 36, height: 36 }}
+              tintColor="#fff"
             />
             {isExpanded && <Text style={{ fontFamily: "Urbanist_400Regular", color: "#fff" }}>Stocka</Text>}
           </View>

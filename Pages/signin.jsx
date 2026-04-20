@@ -30,7 +30,7 @@ export default function SignInScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
 
-  const [fontsLoaded] = useFonts({
+  const [fontsLoaded] = useFonts({  
     Urbanist_400Regular,
     Urbanist_500Medium,
     Urbanist_600SemiBold,
@@ -88,6 +88,7 @@ export default function SignInScreen({ navigation }) {
             <Image
               source={require("../assets/images/ppl.png")}
               style={styles.logo}
+              tintColor="#fff"
             />
 
             <Text style={styles.welcometext}>
@@ -182,7 +183,6 @@ const styles = StyleSheet.create({
     width: 180,
     height: 80,
     resizeMode: "contain",
-    tintColor:"#fff",
   },
 
   welcometext: {
@@ -240,11 +240,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 10,
 
-    shadowColor: "#0A5E8C",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    elevation: 5,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#0A5E8C",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.5,
+        shadowRadius: 5,
+      },
+      android: {
+        elevation: 5,
+      },
+      web: {
+        boxShadow: "0px 4px 5px rgba(10,94,140,0.5)",
+      },
+    }),
   },
 
   buttonText: {

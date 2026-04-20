@@ -455,7 +455,7 @@ export default function StockScreen({ navigation }) {
         {!isPressState && (
           <>
             <View style={[styles.logoContainerSidebar, isExpanded && styles.logoContainerExpanded]}>
-              <Image source={require("../assets/images/ppl.png")} style={{ width: 36, height: 36,tintColor:"#fff"}} />
+              <Image source={require("../assets/images/ppl.png")} style={{ width: 36, height: 36 }} tintColor="#fff" />
               {isExpanded && <Text style={styles.stockText}>Stocka</Text>}
             </View>
 
@@ -1426,14 +1426,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
 
-    // Shadow (iOS)
-    shadowColor: "#0A5E8C",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 6,
-
-    // Shadow (Android)
-    elevation: 6,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#0A5E8C",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.4,
+        shadowRadius: 6,
+      },
+      android: {
+        elevation: 6,
+      },
+      web: {
+        boxShadow: "0px 4px 6px rgba(10,94,140,0.4)",
+      },
+    }),
   },
 
   addText: {
@@ -1511,11 +1517,20 @@ const formStyles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 20,
     padding: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 10,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.3,
+        shadowRadius: 20,
+      },
+      android: {
+        elevation: 10,
+      },
+      web: {
+        boxShadow: "0px 10px 20px rgba(0,0,0,0.3)",
+      },
+    }),
   },
   darkCard: {
     backgroundColor: "#121d2b",
@@ -1605,11 +1620,20 @@ const formStyles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginTop: 16,
-    shadowColor: "#09111E",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#09111E",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 5,
+      },
+      web: {
+        boxShadow: "0px 4px 8px rgba(9,17,30,0.3)",
+      },
+    }),
   },
 
   addText: {
@@ -1647,11 +1671,20 @@ const saleStyles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 20,
     padding: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 10,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.3,
+        shadowRadius: 20,
+      },
+      android: {
+        elevation: 10,
+      },
+      web: {
+        boxShadow: "0px 10px 20px rgba(0,0,0,0.3)",
+      },
+    }),
   },
   darkCard: {
     backgroundColor: "#121d2b",
@@ -1747,11 +1780,20 @@ const saleStyles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 12,
     marginTop: 16,
-    shadowColor: "#09111E",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#09111E",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 5,
+      },
+      web: {
+        boxShadow: "0px 4px 8px rgba(9,17,30,0.3)",
+      },
+    }),
   },
 
   recordText: {

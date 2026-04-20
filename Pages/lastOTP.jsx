@@ -47,7 +47,7 @@ export default function LastOTPScreen({ navigation }) {
         >
           <View style={styles.content}>
             <View style={styles.congzIcon}>
-               <Image source={require("../assets/images/ppl.png")} style={styles.logo} />
+               <Image source={require("../assets/images/ppl.png")} style={styles.logo} tintColor="#fff" />
             </View>
 
             <Text style={styles.welcometext}>
@@ -118,11 +118,20 @@ const styles = StyleSheet.create({
     fontSize: 16, // was 17
     fontFamily: "Urbanist_400Regular",
 
-    shadowColor: "#0A5E8C",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    elevation: 5,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#0A5E8C",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.5,
+        shadowRadius: 5,
+      },
+      android: {
+        elevation: 5,
+      },
+      web: {
+        boxShadow: "0px 4px 5px rgba(10,94,140,0.5)",
+      },
+    }),
   },
 
   button: {
@@ -133,11 +142,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 5,
 
-    shadowColor: "#0A5E8C",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    elevation: 5,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#0A5E8C",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.5,
+        shadowRadius: 5,
+      },
+      android: {
+        elevation: 5,
+      },
+      web: {
+        boxShadow: "0px 4px 5px rgba(10,94,140,0.5)",
+      },
+    }),
   },
 
   buttonText: {
@@ -195,11 +213,20 @@ otpContainer: {
     fontSize: 16, // was 17
     fontFamily: "Urbanist_400Regular",
 
-    shadowColor: "#0A5E8C",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    elevation: 5,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#0A5E8C",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.5,
+        shadowRadius: 5,
+      },
+      android: {
+        elevation: 5,
+      },
+      web: {
+        boxShadow: "0px 4px 5px rgba(10,94,140,0.5)",
+      },
+    }),
   },
 
   congzIcon: {
@@ -219,7 +246,6 @@ logo: {
   width: 70,
   height: 70,
   resizeMode: "contain",
-  tintColor:"#fff",
 },
 });
 

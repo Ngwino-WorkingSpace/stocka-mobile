@@ -174,11 +174,20 @@ const styles = StyleSheet.create({
     fontSize: 16, // was 17
     fontFamily: "Urbanist_400Regular",
 
-    shadowColor: "#0A5E8C",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    elevation: 5,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#0A5E8C",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.5,
+        shadowRadius: 5,
+      },
+      android: {
+        elevation: 5,
+      },
+      web: {
+        boxShadow: "0px 4px 5px rgba(10,94,140,0.5)",
+      },
+    }),
   },
 
   button: {
@@ -189,11 +198,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 10,
 
-    shadowColor: "#0A5E8C",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    elevation: 5,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#0A5E8C",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.5,
+        shadowRadius: 5,
+      },
+      android: {
+        elevation: 5,
+      },
+      web: {
+        boxShadow: "0px 4px 5px rgba(10,94,140,0.5)",
+      },
+    }),
   },
 
   buttonText: {

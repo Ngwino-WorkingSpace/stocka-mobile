@@ -82,6 +82,7 @@ export default function SignupScreen({ navigation }) {
             <Image
               source={require("../assets/images/ppl.png")}
               style={styles.logo}
+              tintColor="#fff"
             />
 
             <Text style={styles.welcometext}>
@@ -196,7 +197,6 @@ const styles = StyleSheet.create({
     width: 180,
     height: 80,
     resizeMode: "contain",
-    tintColor:"#fff",
   },
 
   welcometext: {

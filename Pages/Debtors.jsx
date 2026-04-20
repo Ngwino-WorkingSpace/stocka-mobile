@@ -368,7 +368,8 @@ export default function DebtorsScreen({ navigation }) {
           <View style={[styles.logoContainer, isExpanded && styles.logoContainerExpanded]}>
             <Image
               source={require("../assets/images/ppl.png")}
-              style={{ width: 36, height: 36,tintColor:"#fff" }}
+              style={{ width: 36, height: 36 }}
+              tintColor="#fff"
             />
             {isExpanded && <Text style={styles.stockText}>Stocka</Text>}
           </View>
@@ -1443,11 +1444,20 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 25,
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-    elevation: 10,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.1,
+        shadowRadius: 20,
+      },
+      android: {
+        elevation: 10,
+      },
+      web: {
+        boxShadow: "0px 10px 20px rgba(0,0,0,0.1)",
+      },
+    }),
   },
   helpModalTitle: {
     fontFamily: "Urbanist_700Bold",

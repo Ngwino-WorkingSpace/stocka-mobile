@@ -230,7 +230,8 @@ export default function SalesScreen({ navigation }) {
           <View style={[styles.logoContainerSidebar, isExpanded && styles.logoContainerExpanded]}>
             <Image
               source={require("../assets/images/ppl.png")}
-              style={{ width: 36, height: 36,tintColor:"#fff"}} />
+              style={{ width: 36, height: 36 }}
+              tintColor="#fff" />
             {isExpanded && <Text style={styles.stockText}>Stocka</Text>}
           </View>
         )}
@@ -839,11 +840,20 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 12,
     marginBottom: 15,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-    elevation: 3,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOpacity: 0.05,
+        shadowOffset: { width: 0, height: 2 },
+        shadowRadius: 6,
+      },
+      android: {
+        elevation: 3,
+      },
+      web: {
+        boxShadow: "0px 2px 6px rgba(0,0,0,0.05)",
+      },
+    }),
     gap: 15,
   },
   imageWrapper: {
@@ -920,11 +930,20 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 40,
     borderRadius: 5,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 3 },
-    shadowRadius: 5,
-    elevation: 4,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOpacity: 0.2,
+        shadowOffset: { width: 0, height: 3 },
+        shadowRadius: 5,
+      },
+      android: {
+        elevation: 4,
+      },
+      web: {
+        boxShadow: "0px 3px 5px rgba(0,0,0,0.2)",
+      },
+    }),
   },
   MoreText: {
     fontFamily: "Urbanist_600SemiBold",
@@ -987,11 +1006,20 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 25,
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-    elevation: 10,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.1,
+        shadowRadius: 20,
+      },
+      android: {
+        elevation: 10,
+      },
+      web: {
+        boxShadow: "0px 10px 20px rgba(0,0,0,0.1)",
+      },
+    }),
   },
   helpModalTitle: {
     fontFamily: "Urbanist_700Bold",

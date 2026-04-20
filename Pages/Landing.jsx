@@ -24,7 +24,7 @@ export default function LandingScreen({navigation}){
           <Background/>
            <View style={styles.content}>
                  <View style={styles.logoContainer}>
-                   <Image source={require("../assets/images/ppl.png")}  style={styles.logo}/>
+                   <Image source={require("../assets/images/ppl.png")} style={styles.logo} tintColor="#fff" />
                    <Text style={styles.title}>Stocka</Text>
                  </View>
             <View style={styles.GetStarted}>
@@ -101,7 +101,6 @@ getStartedText: {
   logo: {
     width: 70,
     height: 70,
-    tintColor:"#fff",
   },
   title:{
     fontSize: 30,
