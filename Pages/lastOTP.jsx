@@ -47,7 +47,7 @@ export default function LastOTPScreen({ navigation }) {
         >
           <View style={styles.content}>
             <View style={styles.congzIcon}>
-                <Text style={styles.summaryEmoji}>🥳</Text>
+               <Image source={require("../assets/images/ppl.png")} style={styles.logo} />
             </View>
 
             <Text style={styles.welcometext}>
@@ -214,9 +214,13 @@ otpContainer: {
 summaryEmoji: {
   fontSize: 90,               // big emoji
   textAlign: "center",
-}
-
-
+},
+logo: {
+  width: 70,
+  height: 70,
+  resizeMode: "contain",
+  tintColor:"#fff",
+},
 });
 
 

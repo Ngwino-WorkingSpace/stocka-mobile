@@ -196,6 +196,7 @@ const styles = StyleSheet.create({
     width: 180,
     height: 80,
     resizeMode: "contain",
+    tintColor:"#fff",
   },
 
   welcometext: {

@@ -124,6 +124,11 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontFamily:"Urbanist_400Regular",
   },
+  logo:{
+    tintColor:"#fff",
+    width: 70,
+    height: 70,
+  }
 });
 
 
