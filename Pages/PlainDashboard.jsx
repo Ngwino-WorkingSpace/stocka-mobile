@@ -14,7 +14,9 @@ import {
 } from "react-native";
 import AnimatedBox from "../components/AnimatedBox.jsx";
 import AppSidebar from "../components/AppSidebar";
-import {useFonts} from "@expo-google-fonts/urbanist";
+import {useFonts, Urbanist_400Regular, Urbanist_700Bold, Urbanist_500Medium, Urbanist_600SemiBold} from "@expo-google-fonts/urbanist";
+import { Ionicons } from "@expo/vector-icons";
+
 
 const MAIN = "#09111E";
 
@@ -37,7 +39,6 @@ import { useFocusEffect } from '@react-navigation/native';
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../src/context/ThemeContext';
-import { useFonts } from "@expo-google-fonts/urbanist";
 
 // ... imports
 
@@ -182,7 +183,7 @@ export default function PlainDashboardScreen({ navigation }) {
   return (
     <View style={[styles.container, { backgroundColor: darkMode ? "#09111E" : "#fff" }]}>
       {/* CONTENT (Rendered first so absolute elements can overlay it) */}
-      <View style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0 }}>
+      <View style={{ flex: 1, marginLeft: isPressState ? 34 : isCollapsed ? 70 : 0 }}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -631,6 +632,21 @@ export default function PlainDashboardScreen({ navigation }) {
         </View>
       </Modal>
 
+      {/* REUSABLE SIDEBAR COMPONENTS */}
+      <AppSidebar
+        sidebarState={sidebarState}
+        setSidebarState={setSidebarState}
+        selectedItem="Dashboard"
+        onNavItemPress={(item) => {
+          setSelectedItem(item);
+          setSidebarState("press");
+          navigation.navigate(getRouteName(item));
+        }}
+        darkMode={darkMode}
+        toggleTheme={toggleTheme}
+        onLogout={() => setShowLogoutModal(true)}
+        onHelp={() => setHelpModalVisible(true)}
+      />
     </View>
   );
 }
@@ -670,180 +686,6 @@ const FormInput = ({
 const styles = StyleSheet.create({
   container: { flex: 1, flexDirection: "row", position: "relative" },
 
-  floatingPress: {
-    position: "absolute",
-    left: 0,
-    top: "45%",
-    width: 34,
-    height: 60,              // ✅ small height
-    backgroundColor: MAIN,
-    borderTopRightRadius: 10,
-    borderBottomRightRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 100,
-    elevation: 6,
-  },
-
-
-  pressTextWrapper: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  pressText: {
-    color: "#fff",
-    fontSize: 11,
-    fontFamily: "Urbanist_600SemiBold",
-    lineHeight: 12,
-  },
-
-
-
-  overlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(9, 17, 30, 0.3)", // Soft blue overlay
-    zIndex: 5,
-  },
-  sidebar: {
-    position: "absolute",
-    top: 0,
-    bottom: 0,
-    left: 0,
-    paddingTop: 50,
-    paddingHorizontal: 0,
-    zIndex: 10,
-    justifyContent: "center",
-    overflow: "hidden",
-  },
-  pressTab: {
-    position: "absolute",
-    left: 0,
-    top: "40%",
-    backgroundColor: "#0B3A53",
-    paddingVertical: 10,
-    paddingHorizontal: 6,
-    borderTopRightRadius: 6,
-    borderBottomRightRadius: 6,
-    zIndex: 10,
-  },
-
-  pressText: {
-    color: "#fff",
-    fontFamily: "Urbanist_600SemiBold",
-    fontSize: 16,
-    letterSpacing: 2,
-    textAlign: "center",
-    includeFontPadding: false,
-    transform: [{ rotate: "-90deg" }],
-  },
-  arrowButton: {
-    marginBottom: 25,
-    padding: 5,
-  },
-  closeButton: {
-    alignSelf: "flex-end",
-    marginBottom: 25,
-    padding: 2,
-    marginRight: 10,
-  },
-  logoContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 5,
-    width: "100%",
-  },
-  logoContainerExpanded: {
-    paddingLeft: 10,
-    justifyContent: "flex-start",
-  },
-  stockText: {
-    fontFamily: "Urbanist_700Bold",
-    fontSize: 18,
-    color: "#fff",
-    marginLeft: 10,
-  },
-  menuContainer: {
-    width: "100%",
-    marginTop: 2,
-  },
-  navItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    width: "100%",
-    justifyContent: "center",
-    minHeight: 44,
-    overflow: "visible",
-  },
-  navItemExpanded: {
-    justifyContent: "flex-start",
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-  },
-  navItemSelected: {
-    backgroundColor: "#4a9eff",
-  },
-  navText: {
-    color: "#fff",
-    fontFamily: "Urbanist_500Medium",
-    marginLeft: 15,
-    fontSize: 14,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    marginVertical: 15,
-    width: "100%",
-  },
-  utilityContainer: {
-    width: "100%",
-    marginTop: 2,
-  },
-  themeToggleContainer: {
-    position: "absolute",
-    bottom: 0,
-    left: 10,
-    right: 10,
-  },
-  themeToggle: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-  },
-  themeToggleSwitch: {
-    width: 50,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: "#fff",
-    justifyContent: "center",
-    paddingHorizontal: 2,
-    marginHorizontal: 10,
-    flexDirection: "row",
-  },
-  themeToggleSwitchActive: {
-    backgroundColor: "#4a9eff",
-    justifyContent: "flex-end",
-  },
-  themeToggleKnob: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: "#09111E",
-    alignSelf: "center",
-  },
-  themeToggleKnobActive: {
-    backgroundColor: "#fff",
-  },
   headerRow: {
     flexDirection: "row",
     alignItems: "center",

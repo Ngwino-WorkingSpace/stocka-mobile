@@ -302,7 +302,7 @@ export default function DebtorsScreen({ navigation }) {
   return (
     <View style={[styles.mainContainer, { backgroundColor: darkMode ? "#09111E" : "#fff" }]}>
       {/* CONTENT (Rendered first so absolute elements can overlay it) */}
-      <View style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0 }}>
+      <View style={{ flex: 1, marginLeft: isPressState ? 34 : isCollapsed ? 70 : 0 }}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}

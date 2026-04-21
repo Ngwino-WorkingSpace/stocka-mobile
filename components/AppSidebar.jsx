@@ -11,7 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import AnimatedBox from "./AnimatedBox";
 
 const { width } = Dimensions.get("window");
-const MAIN = "#4a9eff"; // Assuming this is your main color
+const MAIN = "#09111E";
 
 const AppSidebar = ({
   sidebarState,
@@ -42,24 +42,7 @@ const AppSidebar = ({
 
   return (
     <>
-      {/* FLOATING PRESS HANDLE */}
-      {isPressState && (
-        <TouchableOpacity
-          onPress={handlePressTextClick}
-          activeOpacity={0.8}
-          style={styles.floatingPress}
-        >
-          <View style={styles.pressTextWrapper}>
-            <Text style={styles.pressText}>S</Text>
-            <Text style={styles.pressText}>S</Text>
-            <Text style={styles.pressText}>E</Text>
-            <Text style={styles.pressText}>R</Text>
-            <Text style={styles.pressText}>P</Text>
-          </View>
-        </TouchableOpacity>
-      )}
-
-      {/* OVERLAY */}
+      {/* OVERLAY — covers page when sidebar is expanded */}
       {isExpanded && (
         <TouchableOpacity
           style={styles.overlay}
@@ -68,32 +51,48 @@ const AppSidebar = ({
         />
       )}
 
-      {/* SIDEBAR */}
+      {/* SIDEBAR — adapts width based on state */}
       <View
         style={[
           styles.sidebar,
           {
-            width: isPressState ? 40 : isCollapsed ? 70 : 250,
+            width: isPressState ? 34 : isCollapsed ? 70 : 250,
             backgroundColor: MAIN,
-            alignItems: isPressState ? "center" : isCollapsed ? "center" : "flex-start",
-            paddingHorizontal: isPressState ? 0 : isCollapsed ? 6 : 10,
+            alignItems: isCollapsed ? "center" : "flex-start",
+            paddingHorizontal: isCollapsed ? 6 : isPressState ? 0 : 10,
           },
         ]}
       >
-        {/* Toggle Arrows */}
-        {isCollapsed && (
-          <TouchableOpacity onPress={handleArrowPress} style={styles.arrowButton}>
-            <Ionicons name="chevron-forward" size={22} color="#fff" />
-          </TouchableOpacity>
-        )}
-        {isExpanded && (
-          <TouchableOpacity onPress={handleCloseSidebar} style={styles.closeButton}>
-            <Ionicons name="chevron-back" size={22} color="#fff" />
+        {/* ── PRESS STATE: the sidebar IS the press handle ── */}
+        {isPressState && (
+          <TouchableOpacity
+            onPress={handlePressTextClick}
+            activeOpacity={0.7}
+            style={styles.pressHandle}
+          >
+            <Text style={styles.pressText}>S</Text>
+            <Text style={styles.pressText}>S</Text>
+            <Text style={styles.pressText}>E</Text>
+            <Text style={styles.pressText}>R</Text>
+            <Text style={styles.pressText}>P</Text>
           </TouchableOpacity>
         )}
 
+        {/* ── COLLAPSED / EXPANDED content ── */}
         {!isPressState && (
           <>
+            {/* Chevron arrows */}
+            {isCollapsed && (
+              <TouchableOpacity onPress={handleArrowPress} style={styles.arrowButton}>
+                <Ionicons name="chevron-forward" size={22} color="#fff" />
+              </TouchableOpacity>
+            )}
+            {isExpanded && (
+              <TouchableOpacity onPress={handleCloseSidebar} style={styles.closeButton}>
+                <Ionicons name="chevron-back" size={22} color="#fff" />
+              </TouchableOpacity>
+            )}
+
             {/* Logo */}
             <View style={[styles.logoContainer, isExpanded && styles.logoContainerExpanded]}>
               <Image
@@ -104,7 +103,7 @@ const AppSidebar = ({
               {isExpanded && <Text style={styles.stockText}>Stocka</Text>}
             </View>
 
-            {/* Menu Container */}
+            {/* Menu Items */}
             <View style={styles.menuContainer}>
               {menuItems.map((item) => (
                 <AnimatedBox
@@ -114,15 +113,15 @@ const AppSidebar = ({
                   style={[
                     styles.navItem,
                     isExpanded && styles.navItemExpanded,
-                    selectedItem.toLowerCase() === item.label.toLowerCase() && isExpanded && styles.navItemSelected
+                    selectedItem.toLowerCase() === item.label.toLowerCase() &&
+                      isExpanded &&
+                      styles.navItemSelected,
                   ]}
                 >
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <Ionicons name={item.icon} size={22} color="#fff" />
                     {isExpanded && (
-                      <Text style={styles.navText}>
-                        {item.label}
-                      </Text>
+                      <Text style={styles.navText}>{item.label}</Text>
                     )}
                   </View>
                 </AnimatedBox>
@@ -138,7 +137,7 @@ const AppSidebar = ({
                 style={[styles.navItem, isExpanded && styles.navItemExpanded]}
                 onPress={onHelp}
               >
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Ionicons name="help-circle-outline" size={22} color="#fff" />
                   {isExpanded && <Text style={styles.navText}>Help</Text>}
                 </View>
@@ -148,23 +147,25 @@ const AppSidebar = ({
                 style={[styles.navItem, isExpanded && styles.navItemExpanded]}
                 onPress={onLogout}
               >
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Ionicons name="log-out-outline" size={22} color="#fff" />
                   {isExpanded && <Text style={styles.navText}>Logout</Text>}
                 </View>
               </TouchableOpacity>
             </View>
 
-            {/* Theme Toggle */}
+            {/* Theme Toggle (expanded only) */}
             {isExpanded && (
               <View style={styles.themeToggleContainer}>
                 <View style={styles.themeToggle}>
-                  <Ionicons name="sunny" size={20} color={!darkMode ? MAIN : "#999"} />
+                  <Ionicons name="sunny" size={20} color={!darkMode ? "#4a9eff" : "#999"} />
                   <TouchableOpacity
                     style={[styles.themeToggleSwitch, darkMode && styles.themeToggleSwitchActive]}
                     onPress={toggleTheme}
                   >
-                    <View style={[styles.themeToggleKnob, darkMode && styles.themeToggleKnobActive]} />
+                    <View
+                      style={[styles.themeToggleKnob, darkMode && styles.themeToggleKnobActive]}
+                    />
                   </TouchableOpacity>
                   <Ionicons name="moon" size={20} color={darkMode ? "#fff" : "#999"} />
                 </View>
@@ -178,30 +179,6 @@ const AppSidebar = ({
 };
 
 const styles = StyleSheet.create({
-  floatingPress: {
-    position: "absolute",
-    left: 0,
-    top: "45%",
-    width: 34,
-    height: 60,
-    backgroundColor: MAIN,
-    borderTopRightRadius: 10,
-    borderBottomRightRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 100,
-    elevation: 6,
-  },
-  pressTextWrapper: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  pressText: {
-    color: "#fff",
-    fontSize: 8,
-    fontFamily: "Urbanist_700Bold",
-    lineHeight: 9,
-  },
   overlay: {
     position: "absolute",
     top: 0,
@@ -209,7 +186,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     backgroundColor: "rgba(9, 17, 30, 0.4)",
-    zIndex: 150, // Higher than everything else
+    zIndex: 150,
   },
   sidebar: {
     position: "absolute",
@@ -217,9 +194,29 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     paddingTop: 50,
-    zIndex: 200, // Top-most
+    zIndex: 200,
     justifyContent: "flex-start",
     overflow: "hidden",
+  },
+  /* Press handle — lives inside the sidebar when in press state */
+  pressHandle: {
+    position: "absolute",
+    top: "45%",
+    left: 0,
+    width: 34,
+    height: 60,
+    backgroundColor: MAIN,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  pressText: {
+    color: "#fff",
+    fontSize: 30,
+    fontFamily: "Urbanist_700Bold",
+    lineHeight: 30,
+    transform: [{ rotate: "-90deg" }]
   },
   arrowButton: {
     marginBottom: 25,
@@ -313,10 +310,11 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: MAIN,
+    backgroundColor: "#4a9eff",
   },
   themeToggleKnobActive: {
     alignSelf: "flex-end",
+    backgroundColor: MAIN,
   },
 });
 

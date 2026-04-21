@@ -402,7 +402,7 @@ export default function StockScreen({ navigation }) {
   return (
     <View style={[styles.container, { backgroundColor: darkMode ? "#09111E" : "#fff" }]}>
       {/* CONTENT (Rendered first so absolute elements can overlay it) */}
-      <View style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0 }}>
+      <View style={{ flex: 1, marginLeft: isPressState ? 34 : isCollapsed ? 70 : 0 }}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -1024,160 +1024,10 @@ const styles = StyleSheet.create({
   darkDetailsCard: {
     backgroundColor: "#121d2b",
   },
-  floatingPress: {
-    position: "absolute",
-    left: 0,
-    top: "45%",
-    width: 34,
-    height: 60,
-    backgroundColor: MAIN,
-    borderTopRightRadius: 10,
-    borderBottomRightRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 100,
-    elevation: 6,
-  },
-  overlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(9, 17, 30, 0.3)",
-    zIndex: 5,
-  },
-  sidebar: {
-    position: "absolute",
-    top: 0,
-    bottom: 0,
-    left: 0,
-    paddingTop: 50,
-    paddingHorizontal: 0,
-    zIndex: 10,
-    justifyContent: "center",
-    overflow: "hidden",
-  },
-  pressContainer: {
-    width: "100%",
-    height: 150,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 20,
-  },
-  pressTextWrapper: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  pressText: {
-    color: "#fff",
-    fontSize: 11,
-    fontFamily: "Urbanist_600SemiBold",
-    lineHeight: 12,
-    transform: [{ rotate: "-90deg" }],
-  },
-  arrowButton: {
-    marginBottom: 25,
-    padding: 5,
-  },
-  closeButton: {
-    alignSelf: "flex-end",
-    marginBottom: 25,
-    padding: 2,
-    marginRight: 10,
-  },
-  logoContainerSidebar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 5,
-    width: "100%",
-  },
-  logoContainerExpanded: {
-    paddingLeft: 10,
-    justifyContent: "flex-start",
-  },
-  stockText: {
-    fontFamily: "Urbanist_700Bold",
-    fontSize: 18,
-    color: "#fff",
-    marginLeft: 10,
-  },
-  menuContainer: {
-    width: "100%",
-    marginTop: 5,
-  },
-  navItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    width: "100%",
-    justifyContent: "center",
-    minHeight: 44,
-    overflow: "visible",
-  },
-  navItemExpanded: {
-    justifyContent: "flex-start",
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-  },
-  navItemSelected: {
-    backgroundColor: "#4a9eff",
-  },
-  navText: {
-    color: "#fff",
-    fontFamily: "Urbanist_500Medium",
-    marginLeft: 15,
-    fontSize: 14,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    marginVertical: 15,
-    width: "100%",
-  },
-  utilityContainer: {
-    width: "100%",
-    marginTop: 10,
-  },
-  themeToggleContainer: {
-    bottom: 0,
-  },
-  themeToggle: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-  },
-  themeToggleSwitch: {
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: "#fff",
-    justifyContent: "center",
-    paddingHorizontal: 2,
-    marginHorizontal: 10,
-    flexDirection: "row",
-  },
-  themeToggleSwitchActive: {
-    backgroundColor: "#4a9eff",
-  },
-  themeToggleKnob: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: "#09111E",
-    alignSelf: "center",
-  },
-  themeToggleKnobActive: {
-    backgroundColor: "#fff",
-  },
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 15,
   },
   backButton: {
     padding: 8,

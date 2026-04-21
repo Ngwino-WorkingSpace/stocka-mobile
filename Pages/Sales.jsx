@@ -132,26 +132,6 @@ export default function SalesScreen({ navigation }) {
 
   if (!fontsLoaded) return null;
 
-  const handlePressTextClick = () => {
-    setSidebarState("collapsed");
-  };
-
-  const handleNavItemPress = (itemName) => {
-    setSelectedItem(itemName);
-    setSidebarState("press");
-    if (navigation) {
-      navigation.navigate(getRouteName(itemName));
-    }
-  };
-
-  
-  const handleCloseSidebar = () => {
-    setSidebarState("press");
-  };
-  
-  const handleArrowPress = () => {
-    setSidebarState("expanded");
-  };
   const isPressState = sidebarState === "press";
   const isCollapsed = sidebarState === "collapsed";
   const isExpanded = sidebarState === "expanded";
@@ -161,7 +141,7 @@ export default function SalesScreen({ navigation }) {
   return (
     <View style={[styles.container, { backgroundColor: darkMode ? "#09111E" : "#fff" }]}>
       {/* CONTENT (Rendered first so absolute elements can overlay it) */}
-      <View style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0 }}>
+      <View style={{ flex: 1, marginLeft: isPressState ? 34 : isCollapsed ? 70 : 0 }}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
