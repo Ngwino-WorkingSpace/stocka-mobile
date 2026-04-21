@@ -12,17 +12,9 @@ import {
   Platform,
   RefreshControl,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  useFonts,
-  Urbanist_400Regular,
-  Urbanist_500Medium,
-  Urbanist_600SemiBold,
-  Urbanist_700Bold,
-} from "@expo-google-fonts/urbanist";
-import { Ionicons } from "@expo/vector-icons";
-
 import AnimatedBox from "../components/AnimatedBox.jsx";
+import AppSidebar from "../components/AppSidebar";
+import {useFonts} from "@expo-google-fonts/urbanist";
 
 const MAIN = "#09111E";
 
@@ -45,6 +37,7 @@ import { useFocusEffect } from '@react-navigation/native';
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../src/context/ThemeContext';
+import { useFonts } from "@expo-google-fonts/urbanist";
 
 // ... imports
 
@@ -188,189 +181,16 @@ export default function PlainDashboardScreen({ navigation }) {
 
   return (
     <View style={[styles.container, { backgroundColor: darkMode ? "#09111E" : "#fff" }]}>
-
-      {/* FLOATING PRESS HANDLE */}
-      {isPressState && (
-        <TouchableOpacity
-          onPress={handlePressTextClick}
-          activeOpacity={0.8}
-          style={styles.floatingPress}
-        >
-          <View style={styles.pressTextWrapper}>
-            <Text style={styles.pressText}>S</Text>
-            <Text style={styles.pressText}>S</Text>
-            <Text style={styles.pressText}>E</Text>
-            <Text style={styles.pressText}>R</Text>
-            <Text style={styles.pressText}>P</Text>
-          </View>
-        </TouchableOpacity>
-      )}
-
-
-
-      {/* OVERLAY - Shows when sidebar is expanded */}
-      {isExpanded && (
-        <TouchableOpacity
-          style={styles.overlay}
-          activeOpacity={1}
-          onPress={handleCloseSidebar}
-        />
-      )}
-
-      {/* SIDEBAR */}
-      <View
-        style={[
-          styles.sidebar,
-          {
-            width: isPressState ? 40 : isCollapsed ? 70 : 250,
-            backgroundColor: MAIN,
-            alignItems: isPressState ? "center" : isCollapsed ? "center" : "flex-start",
-            paddingHorizontal: isPressState ? 0 : isCollapsed ? 6 : 10,
-          },
-        ]}
-      >
-
-        {/* Toggle Arrow - Only visible when collapsed (icons only) */}
-        {isCollapsed && (
-          <TouchableOpacity
-            onPress={handleArrowPress}
-            style={styles.arrowButton}
-          >
-            <Ionicons
-              name="chevron-forward"
-              size={22}
-              color="#fff"
-            />
-          </TouchableOpacity>
-        )}
-
-        {/* Close Arrow - Only visible when expanded */}
-        {isExpanded && (
-          <TouchableOpacity
-            onPress={handleCloseSidebar}
-            style={styles.closeButton}
-          >
-            <Ionicons
-              name="chevron-back"
-              size={22}
-              color="#fff"
-            />
-          </TouchableOpacity>
-        )}
-
-        {/* Stocka Logo - Not shown in press state */}
-        {!isPressState && (
-          <View style={[styles.logoContainer, isExpanded && styles.logoContainerExpanded]}>
-            <Image
-              source={require("../assets/images/ppl.png")}
-              style={{ width: 36, height: 36 }}
-              tintColor="#fff"
-            />
-            {isExpanded && <Text style={styles.stockText}>Stocka</Text>}
-          </View>
-        )}
-
-        {/* Menu Items - Not shown in press state */}
-        {!isPressState && (
-          <>
-            <View style={styles.menuContainer}>
-              {["Dashboard", "Stock", "Sales", "Reports", "debtors", "Profile"].map((item, index) => (
-                <AnimatedBox
-                  key={item}
-                  isButton={true}
-                  onPress={() => handleNavItemPress(item)}
-                  style={[
-                    styles.navItem,
-                    isExpanded && styles.navItemExpanded,
-                    selectedItem === item && isExpanded && styles.navItemSelected
-                  ]}
-                >
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Ionicons name={
-                      item === "Dashboard" ? "battery-charging-outline" :
-                        item === "Stock" ? "cube-outline" :
-                          item === "Sales" ? "flash-outline" :
-                            item === "Reports" ? "document-text-outline" :
-                              item === "debtors" ? "wallet-outline" : "person-outline"
-                    } size={22} color="#fff" />
-                    {isExpanded && <Text style={styles.navText}>{item === "debtors" ? "Debtors" : item}</Text>}
-                  </View>
-                </AnimatedBox>
-              ))}
-            </View>
-
-            {/* Divider */}
-            {isExpanded && <View style={styles.divider} />}
-
-            {/* Utility Items */}
-            <View style={styles.utilityContainer}>
-              <AnimatedBox isButton={true} style={[styles.navItem, isExpanded && styles.navItemExpanded]} onPress={() => setHelpModalVisible(true)}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Ionicons name="help-circle-outline" size={22} color="#fff" />
-                  {isExpanded && <Text style={styles.navText}>Help</Text>}
-                </View>
-              </AnimatedBox>
-
-              <AnimatedBox isButton={true} style={[styles.navItem, isExpanded && styles.navItemExpanded]} onPress={() => setShowLogoutModal(true)}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Ionicons name="log-out-outline" size={22} color="#fff" />
-                  {isExpanded && <Text style={styles.navText}>Logout</Text>}
-                </View>
-              </AnimatedBox>
-            </View>
-
-            {/* Theme Toggle - At the bottom, only when expanded */}
-            {isExpanded && (
-              <View style={styles.themeToggleContainer}>
-                <View style={styles.themeToggle}>
-                  <Ionicons
-                    name="sunny"
-                    size={20}
-                    color={!darkMode ? MAIN : "#999"}
-                  />
-                  <TouchableOpacity
-                    style={[
-                      styles.themeToggleSwitch,
-                      darkMode && styles.themeToggleSwitchActive
-                    ]}
-                    onPress={toggleTheme}
-                  >
-                    <View style={[
-                      styles.themeToggleKnob,
-                      darkMode && styles.themeToggleKnobActive
-                    ]} />
-                  </TouchableOpacity>
-                  <Ionicons
-                    name="moon"
-                    size={20}
-                    color={darkMode ? "#fff" : "#999"}
-                  />
-                </View>
-              </View>
-            )}
-          </>
-        )}
-      </View>
-
-      {/* CONTENT */}
-      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0 }}>
+      {/* CONTENT (Rendered first so absolute elements can overlay it) */}
+      <View style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0 }}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
           <ScrollView
-            contentContainerStyle={{
-              flexGrow: 1,
-              padding: 20,
-              paddingBottom: 20,
-            }}
-            style={darkMode && styles.darkScrollView}
+            contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
             showsVerticalScrollIndicator={false}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[MAIN]} />
-            }
           >
-            {/* Header */}
             <AnimatedBox type="fade" duration={600}>
               <View style={[styles.headerRow, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, marginBottom: 20 }]}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -379,13 +199,13 @@ export default function PlainDashboardScreen({ navigation }) {
                       <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
                     </TouchableOpacity>
                   )}
-                  <View style={styles.logoContainerHeader}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 10 }}>
                     <Image source={require("../assets/images/ppl.png")} style={{ width: 36, height: 36 }} />
-                    <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
+                    <Text style={[styles.title, { marginBottom: 0 }, darkMode && styles.darkText]}>Stocka</Text>
                   </View>
                 </View>
                 <TouchableOpacity onPress={() => setHelpModalVisible(true)}>
-                  <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
+                  <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : "#09111E"} />
                 </TouchableOpacity>
               </View>
             </AnimatedBox>
@@ -521,7 +341,7 @@ export default function PlainDashboardScreen({ navigation }) {
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
-      </SafeAreaView>
+      </View>
 
       {/* ================= ADD STOCK MODAL ================= */}
       <Modal visible={addStockVisible} transparent animationType="slide">

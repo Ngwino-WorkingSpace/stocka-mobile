@@ -26,8 +26,8 @@ import { useAuth } from "../src/context/AuthContext";
 import { useFocusEffect } from '@react-navigation/native';
 import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../src/context/ThemeContext';
-
-import AnimatedBox from "../components/AnimatedBox.jsx";
+import AppSidebar from "../components/AppSidebar";
+import AnimatedBox from "../components/AnimatedBox";
 
 const MAIN = "#09111E";
 
@@ -130,168 +130,11 @@ export default function ProfileScreen({ navigation }) {
   return (
     <View style={[styles.mainContainer, { backgroundColor: darkMode ? "#09111E" : "#fff" }]}>
 
-      {/* FLOATING PRESS HANDLE */}
-      {isPressState && (
-        <TouchableOpacity
-          onPress={handlePressTextClick}
-          activeOpacity={0.8}
-          style={styles.floatingPress}
-        >
-          <View style={styles.pressTextWrapper}>
-            <Text style={styles.pressText}>S</Text>
-            <Text style={styles.pressText}>S</Text>
-            <Text style={styles.pressText}>E</Text>
-            <Text style={styles.pressText}>R</Text>
-            <Text style={styles.pressText}>P</Text>
-          </View>
-        </TouchableOpacity>
-      )}
-      {/* OVERLAY - Shows when sidebar is expanded */}
-      {isExpanded && (
-        <TouchableOpacity
-          style={styles.overlay}
-          activeOpacity={1}
-          onPress={handleCloseSidebar}
-        />
-      )}
-
-      {/* SIDEBAR */}
-      <View
-        style={[
-          styles.sidebar,
-          {
-            width: isPressState ? 40 : isCollapsed ? 70 : 250,
-            backgroundColor: MAIN,
-            alignItems: isPressState ? "center" : isCollapsed ? "center" : "flex-start",
-            paddingHorizontal: isPressState ? 0 : isCollapsed ? 6 : 10,
-          },
-        ]}
-      >
-
-        {/* Toggle Arrow - Only visible when collapsed (icons only) */}
-        {isCollapsed && (
-          <TouchableOpacity
-            onPress={handleArrowPress}
-            style={styles.arrowButton}
-          >
-            <Ionicons
-              name="chevron-forward"
-              size={22}
-              color="#fff"
-            />
-          </TouchableOpacity>
-        )}
-
-        {/* Close Arrow - Only visible when expanded */}
-        {isExpanded && (
-          <TouchableOpacity
-            onPress={handleCloseSidebar}
-            style={styles.closeButton}
-          >
-            <Ionicons
-              name="chevron-back"
-              size={22}
-              color="#fff"
-            />
-          </TouchableOpacity>
-        )}
-
-        {/* Stocka Logo - Not shown in press state */}
-        {!isPressState && (
-          <View style={[styles.logoContainer, isExpanded && styles.logoContainerExpanded]}>
-            <Image
-              source={require("../assets/images/ppl.png")}
-              style={{ width: 36, height: 36 }}
-              tintColor="#fff"
-            />
-            {isExpanded && <Text style={{ fontFamily: "Urbanist_400Regular", color: "#fff" }}>Stocka</Text>}
-          </View>
-        )}
-
-        {/* Menu Items - Not shown in press state */}
-        {!isPressState && (
-          <>
-            <View style={styles.menuContainer}>
-              {["Dashboard", "Stock", "Sales", "Reports", "debtors", "Profile"].map((item, index) => (
-                <AnimatedBox
-                  key={item}
-                  isButton={true}
-                  onPress={() => handleNavItemPress(item)}
-                  style={[
-                    styles.navItem,
-                    isExpanded && styles.navItemExpanded,
-                    selectedItem === item && isExpanded && styles.navItemSelected
-                  ]}
-                >
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Ionicons name={
-                      item === "Dashboard" ? "battery-charging-outline" :
-                        item === "Stock" ? "cube-outline" :
-                          item === "Sales" ? "flash-outline" :
-                            item === "Reports" ? "document-text-outline" :
-                              item === "debtors" ? "wallet-outline" : "person-outline"
-                    } size={22} color="#fff" />
-                    {isExpanded && <Text style={styles.navText}>{item.charAt(0).toUpperCase() + item.slice(1)}</Text>}
-                  </View>
-                </AnimatedBox>
-              ))}
-            </View>
-
-            {/* Divider */}
-            {isExpanded && <View style={styles.divider} />}
-
-            {/* Utility Items */}
-            <View style={styles.utilityContainer}>
-              <AnimatedBox isButton={true} style={[styles.navItem, isExpanded && styles.navItemExpanded]} onPress={() => setHelpModalVisible(true)}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Ionicons name="help-circle-outline" size={22} color="#fff" />
-                  {isExpanded && <Text style={styles.navText}>Help</Text>}
-                </View>
-              </AnimatedBox>
-
-              <AnimatedBox isButton={true} style={[styles.navItem, isExpanded && styles.navItemExpanded]} onPress={() => setShowLogoutModal(true)}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Ionicons name="log-out-outline" size={22} color="#fff" />
-                  {isExpanded && <Text style={styles.navText}>Logout</Text>}
-                </View>
-              </AnimatedBox>
-            </View>
-
-            {/* Theme Toggle - At the bottom, only when expanded */}
-            {isExpanded && (
-              <View style={styles.themeToggleContainer}>
-                <View style={styles.themeToggle}>
-                  <Ionicons
-                    name="sunny"
-                    size={20}
-                    color={!darkMode ? MAIN : "#999"}
-                  />
-                  <TouchableOpacity
-                    style={[
-                      styles.themeToggleSwitch,
-                      darkMode && styles.themeToggleSwitchActive
-                    ]}
-                    onPress={toggleTheme}
-                  >
-                    <View style={[
-                      styles.themeToggleKnob,
-                      darkMode && styles.themeToggleKnobActive
-                    ]} />
-                  </TouchableOpacity>
-                  <Ionicons
-                    name="moon"
-                    size={20}
-                    color={darkMode ? "#fff" : "#999"}
-                  />
-                </View>
-              </View>
-            )}
-          </>
-        )}
-      </View>
-
-      {/* CONTENT */}
-      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0, backgroundColor: darkMode ? "#09111E" : "#fff" }}>
+      {/* CONTENT (Rendered first so absolute elements can overlay it) */}
+      <View style={{ 
+        flex: 1, 
+        marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0, backgroundColor: darkMode ? "#09111E" : "#fff" 
+        }}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -363,16 +206,25 @@ export default function ProfileScreen({ navigation }) {
                 darkMode={darkMode}
               />
             </AnimatedBox>
-
-            {/* Buttons */}
-            {/* Buttons commented out as requested */}
-            {/* <TouchableOpacity style={[styles.grayButton, darkMode && styles.darkGrayButton]}>
-              <Text style={[styles.grayText, darkMode && styles.darkGrayText]}>CHANGE PASSWORD</Text>
-            </TouchableOpacity> */}
-
           </ScrollView>
         </KeyboardAvoidingView>
-      </SafeAreaView>
+      </View>
+
+      {/* REUSABLE SIDEBAR COMPONENTS */}
+      <AppSidebar
+        sidebarState={sidebarState}
+        setSidebarState={setSidebarState}
+        selectedItem="Profile"
+        onNavItemPress={(item) => {
+          setSelectedItem(item);
+          setSidebarState("press");
+          navigation.navigate(getRouteName(item));
+        }}
+        darkMode={darkMode}
+        toggleTheme={toggleTheme}
+        onLogout={() => setShowLogoutModal(true)}
+        onHelp={() => setHelpModalVisible(true)}
+      />
 
       <Modal
         transparent

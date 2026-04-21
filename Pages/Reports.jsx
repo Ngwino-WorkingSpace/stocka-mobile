@@ -20,7 +20,7 @@ import {
   Urbanist_700Bold,
 } from "@expo-google-fonts/urbanist";
 import { Ionicons } from "@expo/vector-icons";
-
+import AppSidebar from "../components/AppSidebar";
 import AnimatedBox from "../components/AnimatedBox.jsx";
 
 const MAIN = "#09111E";
@@ -195,153 +195,43 @@ export default function ReportsScreen({ navigation }) {
 
   return (
     <View style={[styles.container, { backgroundColor: darkMode ? "#09111E" : "#fff" }]}>
-
-      {/* FLOATING PRESS HANDLE */}
-      {isPressState && (
-        <TouchableOpacity
-          onPress={handlePressTextClick}
-          activeOpacity={0.8}
-          style={styles.floatingPress}
+      {/* CONTENT (Rendered first so absolute elements can overlay it) */}
+      <View style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0 }}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-          <View style={styles.pressTextWrapper}>
-            <Text style={styles.pressText}>S</Text>
-            <Text style={styles.pressText}>S</Text>
-            <Text style={styles.pressText}>E</Text>
-            <Text style={styles.pressText}>R</Text>
-            <Text style={styles.pressText}>P</Text>
-          </View>
-        </TouchableOpacity>
-      )}
-
-      {/* OVERLAY */}
-      {isExpanded && (
-        <TouchableOpacity
-          style={styles.overlay}
-          activeOpacity={1}
-          onPress={handleCloseSidebar}
-        />
-      )}
-
-      {/* SIDEBAR - Keeping existing sidebar code structure */}
-      <View
-        style={[
-          styles.sidebar,
-          {
-            width: isPressState ? 40 : isCollapsed ? 70 : 250,
-            backgroundColor: MAIN,
-            alignItems: isPressState ? "center" : isCollapsed ? "center" : "flex-start",
-            paddingHorizontal: isPressState ? 0 : isCollapsed ? 6 : 10,
-          },
-        ]}
-      >
-        {/* ... Sidebar contents (Arrows, Logo, Menu, Utility, Theme) ... */}
-        {/* Assuming I check the Sidebar content in original file and keep it similar or just imply reuse if I wasn't replacing whole file.
-             But I AM replacing a large chunk. I must include the Sidebar code to avoid breaking it.
-             To be safe, I will include the standard Sidebar logic from other screens or duplicate what was there.
-         */}
-        {isCollapsed && (
-          <TouchableOpacity onPress={handleArrowPress} style={styles.arrowButton}>
-            <Ionicons name="chevron-forward" size={22} color="#fff" />
-          </TouchableOpacity>
-        )}
-        {isExpanded && (
-          <TouchableOpacity onPress={handleCloseSidebar} style={styles.closeButton}>
-            <Ionicons name="chevron-back" size={22} color="#fff" />
-          </TouchableOpacity>
-        )}
-        {!isPressState && (
-          <View style={[styles.logoContainer, isExpanded && styles.logoContainerExpanded]}>
-            <Image source={require("../assets/images/ppl.png")} style={{ width: 36, height: 36 }} tintColor="#fff" />
-            {isExpanded && <Text style={styles.stockText}>Stocka</Text>}
-          </View>
-        )}
-        {!isPressState && (
-          <>
-            <View style={styles.menuContainer}>
-              {["Dashboard", "Stock", "Sales", "Reports", "Debtors", "Profile"].map((item, index) => (
-                <AnimatedBox 
-                  key={item}
-                  isButton={true}
-                  onPress={() => handleNavItemPress(item)}
-                  style={[
-                    styles.navItem,
-                    isExpanded && styles.navItemExpanded,
-                    selectedItem === item && isExpanded && styles.navItemSelected
-                  ]}
-                >
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Ionicons name={
-                      item === "Dashboard" ? "battery-charging-outline" :
-                        item === "Stock" ? "cube-outline" :
-                          item === "Sales" ? "flash-outline" :
-                            item === "Reports" ? "document-text-outline" :
-                              item === "Debtors" ? "wallet-outline" : "person-outline"
-                    } size={22} color="#fff" />
-                    {isExpanded && <Text style={styles.navText}>{item}</Text>}
-                  </View>
-                </AnimatedBox>
-              ))}
-            </View>
-            {isExpanded && <View style={styles.divider} />}
-            <View style={styles.utilityContainer}>
-              <AnimatedBox isButton={true} style={[styles.navItem, isExpanded && styles.navItemExpanded]} onPress={() => setHelpModalVisible(true)}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Ionicons name="help-circle-outline" size={22} color="#fff" />
-                  {isExpanded && <Text style={styles.navText}>Help</Text>}
-                </View>
-              </AnimatedBox>
-              <AnimatedBox isButton={true} style={[styles.navItem, isExpanded && styles.navItemExpanded]} onPress={() => setShowLogoutModal(true)}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Ionicons name="log-out-outline" size={22} color="#fff" />
-                  {isExpanded && <Text style={styles.navText}>Logout</Text>}
-                </View>
-              </AnimatedBox>
-            </View>
-            {isExpanded && (
-              <View style={styles.themeToggleContainer}>
-                <View style={styles.themeToggle}>
-                  <Ionicons name="sunny" size={20} color={!darkMode ? MAIN : "#999"} />
-                  <TouchableOpacity style={[styles.themeToggleSwitch, darkMode && styles.themeToggleSwitchActive]} onPress={() => setDarkMode(!darkMode)}>
-                    <View style={[styles.themeToggleKnob, darkMode && styles.themeToggleKnobActive]} />
-                  </TouchableOpacity>
-                  <Ionicons name="moon" size={20} color={darkMode ? "#fff" : "#999"} />
-                </View>
-              </View>
-            )}
-          </>
-        )}
-      </View>
-
-      {/* CONTENT */}
-      <View style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0, backgroundColor: darkMode ? "#09111E" : "#fff", paddingTop: insets.top, paddingBottom: insets.bottom }}>
-        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
           <ScrollView
-            contentContainerStyle={{ flexGrow: 1, padding: 20, paddingBottom: 20, backgroundColor: darkMode ? "#09111E" : "#fff" }}
             style={darkMode && styles.darkScrollView}
-            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 100 }}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#09111E"]} />
             }
           >
-            {/* HEADER */}
-            <AnimatedBox type="fade" duration={600}>
-              <View style={[styles.header, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  {navigation?.canGoBack() && (
-                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                      <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
+            <View style={{ padding: 15 }}>
+              {/* Header */}
+              <AnimatedBox type="fade" duration={600}>
+                <View style={[styles.headerRow, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, marginBottom: 20 }]}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    {navigation?.canGoBack() && (
+                        <TouchableOpacity
+                        onPress={() => navigation.goBack()}
+                        style={styles.backButton}
+                        >
+                        <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
+                        </TouchableOpacity>
+                    )}
+                    <View style={styles.logoContainerHeader}>
+                        <Image source={require("../assets/images/ppl.png")} style={{ width: 36, height: 36 }} />
+                        <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
+                    </View>
+                    </View>
+                    <TouchableOpacity onPress={() => setHelpModalVisible(true)}>
+                    <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
                     </TouchableOpacity>
-                  )}
-                  <View style={styles.logoContainerHeader}>
-                    <Image source={require("../assets/images/ppl.png")} style={{ width: 36, height: 36 }} />
-                    <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
-                  </View>
                 </View>
-                <TouchableOpacity onPress={() => setHelpModalVisible(true)}>
-                  <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
-                </TouchableOpacity>
-              </View>
-            </AnimatedBox>
+              </AnimatedBox>
+            </View>
 
             {/* TABS */}
             <AnimatedBox type="slideUp" delay={100}>
@@ -542,6 +432,21 @@ export default function ReportsScreen({ navigation }) {
         </View>
       </Modal>
 
+      {/* REUSABLE SIDEBAR COMPONENTS */}
+      <AppSidebar
+        sidebarState={sidebarState}
+        setSidebarState={setSidebarState}
+        selectedItem="Reports"
+        onNavItemPress={(item) => {
+          setSelectedItem(item);
+          setSidebarState("press");
+          navigation.navigate(getRouteName(item));
+        }}
+        darkMode={darkMode}
+        toggleTheme={toggleTheme}
+        onLogout={() => setShowLogoutModal(true)}
+        onHelp={() => setHelpModalVisible(true)}
+      />
     </View>
   );
 }
