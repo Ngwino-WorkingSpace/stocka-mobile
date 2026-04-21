@@ -143,14 +143,14 @@ export default function SalesScreen({ navigation }) {
     }
   };
 
-  const handleArrowPress = () => {
-    setSidebarState("expanded");
-  };
-
+  
   const handleCloseSidebar = () => {
     setSidebarState("press");
   };
-
+  
+  const handleArrowPress = () => {
+    setSidebarState("expanded");
+  };
   const isPressState = sidebarState === "press";
   const isCollapsed = sidebarState === "collapsed";
   const isExpanded = sidebarState === "expanded";

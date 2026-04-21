@@ -275,7 +275,7 @@ export default function PlainDashboardScreen({ navigation }) {
           <>
             <View style={styles.menuContainer}>
               {["Dashboard", "Stock", "Sales", "Reports", "debtors", "Profile"].map((item, index) => (
-                <AnimatedBox 
+                <AnimatedBox
                   key={item}
                   isButton={true}
                   onPress={() => handleNavItemPress(item)}
@@ -392,32 +392,32 @@ export default function PlainDashboardScreen({ navigation }) {
 
             {/* TABS */}
             <AnimatedBox type="slideUp" delay={100}>
-                <View style={styles.tabs}>
+              <View style={styles.tabs}>
                 {["Daily", "Weekly", "Monthly", "Annually"].map((tab) => (
-                    <TouchableOpacity
+                  <TouchableOpacity
                     key={tab}
                     onPress={() => setSelectedTab(tab)}
                     style={[
-                        styles.tab,
-                        selectedTab === tab && styles.activeTab,
+                      styles.tab,
+                      selectedTab === tab && styles.activeTab,
                     ]}
-                    >
+                  >
                     <Text
-                        style={[
+                      style={[
                         styles.tabText,
                         selectedTab === tab && styles.activeTabText,
-                        ]}
+                      ]}
                     >
-                        {tab}
+                      {tab}
                     </Text>
-                    </TouchableOpacity>
+                  </TouchableOpacity>
                 ))}
-                </View>
+              </View>
             </AnimatedBox>
 
             {/* TITLE */}
             <AnimatedBox type="slideUp" delay={200}>
-                <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Your Dashboard</Text>
+              <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Your Dashboard</Text>
             </AnimatedBox>
 
             {/* DASHBOARD CARDS - SINGLE BG */}
@@ -461,34 +461,34 @@ export default function PlainDashboardScreen({ navigation }) {
 
             {/* TRANSACTIONS */}
             <AnimatedBox delay={600} type="slideUp">
-                <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Recent transactions</Text>
+              <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Recent transactions</Text>
             </AnimatedBox>
             {transactions.length === 0 && !loading && (
-              <Text style={[{ marginLeft: 20 , fontFamily: "Urbanist_400Regular" }, darkMode && styles.darkText]}>No recent transactions</Text>
+              <Text style={[{ marginLeft: 20, fontFamily: "Urbanist_400Regular" }, darkMode && styles.darkText]}>No recent transactions</Text>
             )}
             {transactions.map((t, i) => (
               <AnimatedBox key={i} delay={700 + (i * 50)} type="fade">
                 <View style={[styles.transaction, darkMode && styles.darkTransaction]}>
-                    <Ionicons name={t.icon} size={24} color={MAIN} />
-                    <View style={{ flex: 1, marginLeft: 10 }}>
+                  <Ionicons name={t.icon} size={24} color={MAIN} />
+                  <View style={{ flex: 1, marginLeft: 10 }}>
                     <Text style={[styles.transTitle, darkMode && styles.darkText]}>{t.txt}</Text>
                     <Text style={[styles.transDate, darkMode && { color: "#aaa" }]}>{t.date}</Text>
-                    </View>
-                    <Text
+                  </View>
+                  <Text
                     style={[
-                        styles.transPrice,
-                        t.price.startsWith("-") ? { color: "red" } : { color: "green" },
+                      styles.transPrice,
+                      t.price.startsWith("-") ? { color: "red" } : { color: "green" },
                     ]}
-                    >
+                  >
                     {t.price}
-                    </Text>
+                  </Text>
                 </View>
               </AnimatedBox>
             ))}
 
             {/* ALERTS */}
             <AnimatedBox delay={1000} type="slideUp">
-                <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Alerts</Text>
+              <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Alerts</Text>
             </AnimatedBox>
             {[
               { title: "Low Stock", text: metrics ? `${metrics.lowStockCount} products are low on stock` : "Checking..." },
@@ -496,11 +496,11 @@ export default function PlainDashboardScreen({ navigation }) {
             ].map((a, i) => (
               <AnimatedBox key={i} delay={1100 + (i * 100)} type="slideRight">
                 <View style={[styles.alert, darkMode && styles.darkAlert]}>
-                    <Ionicons name="warning-outline" size={22} color="red" />
-                    <View style={{ marginLeft: 10 }}>
+                  <Ionicons name="warning-outline" size={22} color="red" />
+                  <View style={{ marginLeft: 10 }}>
                     <Text style={styles.alertTitle}>{a.title}</Text>
                     <Text style={[styles.alertText, darkMode && { color: "#aaa" }]}>{a.text}</Text>
-                    </View>
+                  </View>
                 </View>
               </AnimatedBox>
             ))}
@@ -848,11 +848,7 @@ const FormInput = ({
 
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    flexDirection: "column", 
-    position: "relative" 
-  },
+  container: { flex: 1, flexDirection: "row", position: "relative" },
 
   floatingPress: {
     position: "absolute",

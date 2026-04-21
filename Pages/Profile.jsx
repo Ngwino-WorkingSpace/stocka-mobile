@@ -213,7 +213,7 @@ export default function ProfileScreen({ navigation }) {
           <>
             <View style={styles.menuContainer}>
               {["Dashboard", "Stock", "Sales", "Reports", "debtors", "Profile"].map((item, index) => (
-                <AnimatedBox 
+                <AnimatedBox
                   key={item}
                   isButton={true}
                   onPress={() => handleNavItemPress(item)}
@@ -291,7 +291,7 @@ export default function ProfileScreen({ navigation }) {
       </View>
 
       {/* CONTENT */}
-      <View style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0, backgroundColor: darkMode ? "#09111E" : "#fff" }}>
+      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0, backgroundColor: darkMode ? "#09111E" : "#fff" }}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -372,7 +372,7 @@ export default function ProfileScreen({ navigation }) {
 
           </ScrollView>
         </KeyboardAvoidingView>
-      </View>
+      </SafeAreaView>
 
       <Modal
         transparent
@@ -489,7 +489,7 @@ const ProfileInput = ({
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    flexDirection: "column",
+    flexDirection: "row",
     position: "relative",
   },
   floatingPress: {

@@ -549,7 +549,7 @@ export default function ReportsScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "column",
+    flexDirection: "row",
     backgroundColor: "#fff",
     position: "relative",
   },
