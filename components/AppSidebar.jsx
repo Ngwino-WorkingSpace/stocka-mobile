@@ -213,9 +213,9 @@ const styles = StyleSheet.create({
   },
   pressText: {
     color: "#fff",
-    fontSize: 30,
+    fontSize: 15,
     fontFamily: "Urbanist_700Bold",
-    lineHeight: 30,
+    lineHeight: 12,
     transform: [{ rotate: "-90deg" }]
   },
   arrowButton: {

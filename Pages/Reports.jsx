@@ -22,6 +22,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import AppSidebar from "../components/AppSidebar";
 import AnimatedBox from "../components/AnimatedBox.jsx";
+import { useTheme } from '../src/context/ThemeContext';
 
 const MAIN = "#09111E";
 
@@ -54,6 +55,7 @@ export default function ReportsScreen({ navigation }) {
   const isExpanded = sidebarState === "expanded";
 
   const [darkMode, setDarkMode] = useState(false);
+   const { isDarkMode, toggleTheme } = useTheme();
   const [selectedItem, setSelectedItem] = useState("Reports");
   const [selectedTab, setSelectedTab] = useState("Daily");
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -177,7 +179,7 @@ export default function ReportsScreen({ navigation }) {
   return (
     <View style={[styles.container, { backgroundColor: darkMode ? "#09111E" : "#fff" }]}>
       {/* CONTENT (Rendered first so absolute elements can overlay it) */}
-      <View style={{ flex: 1, marginLeft: isPressState ? 34 : isCollapsed ? 70 : 0 }}>
+      <View style={{ flex: 1, marginLeft: isPressState ? 70 : isCollapsed ? 70 : 0 }}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -189,7 +191,7 @@ export default function ReportsScreen({ navigation }) {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#09111E"]} />
             }
           >
-            <View style={{ padding: 15 }}>
+            <View>
               {/* Header */}
               <AnimatedBox type="fade" duration={600}>
                 <View style={[styles.headerRow, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, marginBottom: 20 }]}>
@@ -463,7 +465,6 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   backButton: {
-    padding: 8,
     marginRight: 8,
   },
   logoContainerHeader: {
@@ -474,7 +475,6 @@ const styles = StyleSheet.create({
     fontFamily: "Urbanist_700Bold",
     fontSize: 20,
     color: MAIN,
-    marginLeft: 10,
   },
   tabs: {
     flexDirection: "row",
@@ -624,13 +624,12 @@ const styles = StyleSheet.create({
     color: MAIN,
   },
   summaryContainer: {
-    marginBottom: 20,
+    marginBottom: 2,
   },
   summaryCard: {
     backgroundColor: "#F5F5F5",
     borderRadius: 12,
     padding: 15,
-    marginBottom: 12,
     flexDirection: "row",
     alignItems: "center",
   },
