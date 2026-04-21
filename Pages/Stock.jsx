@@ -220,7 +220,7 @@ export default function StockScreen({ navigation }) {
   //   }
   // };
 
-  
+
   const handleCloseSidebar = () => {
     setSidebarState("press");
   };
@@ -424,7 +424,7 @@ export default function StockScreen({ navigation }) {
 
 
   return (
-   <View style={[styles.container, { backgroundColor: darkMode ? "#09111E" : "#fff" }]}>
+    <View style={[styles.container, { backgroundColor: darkMode ? "#09111E" : "#fff" }]}>
       {/* FLOATING PRESS HANDLE */}
       {isPressState && (
         <TouchableOpacity
@@ -443,283 +443,283 @@ export default function StockScreen({ navigation }) {
       )}
 
       {/* OVERLAY - Shows when sidebar is expanded */}
-            {isExpanded && (
+      {isExpanded && (
+        <TouchableOpacity
+          style={styles.overlay}
+          activeOpacity={1}
+          onPress={handleCloseSidebar}
+        />
+      )}
+
+      {/* SIDEBAR */}
+      <View
+        style={[
+          styles.sidebar,
+          {
+            width: isPressState ? 40 : isCollapsed ? 70 : 250,
+            backgroundColor: MAIN,
+            alignItems: isPressState ? "center" : isCollapsed ? "center" : "flex-start",
+            paddingHorizontal: isPressState ? 0 : isCollapsed ? 6 : 10,
+          },
+        ]}
+      >
+        {/* Toggle Arrow - Only visible when collapsed */}
+        {isCollapsed && (
+          <TouchableOpacity
+            onPress={handleArrowPress}
+            style={styles.arrowButton}
+          >
+            <Ionicons
+              name="chevron-forward"
+              size={22}
+              color="#fff"
+            />
+          </TouchableOpacity>
+        )}
+
+        {/* Close Arrow - Only visible when expanded */}
+        {isExpanded && (
+          <TouchableOpacity
+            onPress={handleCloseSidebar}
+            style={styles.closeButton}
+          >
+            <Ionicons
+              name="chevron-back"
+              size={22}
+              color="#fff"
+            />
+          </TouchableOpacity>
+        )}
+
+        {/* Stocka Logo - Not shown in press state */}
+        {!isPressState && (
+          <View style={[styles.logoContainerSidebar, isExpanded && styles.logoContainerExpanded]}>
+            <Image
+              source={require("../assets/images/ppl.png")}
+              style={{ width: 36, height: 36 }}
+              tintColor="#fff" />
+            {isExpanded && <Text style={styles.stockText}>Stocka</Text>}
+          </View>
+        )}
+
+        {/* Menu Items - Not shown in press state */}
+        {!isPressState && (
+          <>
+            <View style={styles.menuContainer}>
               <TouchableOpacity
-                style={styles.overlay}
-                activeOpacity={1}
-                onPress={handleCloseSidebar}
-              />
-            )}
-      
-            {/* SIDEBAR */}
-            <View
-              style={[
-                styles.sidebar,
-                {
-                  width: isPressState ? 40 : isCollapsed ? 70 : 250,
-                  backgroundColor: MAIN,
-                  alignItems: isPressState ? "center" : isCollapsed ? "center" : "flex-start",
-                  paddingHorizontal: isPressState ? 0 : isCollapsed ? 6 : 10,
-                },
-              ]}
-            >
-              {/* Toggle Arrow - Only visible when collapsed */}
-              {isCollapsed && (
-                <TouchableOpacity
-                  onPress={handleArrowPress}
-                  style={styles.arrowButton}
-                >
-                  <Ionicons
-                    name="chevron-forward"
-                    size={22}
-                    color="#fff"
-                  />
-                </TouchableOpacity>
-              )}
-      
-              {/* Close Arrow - Only visible when expanded */}
-              {isExpanded && (
-                <TouchableOpacity
-                  onPress={handleCloseSidebar}
-                  style={styles.closeButton}
-                >
-                  <Ionicons
-                    name="chevron-back"
-                    size={22}
-                    color="#fff"
-                  />
-                </TouchableOpacity>
-              )}
-      
-              {/* Stocka Logo - Not shown in press state */}
-              {!isPressState && (
-                <View style={[styles.logoContainerSidebar, isExpanded && styles.logoContainerExpanded]}>
-                  <Image
-                    source={require("../assets/images/ppl.png")}
-                    style={{ width: 36, height: 36 }}
-                    tintColor="#fff" />
-                  {isExpanded && <Text style={styles.stockText}>Stocka</Text>}
-                </View>
-              )}
-      
-              {/* Menu Items - Not shown in press state */}
-              {!isPressState && (
-                <>
-                  <View style={styles.menuContainer}>
-                    <TouchableOpacity
-                      style={[
-                        styles.navItem,
-                        isExpanded && styles.navItemExpanded,
-                        selectedItem === "Dashboard" && isExpanded && styles.navItemSelected
-                      ]}
-                      onPress={() => handleNavItemPress("Dashboard")}
-                    >
-                      <Ionicons name="battery-charging-outline" size={22} color="#fff" />
-                      {isExpanded && <Text style={styles.navText}>Dashboard</Text>}
-                    </TouchableOpacity>
-      
-                    <TouchableOpacity
-                      style={[
-                        styles.navItem,
-                        isExpanded && styles.navItemExpanded,
-                        selectedItem === "Stock" && isExpanded && styles.navItemSelected
-                      ]}
-                      onPress={() => handleNavItemPress("Stock")}
-                    >
-                      <Ionicons name="cube-outline" size={22} color="#fff" />
-                      {isExpanded && <Text style={styles.navText}>Stock</Text>}
-                    </TouchableOpacity>
-      
-                    <TouchableOpacity
-                      style={[
-                        styles.navItem,
-                        isExpanded && styles.navItemExpanded,
-                        selectedItem === "Sales" && isExpanded && styles.navItemSelected
-                      ]}
-                      onPress={() => handleNavItemPress("Sales")}
-                    >
-                      <Ionicons name="flash-outline" size={22} color="#fff" />
-                      {isExpanded && <Text style={styles.navText}>Sales</Text>}
-                    </TouchableOpacity>
-      
-                    <TouchableOpacity
-                      style={[
-                        styles.navItem,
-                        isExpanded && styles.navItemExpanded,
-                        selectedItem === "Reports" && isExpanded && styles.navItemSelected
-                      ]}
-                      onPress={() => handleNavItemPress("Reports")}
-                    >
-                      <Ionicons name="document-text-outline" size={22} color="#fff" />
-                      {isExpanded && <Text style={styles.navText}>Reports</Text>}
-                    </TouchableOpacity>
-      
-                    <TouchableOpacity
-                      style={[
-                        styles.navItem,
-                        isExpanded && styles.navItemExpanded,
-                        selectedItem === "Debtors" && isExpanded && styles.navItemSelected
-                      ]}
-                      onPress={() => handleNavItemPress("Debtors")}
-                    >
-                      <Ionicons name="wallet-outline" size={22} color="#fff" />
-                      {isExpanded && <Text style={styles.navText}>Debtors</Text>}
-                    </TouchableOpacity>
-      
-                    <TouchableOpacity
-                      style={[
-                        styles.navItem,
-                        isExpanded && styles.navItemExpanded,
-                        selectedItem === "Profile" && isExpanded && styles.navItemSelected
-                      ]}
-                      onPress={() => handleNavItemPress("Profile")}
-                    >
-                      <Ionicons name="person-outline" size={22} color="#fff" />
-                      {isExpanded && <Text style={styles.navText}>Profile</Text>}
-                    </TouchableOpacity>
-                  </View>
-      
-                  {/* Divider */}
-                  {isExpanded && <View style={styles.divider} />}
-      
-                  {/* Utility Items */}
-                  <View style={styles.utilityContainer}>
-                    <TouchableOpacity
-                      style={[styles.navItem, isExpanded && styles.navItemExpanded]}
-                      onPress={() => setHelpModalVisible(true)}
-                    >
-                      <Ionicons name="help-circle-outline" size={22} color="#fff" />
-                      {isExpanded && <Text style={styles.navText}>Help</Text>}
-                    </TouchableOpacity>
-      
-                    <TouchableOpacity
-                      style={[styles.navItem, isExpanded && styles.navItemExpanded]}
-                      onPress={() => setShowLogoutModal(true)}
-                    >
-                      <Ionicons name="log-out-outline" size={22} color="#fff" />
-                      {isExpanded && <Text style={styles.navText}>Logout</Text>}
-                    </TouchableOpacity>
-                  </View>
-      
-                  {/* Theme Toggle - At the bottom, only when expanded */}
-                  {isExpanded && (
-                    <View style={styles.themeToggleContainer}>
-                      <View style={styles.themeToggle}>
-                        <Ionicons
-                          name="sunny"
-                          size={20}
-                          color={!darkMode ? MAIN : "#999"}
-                        />
-                        <TouchableOpacity
-                          style={[
-                            styles.themeToggleSwitch,
-                            darkMode && styles.themeToggleSwitchActive
-                          ]}
-                          onPress={toggleTheme}
-                        >
-                          <View style={[
-                            styles.themeToggleKnob,
-                            darkMode && styles.themeToggleKnobActive
-                          ]} />
-                        </TouchableOpacity>
-                        <Ionicons
-                          name="moon"
-                          size={20}
-                          color={darkMode ? "#fff" : "#999"}
-                        />
-                      </View>
-                    </View>
-                  )}
-                </>
-              )}
-            </View>
-      
-
-      {/* CONTENT */}
-            <View style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0, backgroundColor: darkMode ? "#09111E" : "#fff", paddingTop: insets.top, paddingBottom: insets.bottom }}>
-              <KeyboardAvoidingView
-                style={{ flex: 1 }}
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                style={[
+                  styles.navItem,
+                  isExpanded && styles.navItemExpanded,
+                  selectedItem === "Dashboard" && isExpanded && styles.navItemSelected
+                ]}
+                onPress={() => handleNavItemPress("Dashboard")}
               >
-                <ScrollView
-                  style={darkMode && styles.darkScrollView}
-                  contentContainerStyle={{ paddingBottom: 100 }}
-                  refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#09111E"]} />
-                  }
-                >
-                  <View style={{ padding: 15 }}>
-                    {/* Header */}
-                    <AnimatedBox type="fade" duration={600}>
-                      <View style={[styles.headerRow, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, marginBottom: 20 }]}>
-                          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                          {navigation?.canGoBack() && (
-                              <TouchableOpacity
-                              onPress={() => navigation.goBack()}
-                              style={styles.backButton}
-                              >
-                              <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
-                              </TouchableOpacity>
-                          )}
-                          <View style={styles.logoContainerHeader}>
-                              <Image source={require("../assets/images/ppl.png")} style={{ width: 36, height: 36 }} />
-                              <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
-                          </View>
-                          </View>
-                          <TouchableOpacity onPress={() => setHelpModalVisible(true)}>
-                          <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
-                          </TouchableOpacity>
-                      </View>
-                    </AnimatedBox>
+                <Ionicons name="battery-charging-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Dashboard</Text>}
+              </TouchableOpacity>
 
-          <AnimatedBox type="slideUp" delay={100}>
-            <View style={styles.searchCategoryContainer}>
-              <TextInput style={styles.searchInput} placeholder="Search..." value={searchText} onChangeText={setSearchText} placeholderTextColor={darkMode ? "#aaa" : "#999"} />
-              <TouchableOpacity style={styles.categoryDropdown} onPress={() => setCategoryVisible(true)}>
-                <Text style={styles.categoryText}>{selectedCategory}</Text>
-                <Ionicons name="chevron-down" size={20} color="#fff" />
+              <TouchableOpacity
+                style={[
+                  styles.navItem,
+                  isExpanded && styles.navItemExpanded,
+                  selectedItem === "Stock" && isExpanded && styles.navItemSelected
+                ]}
+                onPress={() => handleNavItemPress("Stock")}
+              >
+                <Ionicons name="cube-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Stock</Text>}
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.navItem,
+                  isExpanded && styles.navItemExpanded,
+                  selectedItem === "Sales" && isExpanded && styles.navItemSelected
+                ]}
+                onPress={() => handleNavItemPress("Sales")}
+              >
+                <Ionicons name="flash-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Sales</Text>}
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.navItem,
+                  isExpanded && styles.navItemExpanded,
+                  selectedItem === "Reports" && isExpanded && styles.navItemSelected
+                ]}
+                onPress={() => handleNavItemPress("Reports")}
+              >
+                <Ionicons name="document-text-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Reports</Text>}
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.navItem,
+                  isExpanded && styles.navItemExpanded,
+                  selectedItem === "Debtors" && isExpanded && styles.navItemSelected
+                ]}
+                onPress={() => handleNavItemPress("Debtors")}
+              >
+                <Ionicons name="wallet-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Debtors</Text>}
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.navItem,
+                  isExpanded && styles.navItemExpanded,
+                  selectedItem === "Profile" && isExpanded && styles.navItemSelected
+                ]}
+                onPress={() => handleNavItemPress("Profile")}
+              >
+                <Ionicons name="person-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Profile</Text>}
               </TouchableOpacity>
             </View>
-          </AnimatedBox>
 
-          <AnimatedBox type="slideUp" delay={200}>
-            <Text style={[styles.title, darkMode && styles.darkText]}>Products in Stock</Text>
-          </AnimatedBox>
+            {/* Divider */}
+            {isExpanded && <View style={styles.divider} />}
 
-          {filteredProducts.filter(p => p.TextHead.toLowerCase().includes(searchText.toLowerCase())).length === 0 ? (
-            <Text style={{ textAlign: 'center', marginTop: 20, fontFamily: "Urbanist_400Regular", color: darkMode ? '#aaa' : '#666' }}>No products found</Text>
-          ) : filteredProducts.filter(p => p.TextHead.toLowerCase().includes(searchText.toLowerCase())).map((item, index) => (
-            <AnimatedBox key={item.id} delay={index * 100} type="slideUp">
-              <View style={[styles.productCard, darkMode && styles.darkProductCard]}>
-                <Image source={item.Image} style={styles.productImage} />
-                <View style={{ flex: 1, marginLeft: 12 }}>
-                  <Text style={[styles.productName, darkMode && styles.darkText]}>{item.TextHead}</Text>
-                  <Text style={[styles.productCategory, darkMode && { color: "#aaa" }]}>{item.subText}</Text>
-                  <Text style={[styles.productKilos, darkMode && { color: "#aaa" }]}>{item.kilos}</Text>
+            {/* Utility Items */}
+            <View style={styles.utilityContainer}>
+              <TouchableOpacity
+                style={[styles.navItem, isExpanded && styles.navItemExpanded]}
+                onPress={() => setHelpModalVisible(true)}
+              >
+                <Ionicons name="help-circle-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Help</Text>}
+              </TouchableOpacity>
 
-                  <View style={styles.warningWrapper}>
-                    {item.minExpiry && (
-                      <View style={{ flexDirection: 'row', marginRight: 10, alignItems: 'center' }}>
-                        <Ionicons name="time-outline" size={16} color="#aaa" />
-                        <Text style={[styles.productExpiry, darkMode && { color: "#ff6b6b" }]}>{item.ViewText}</Text>
-                      </View>
-                    )}
+              <TouchableOpacity
+                style={[styles.navItem, isExpanded && styles.navItemExpanded]}
+                onPress={() => setShowLogoutModal(true)}
+              >
+                <Ionicons name="log-out-outline" size={22} color="#fff" />
+                {isExpanded && <Text style={styles.navText}>Logout</Text>}
+              </TouchableOpacity>
+            </View>
 
-                  </View>
-
-                  <AnimatedBox isButton={true} onPress={() => setSelectedProduct(item)} style={styles.viewButton}>
-                    <Text style={styles.viewButtonText}>View Details</Text>
-                  </AnimatedBox>
+            {/* Theme Toggle - At the bottom, only when expanded */}
+            {isExpanded && (
+              <View style={styles.themeToggleContainer}>
+                <View style={styles.themeToggle}>
+                  <Ionicons
+                    name="sunny"
+                    size={20}
+                    color={!darkMode ? MAIN : "#999"}
+                  />
+                  <TouchableOpacity
+                    style={[
+                      styles.themeToggleSwitch,
+                      darkMode && styles.themeToggleSwitchActive
+                    ]}
+                    onPress={toggleTheme}
+                  >
+                    <View style={[
+                      styles.themeToggleKnob,
+                      darkMode && styles.themeToggleKnobActive
+                    ]} />
+                  </TouchableOpacity>
+                  <Ionicons
+                    name="moon"
+                    size={20}
+                    color={darkMode ? "#fff" : "#999"}
+                  />
                 </View>
               </View>
-            </AnimatedBox>
-          ))}
+            )}
+          </>
+        )}
+      </View>
 
-          <AnimatedBox isButton={true} usePulse={true} onPress={() => setAddNewProductVisible(true)} style={styles.productButton}>
-            <Text style={styles.addText}>+ Add Product</Text>
-          </AnimatedBox>
-          </View>
-        </ScrollView>
+
+      {/* CONTENT */}
+      <View style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0, backgroundColor: darkMode ? "#09111E" : "#fff", paddingTop: insets.top, paddingBottom: insets.bottom }}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+          <ScrollView
+            style={darkMode && styles.darkScrollView}
+            contentContainerStyle={{ paddingBottom: 100 }}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#09111E"]} />
+            }
+          >
+            <View style={{ padding: 15 }}>
+              {/* Header */}
+              <AnimatedBox type="fade" duration={600}>
+                <View style={[styles.headerRow, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, marginBottom: 20 }]}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    {navigation?.canGoBack() && (
+                      <TouchableOpacity
+                        onPress={() => navigation.goBack()}
+                        style={styles.backButton}
+                      >
+                        <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
+                      </TouchableOpacity>
+                    )}
+                    <View style={styles.logoContainerHeader}>
+                      <Image source={require("../assets/images/ppl.png")} style={{ width: 36, height: 36 }} />
+                      <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
+                    </View>
+                  </View>
+                  <TouchableOpacity onPress={() => setHelpModalVisible(true)}>
+                    <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
+                  </TouchableOpacity>
+                </View>
+              </AnimatedBox>
+
+              <AnimatedBox type="slideUp" delay={100}>
+                <View style={styles.searchCategoryContainer}>
+                  <TextInput style={styles.searchInput} placeholder="Search..." value={searchText} onChangeText={setSearchText} placeholderTextColor={darkMode ? "#aaa" : "#999"} />
+                  <TouchableOpacity style={styles.categoryDropdown} onPress={() => setCategoryVisible(true)}>
+                    <Text style={styles.categoryText}>{selectedCategory}</Text>
+                    <Ionicons name="chevron-down" size={20} color="#fff" />
+                  </TouchableOpacity>
+                </View>
+              </AnimatedBox>
+
+              <AnimatedBox type="slideUp" delay={200}>
+                <Text style={[styles.title, darkMode && styles.darkText]}>Products in Stock</Text>
+              </AnimatedBox>
+
+              {filteredProducts.filter(p => p.TextHead.toLowerCase().includes(searchText.toLowerCase())).length === 0 ? (
+                <Text style={{ textAlign: 'center', marginTop: 20, fontFamily: "Urbanist_400Regular", color: darkMode ? '#aaa' : '#666' }}>No products found</Text>
+              ) : filteredProducts.filter(p => p.TextHead.toLowerCase().includes(searchText.toLowerCase())).map((item, index) => (
+                <AnimatedBox key={item.id} delay={index * 100} type="slideUp">
+                  <View style={[styles.productCard, darkMode && styles.darkProductCard]}>
+                    <Image source={item.Image} style={styles.productImage} />
+                    <View style={{ flex: 1, marginLeft: 12 }}>
+                      <Text style={[styles.productName, darkMode && styles.darkText]}>{item.TextHead}</Text>
+                      <Text style={[styles.productCategory, darkMode && { color: "#aaa" }]}>{item.subText}</Text>
+                      <Text style={[styles.productKilos, darkMode && { color: "#aaa" }]}>{item.kilos}</Text>
+
+                      <View style={styles.warningWrapper}>
+                        {item.minExpiry && (
+                          <View style={{ flexDirection: 'row', marginRight: 10, alignItems: 'center' }}>
+                            <Ionicons name="time-outline" size={16} color="#aaa" />
+                            <Text style={[styles.productExpiry, darkMode && { color: "#ff6b6b" }]}>{item.ViewText}</Text>
+                          </View>
+                        )}
+
+                      </View>
+
+                      <AnimatedBox isButton={true} onPress={() => setSelectedProduct(item)} style={styles.viewButton}>
+                        <Text style={styles.viewButtonText}>View Details</Text>
+                      </AnimatedBox>
+                    </View>
+                  </View>
+                </AnimatedBox>
+              ))}
+
+              <AnimatedBox isButton={true} usePulse={true} onPress={() => setAddNewProductVisible(true)} style={styles.productButton}>
+                <Text style={styles.addText}>+ Add Product</Text>
+              </AnimatedBox>
+            </View>
+          </ScrollView>
         </KeyboardAvoidingView>
       </View>
 
@@ -1221,7 +1221,7 @@ const FormInput = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "column",
+    flexDirection: "row",
     backgroundColor: "#fff",
     position: "relative",
   },

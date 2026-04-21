@@ -490,6 +490,7 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     flexDirection: "row",
+    backgroundColor: "#fff",
     position: "relative",
   },
   floatingPress: {
@@ -519,6 +520,7 @@ const styles = StyleSheet.create({
   },
 
   overlay: {
+    flex: 1,
     position: "absolute",
     top: 0,
     left: 0,
@@ -595,12 +597,12 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     fontSize: 14,
   },
-  divider: {
-    height: 1,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    marginVertical: 15,
-    width: "100%",
-  },
+  // divider: {
+  //   height: 1,
+  //   backgroundColor: "rgba(255, 255, 255, 0.2)",
+  //   marginVertical: 15,
+  //   width: "100%",
+  // },
   utilityContainer: {
     width: "100%",
     marginTop: 10,
