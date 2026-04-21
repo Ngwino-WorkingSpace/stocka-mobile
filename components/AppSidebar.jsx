@@ -6,6 +6,7 @@ import {
   Image,
   StyleSheet,
   Dimensions,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import AnimatedBox from "./AnimatedBox";
@@ -105,29 +106,45 @@ const AppSidebar = ({
 
             {/* Menu Items */}
             <View style={styles.menuContainer}>
-              {menuItems.map((item) => (
-                <AnimatedBox
-                  key={item.label}
-                  isButton={true}
-                  onPress={() => onNavItemPress(item.label)}
-                  style={[
-                    styles.navItem,
-                    isExpanded && styles.navItemExpanded,
-                    selectedItem.toLowerCase() === item.label.toLowerCase() &&
-                      isExpanded &&
-                      styles.navItemSelected,
-                  ]}
-                >
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <Ionicons name={item.icon} size={22} color="#fff" />
-                    {isExpanded && (
-                      <Text style={styles.navText}>{item.label}</Text>
+              {menuItems.map((item) => {
+                const isActive =
+                  selectedItem.toLowerCase() === item.label.toLowerCase();
+                return (
+                  <Pressable
+                    key={item.label}
+                    onPress={() => onNavItemPress(item.label)}
+                    style={({ pressed }) => [
+                      styles.navItem,
+                      isExpanded && styles.navItemExpanded,
+                      // active item always has the highlight when expanded
+                      isActive && isExpanded && styles.navItemSelected,
+                      // press: white bg overrides everything
+                      pressed && styles.navItemHovered,
+                    ]}
+                  >
+                    {({ pressed }) => (
+                      <View style={{ flexDirection: "row", alignItems: "center" }}>
+                        <Ionicons
+                          name={item.icon}
+                          size={22}
+                          color={pressed ? "#09111E" : "#fff"}
+                        />
+                        {isExpanded && (
+                          <Text
+                            style={[
+                              styles.navText,
+                              pressed && { color: "#09111E" },
+                            ]}
+                          >
+                            {item.label}
+                          </Text>
+                        )}
+                      </View>
                     )}
-                  </View>
-                </AnimatedBox>
-              ))}
+                  </Pressable>
+                );
+              })}
             </View>
-
             {/* Divider */}
             {isExpanded && <View style={styles.divider} />}
 
@@ -264,6 +281,10 @@ const styles = StyleSheet.create({
   },
   navItemSelected: {
     backgroundColor: "rgba(255, 255, 255, 0.2)",
+  },
+  navItemHovered: {
+    backgroundColor: "#fff",
+    borderRadius: 8,
   },
   navText: {
     color: "#fff",
