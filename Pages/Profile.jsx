@@ -223,14 +223,16 @@ export default function ProfileScreen({ navigation }) {
                     selectedItem === item && isExpanded && styles.navItemSelected
                   ]}
                 >
-                  <Ionicons name={
-                    item === "Dashboard" ? "battery-charging-outline" :
-                      item === "Stock" ? "cube-outline" :
-                        item === "Sales" ? "flash-outline" :
-                          item === "Reports" ? "document-text-outline" :
-                            item === "debtors" ? "wallet-outline" : "person-outline"
-                  } size={22} color="#fff" />
-                  {isExpanded && <Text style={styles.navText}>{item.charAt(0).toUpperCase() + item.slice(1)}</Text>}
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Ionicons name={
+                      item === "Dashboard" ? "battery-charging-outline" :
+                        item === "Stock" ? "cube-outline" :
+                          item === "Sales" ? "flash-outline" :
+                            item === "Reports" ? "document-text-outline" :
+                              item === "debtors" ? "wallet-outline" : "person-outline"
+                    } size={22} color="#fff" />
+                    {isExpanded && <Text style={styles.navText}>{item.charAt(0).toUpperCase() + item.slice(1)}</Text>}
+                  </View>
                 </AnimatedBox>
               ))}
             </View>
@@ -241,13 +243,17 @@ export default function ProfileScreen({ navigation }) {
             {/* Utility Items */}
             <View style={styles.utilityContainer}>
               <AnimatedBox isButton={true} style={[styles.navItem, isExpanded && styles.navItemExpanded]} onPress={() => setHelpModalVisible(true)}>
-                <Ionicons name="help-circle-outline" size={22} color="#fff" />
-                {isExpanded && <Text style={styles.navText}>Help</Text>}
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Ionicons name="help-circle-outline" size={22} color="#fff" />
+                  {isExpanded && <Text style={styles.navText}>Help</Text>}
+                </View>
               </AnimatedBox>
 
               <AnimatedBox isButton={true} style={[styles.navItem, isExpanded && styles.navItemExpanded]} onPress={() => setShowLogoutModal(true)}>
-                <Ionicons name="log-out-outline" size={22} color="#fff" />
-                {isExpanded && <Text style={styles.navText}>Logout</Text>}
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Ionicons name="log-out-outline" size={22} color="#fff" />
+                  {isExpanded && <Text style={styles.navText}>Logout</Text>}
+                </View>
               </AnimatedBox>
             </View>
 
@@ -292,35 +298,25 @@ export default function ProfileScreen({ navigation }) {
         >
           <ScrollView
             contentContainerStyle={[styles.container, darkMode && styles.darkContainer]}
-            style={darkMode && styles.darkScrollView}
             showsVerticalScrollIndicator={false}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[MAIN]} />
-            }
           >
-            {/* Header */}
             {/* Header */}
             <AnimatedBox type="fade" duration={600}>
               <View style={[styles.headerRow, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, marginBottom: 20 }]}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   {navigation?.canGoBack() && (
-                    <TouchableOpacity
-                      onPress={() => navigation.goBack()}
-                      style={styles.backButton}
-                    >
+                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                       <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
                     </TouchableOpacity>
                   )}
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 10 }}>
                     <Image source={require("../assets/images/ppl.png")} style={{ width: 36, height: 36 }} />
-                    <Text style={[{ fontFamily: "Urbanist_700Bold" , fontSize: 20}, darkMode && styles.darkText]}>Stocka</Text>
+                    <Text style={[{ fontFamily: "Urbanist_700Bold", fontSize: 20 }, darkMode && styles.darkText]}>Stocka</Text>
                   </View>
                 </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <TouchableOpacity onPress={() => setHelpModalVisible(true)} style={{ marginRight: 15 }}>
-                    <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
-                  </TouchableOpacity>
-                </View>
+                <TouchableOpacity onPress={() => setHelpModalVisible(true)}>
+                  <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
+                </TouchableOpacity>
               </View>
             </AnimatedBox>
 

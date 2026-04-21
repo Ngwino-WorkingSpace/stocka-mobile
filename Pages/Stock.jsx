@@ -404,7 +404,7 @@ export default function StockScreen({ navigation }) {
 
 
   return (
-    <View style={[styles.container, { backgroundColor: darkMode ? "#09111E" : "#fff", paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+    <View style={[styles.container, { backgroundColor: darkMode ? "#09111E" : "#fff", paddingTop: insets.top, paddingBottom: insets.bottom, flexDirection: 'column' }]}>
       {/* FLOATING PRESS HANDLE */}
       {isPressState && (
         <TouchableOpacity
@@ -438,6 +438,7 @@ export default function StockScreen({ navigation }) {
           {
             width: isPressState ? 40 : isCollapsed ? 70 : 220,
             backgroundColor: MAIN,
+            zIndex: 20,
             alignItems: isPressState ? "center" : isCollapsed ? "center" : "flex-start",
             paddingHorizontal: isPressState ? 0 : isCollapsed ? 6 : 10,
           },
@@ -508,7 +509,7 @@ export default function StockScreen({ navigation }) {
         )}
       </View>
 
-      <SafeAreaView style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0 }}>
+      <View style={{ flex: 1, marginLeft: isPressState ? 40 : isCollapsed ? 70 : 0 }}>
         <ScrollView
           contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
           showsVerticalScrollIndicator={false}
@@ -579,7 +580,7 @@ export default function StockScreen({ navigation }) {
             <Text style={styles.addText}>+ Add Product</Text>
           </AnimatedBox>
         </ScrollView>
-      </SafeAreaView>
+      </View>
 
       {/* ================= CATEGORY MODAL ================= */}
       <Modal visible={categoryVisible} transparent animationType="fade">
@@ -1034,8 +1035,10 @@ const NavItem = ({ icon, label, active, expanded, onPress }) => (
       active && expanded && styles.navItemSelected,
     ]}
   >
-    <Ionicons name={icon} size={22} color="#fff" />
-    {expanded && <Text style={styles.navText}>{label}</Text>}
+    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <Ionicons name={icon} size={22} color="#fff" />
+      {expanded && <Text style={styles.navText}>{label}</Text>}
+    </View>
   </AnimatedBox>
 );
 

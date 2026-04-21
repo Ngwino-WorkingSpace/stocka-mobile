@@ -269,26 +269,32 @@ export default function ReportsScreen({ navigation }) {
                     selectedItem === item && isExpanded && styles.navItemSelected
                   ]}
                 >
-                  <Ionicons name={
-                    item === "Dashboard" ? "battery-charging-outline" :
-                      item === "Stock" ? "cube-outline" :
-                        item === "Sales" ? "flash-outline" :
-                          item === "Reports" ? "document-text-outline" :
-                            item === "Debtors" ? "wallet-outline" : "person-outline"
-                  } size={22} color="#fff" />
-                  {isExpanded && <Text style={styles.navText}>{item}</Text>}
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Ionicons name={
+                      item === "Dashboard" ? "battery-charging-outline" :
+                        item === "Stock" ? "cube-outline" :
+                          item === "Sales" ? "flash-outline" :
+                            item === "Reports" ? "document-text-outline" :
+                              item === "Debtors" ? "wallet-outline" : "person-outline"
+                    } size={22} color="#fff" />
+                    {isExpanded && <Text style={styles.navText}>{item}</Text>}
+                  </View>
                 </AnimatedBox>
               ))}
             </View>
             {isExpanded && <View style={styles.divider} />}
             <View style={styles.utilityContainer}>
               <AnimatedBox isButton={true} style={[styles.navItem, isExpanded && styles.navItemExpanded]} onPress={() => setHelpModalVisible(true)}>
-                <Ionicons name="help-circle-outline" size={22} color="#fff" />
-                {isExpanded && <Text style={styles.navText}>Help</Text>}
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Ionicons name="help-circle-outline" size={22} color="#fff" />
+                  {isExpanded && <Text style={styles.navText}>Help</Text>}
+                </View>
               </AnimatedBox>
               <AnimatedBox isButton={true} style={[styles.navItem, isExpanded && styles.navItemExpanded]} onPress={() => setShowLogoutModal(true)}>
-                <Ionicons name="log-out-outline" size={22} color="#fff" />
-                {isExpanded && <Text style={styles.navText}>Logout</Text>}
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Ionicons name="log-out-outline" size={22} color="#fff" />
+                  {isExpanded && <Text style={styles.navText}>Logout</Text>}
+                </View>
               </AnimatedBox>
             </View>
             {isExpanded && (
