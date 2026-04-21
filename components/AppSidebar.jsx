@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import AnimatedBox from "./AnimatedBox";
+import { useFonts, Urbanist_400Regular, Urbanist_700Bold, Urbanist_500Medium, Urbanist_600SemiBold } from "@expo-google-fonts/urbanist";
+import {Nosifer_400Regular, Nosifer_700Regular} from "@expo-google-fonts/nosifer";
 
 const { width } = Dimensions.get("window");
 const MAIN = "#09111E";

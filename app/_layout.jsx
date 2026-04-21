@@ -18,6 +18,7 @@ import {
   Urbanist_600SemiBold,
   Urbanist_700Bold,
 } from '@expo-google-fonts/urbanist';
+import { Nosifer_400Regular, Nosifer_700Regular } from '@expo-google-fonts/nosifer';
 
 // Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
@@ -37,6 +38,8 @@ export default function RootLayout() {
     Urbanist_500Medium,
     Urbanist_600SemiBold,
     Urbanist_700Bold,
+    Nosifer_400Regular,
+    Nosifer_700Regular,
   });
 
   useEffect(() => {
@@ -124,7 +127,7 @@ const styles = StyleSheet.create({
   splashText: {
     marginTop: 20,
     color: '#fff',
-    fontFamily: 'Urbanist_700Bold', // Make sure fonts are loaded or use system font as backup? 
+    fontFamily: 'Nosifer_400Regular', // Make sure fonts are loaded or use system font as backup? 
     // Wait, if fonts aren't loaded this might error. Safer to use system font here or wait for fonts inside prepare.
     // Actually the splash is showing WHILE fonts are loading. So we shouldn't rely on custom fonts yet unless we are sure.
     // I will use a safe font here.
