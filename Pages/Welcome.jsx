@@ -11,7 +11,7 @@ import {
   Urbanist_700Bold,
 } from "@expo-google-fonts/urbanist";
 
-export default function LandingScreen({navigation}) {
+export default function LandingScreen({ navigation }) {
 
   const [fontsLoaded] = useFonts({
     Urbanist_400Regular,
@@ -28,31 +28,31 @@ export default function LandingScreen({navigation}) {
       {/* Centered content */}
       <View style={styles.centeredContent}>
         <AnimatedBox delay={100} type="slideUp">
-            <Image
+          <Image
             source={require("../assets/images/ppl.png")}
             style={styles.logo}
             tintColor="#fff"
-            />
+          />
         </AnimatedBox>
 
         <AnimatedBox delay={300} type="slideUp">
-            <Text style={styles.subtitle}>Welcome to</Text>
+          <Text style={styles.subtitle}>Welcome to</Text>
         </AnimatedBox>
 
         <AnimatedBox delay={500} type="slideUp">
-            <Text style={styles.title}>Stocka</Text>
+          <Text style={styles.title}>Stocka</Text>
         </AnimatedBox>
 
         <AnimatedBox delay={700} type="slideUp">
-            <Text style={styles.paragraph}>
+          <Text style={styles.paragraph}>
             Stocka is the smart way to run a business without the headache.
             It records every transaction automatically, tracks profits and losses
             in real time, and replaces messy ledgers and complex calculations so
             you can focus on growing your business, not chasing numbers.
-            </Text>
+          </Text>
         </AnimatedBox>
 
-        <AnimatedBox delay={900} isButton={true} onPress={()=>navigation.navigate("signup")} style={styles.button}>
+        <AnimatedBox delay={900} isButton={true} onPress={() => navigation.navigate("signup")} style={styles.button}>
           <Text style={styles.buttonText}>Continue</Text>
           <Ionicons name="arrow-forward-circle" size={27} color="#fff" />
         </AnimatedBox>
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     alignItems: "center",     // centers horizontally
     paddingHorizontal: 30,
     zIndex: 2,
-    paddingTop:150,
+    paddingTop: 150,
   },
 
   logo: {
@@ -89,14 +89,14 @@ const styles = StyleSheet.create({
     fontSize: 25,
     color: "#FFFFFF",
     marginBottom: 5,
-    fontFamily:"Urbanist_400Regular",
+    fontFamily: "Urbanist_400Regular",
   },
   title: {
     fontSize: 55,
     color: "#FFFFFF",
     fontWeight: "bold",
     marginBottom: 15,
-    fontFamily:"Urbanist_700Bold",
+    fontFamily: "Urbanist_700Bold",
   },
   paragraph: {
     fontSize: 14,
@@ -104,8 +104,8 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     textAlign: "center",  // centers text horizontally
     marginBottom: 10,
-    letterSpacing:0.1,
-    fontFamily:"Urbanist_400Regular",
+    letterSpacing: 0.1,
+    fontFamily: "Urbanist_400Regular",
   },
   button: {
     flexDirection: "row",
@@ -115,15 +115,15 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 30,
-    borderWidth:1,
-    borderColor:"#fff",
+    borderWidth: 1,
+    borderColor: "#fff",
   },
   buttonText: {
     color: "#fff",
     fontSize: 22,
     fontWeight: "600",
     marginRight: 8,
-    fontFamily:"Urbanist_400Regular",
+    fontFamily: "Urbanist_400Regular",
   },
   bottomText: {
     position: "absolute",
@@ -132,9 +132,9 @@ const styles = StyleSheet.create({
     fontSize: 21,
     color: "#fff",
     fontWeight: "600",
-    fontFamily:"Urbanist_400Regular",
+    fontFamily: "Urbanist_400Regular",
   },
-  logo:{
+  logo: {
     width: 70,
     height: 70,
   }

@@ -81,99 +81,99 @@ export default function SignupScreen({ navigation }) {
         >
           <View style={styles.content}>
             <AnimatedBox delay={100} type="slideUp">
-                <Image
+              <Image
                 source={require("../assets/images/ppl.png")}
                 style={styles.logo}
                 tintColor="#fff"
-                />
+              />
             </AnimatedBox>
 
             <AnimatedBox delay={200} type="slideUp">
-                <Text style={styles.welcometext}>
+              <Text style={styles.welcometext}>
                 Welcome to TradeWise! Let's get you signed up
-                </Text>
+              </Text>
             </AnimatedBox>
 
             <AnimatedBox delay={300} type="slideUp" style={{ width: '100%' }}>
-                <TextInput
+              <TextInput
                 style={styles.input}
                 placeholder="Fullname"
                 placeholderTextColor="rgba(255, 255, 255, 0.4)"
                 value={fullname}
                 onChangeText={setFullname}
-                />
+              />
             </AnimatedBox>
 
             <AnimatedBox delay={400} type="slideUp" style={{ width: '100%' }}>
-                <TextInput
+              <TextInput
                 style={styles.input}
                 placeholder="Phone number"
                 placeholderTextColor="rgba(255, 255, 255, 0.4)"
                 keyboardType="phone-pad"
                 value={phoneNumber}
                 onChangeText={setPhoneNumber}
-                />
+              />
             </AnimatedBox>
 
             <AnimatedBox delay={500} type="slideUp" style={{ width: '100%' }}>
-                <TextInput
+              <TextInput
                 style={styles.input}
                 placeholder="Email (Optional)"
                 placeholderTextColor="rgba(255, 255, 255, 0.4)"
                 keyboardType="email-address"
                 value={email}
                 onChangeText={setEmail}
-                />
+              />
             </AnimatedBox>
 
             <AnimatedBox delay={600} type="slideUp" style={{ width: '100%' }}>
-                <TextInput
+              <TextInput
                 style={styles.input}
                 placeholder="Recovery Pin"
                 placeholderTextColor="rgba(255, 255, 255, 0.4)"
                 value={recoveryPin}
                 onChangeText={setRecoveryPin}
                 keyboardType="numeric"
-                />
+              />
             </AnimatedBox>
 
             <AnimatedBox delay={700} type="slideUp" style={{ width: '100%' }}>
-                <View style={styles.passwordContainer}>
+              <View style={styles.passwordContainer}>
                 <TextInput
-                    style={styles.passwordInput}
-                    placeholder="Password"
-                    placeholderTextColor="rgba(255, 255, 255, 0.4)"
-                    secureTextEntry={!showPassword}
-                    value={password}
-                    onChangeText={setPassword}
+                  style={styles.passwordInput}
+                  placeholder="Password"
+                  placeholderTextColor="rgba(255, 255, 255, 0.4)"
+                  secureTextEntry={!showPassword}
+                  value={password}
+                  onChangeText={setPassword}
                 />
                 <TouchableOpacity
-                    onPress={() => setShowPassword(!showPassword)}
-                    style={styles.eyeIcon}
+                  onPress={() => setShowPassword(!showPassword)}
+                  style={styles.eyeIcon}
                 >
-                    <Ionicons
+                  <Ionicons
                     name={showPassword ? "eye" : "eye-off"}
                     size={20}
                     color="#fff"
-                    />
+                  />
                 </TouchableOpacity>
-                </View>
+              </View>
             </AnimatedBox>
 
             <AnimatedBox delay={800} type="slideUp" style={{ width: '100%' }}>
-                <Text style={styles.signinText}>
+              <Text style={styles.signinText}>
                 Already have an account?{" "}
                 <Text
-                    style={styles.highlighted}
-                    onPress={() => navigation.navigate("Login")}
+                  style={styles.highlighted}
+                  onPress={() => navigation.navigate("Login")}
                 >
-                    Sign in
+                  Sign in
                 </Text>
-                </Text>
+              </Text>
             </AnimatedBox>
 
             <AnimatedBox delay={900} isButton={true} onPress={handleRegister} style={[styles.button, { opacity: loading ? 0.7 : 1 }]}>
-                <Text style={styles.buttonText}>{loading ? "Signing Up..." : "Sign Up"}</Text>
+              <Text style={styles.buttonText}>{loading ? "Signing Up..." : "Sign Up"}</Text>
             </AnimatedBox>
           </View>
         </ScrollView>
@@ -263,9 +263,11 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#1E90FF",
     paddingVertical: 18,
+    paddingHorizontal: 15,
     borderRadius: 12,
     alignItems: "center",
     marginTop: 10,
+    borderWidth: 1,
   },
 
   buttonText: {

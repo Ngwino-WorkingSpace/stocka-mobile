@@ -31,7 +31,7 @@ export default function SignInScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
 
-  const [fontsLoaded] = useFonts({  
+  const [fontsLoaded] = useFonts({
     Urbanist_400Regular,
     Urbanist_500Medium,
     Urbanist_600SemiBold,
@@ -87,75 +87,75 @@ export default function SignInScreen({ navigation }) {
         >
           <View style={styles.content}>
             <AnimatedBox delay={100} type="slideUp">
-                <Image
+              <Image
                 source={require("../assets/images/ppl.png")}
                 style={styles.logo}
                 tintColor="#fff"
-                />
+              />
             </AnimatedBox>
 
             <AnimatedBox delay={200} type="slideUp">
-                <Text style={styles.welcometext}>
+              <Text style={styles.welcometext}>
                 Welcome to TradeWise! Let's get you signed in
-                </Text>
+              </Text>
             </AnimatedBox>
 
             <AnimatedBox delay={300} type="slideUp" style={{ width: '100%' }}>
-                <TextInput
+              <TextInput
                 style={styles.input}
                 placeholder="Phone number"
                 placeholderTextColor="rgba(255, 255, 255, 0.4)"
                 value={phoneNumber}
                 onChangeText={setPhoneNumber}
                 keyboardType="phone-pad"
-                />
+              />
             </AnimatedBox>
 
             <AnimatedBox delay={400} type="slideUp" style={{ width: '100%' }}>
-                <View style={styles.passwordContainer}>
+              <View style={styles.passwordContainer}>
                 <TextInput
-                    style={styles.passwordInput}
-                    placeholder="Password"
-                    placeholderTextColor="rgba(255, 255, 255, 0.4)"
-                    secureTextEntry={!showPassword}
-                    value={password}
-                    onChangeText={setPassword}
+                  style={styles.passwordInput}
+                  placeholder="Password"
+                  placeholderTextColor="rgba(255, 255, 255, 0.4)"
+                  secureTextEntry={!showPassword}
+                  value={password}
+                  onChangeText={setPassword}
                 />
                 <TouchableOpacity
-                    onPress={() => setShowPassword(!showPassword)}
-                    style={styles.eyeIcon}
+                  onPress={() => setShowPassword(!showPassword)}
+                  style={styles.eyeIcon}
                 >
-                    <Ionicons
+                  <Ionicons
                     name={showPassword ? "eye" : "eye-off"}
                     size={20}
                     color="#fff"
-                    />
+                  />
                 </TouchableOpacity>
-                </View>
+              </View>
             </AnimatedBox>
 
             <AnimatedBox delay={500} type="slideUp" style={{ width: '100%' }}>
-                <Text style={styles.signinText}>
+              <Text style={styles.signinText}>
                 Don't have an account?{" "}
                 <Text
-                    style={styles.highlighted}
-                    onPress={() => navigation.navigate("signup")}
+                  style={styles.highlighted}
+                  onPress={() => navigation.navigate("signup")}
                 >
-                    Sign up
+                  Sign up
                 </Text>
-                </Text>
+              </Text>
             </AnimatedBox>
 
             <AnimatedBox delay={600} isButton={true} onPress={handleLogin} style={[styles.button, { opacity: loading ? 0.7 : 1 }]}>
-                <Text style={styles.buttonText}>{loading ? "Signing In..." : "Sign In"}</Text>
+              <Text style={styles.buttonText}>{loading ? "Signing In..." : "Sign In"}</Text>
             </AnimatedBox>
 
             <AnimatedBox delay={700} type="fade">
-                <Text style={styles.forgot}
+              <Text style={styles.forgot}
                 onPress={() => {
-                    navigation.navigate("forgot-password");
+                  navigation.navigate("forgot-password");
                 }}
-                >Forgot Password?</Text>
+              >Forgot Password?</Text>
             </AnimatedBox>
           </View>
         </ScrollView>
@@ -244,8 +244,8 @@ const styles = StyleSheet.create({
   button: {
     width: "100%",
     backgroundColor: "#1E90FF",
-    paddingVertical: 18,
-    borderRadius: 10,
+    paddingVertical: 16,
+    borderRadius: 12,
     alignItems: "center",
     marginTop: 10,
 
