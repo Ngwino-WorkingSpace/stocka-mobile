@@ -16,6 +16,7 @@ import {
   RefreshControl,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import AnimatedBox from "../components/AnimatedBox.jsx";
 import {
   useFonts,
   Urbanist_400Regular,
@@ -270,27 +271,29 @@ export default function DebtorsScreen({ navigation }) {
     setShowLogoutModal(true);
   };
 
-  const renderDebtorItem = (item) => (
-    <TouchableOpacity key={item.id} onPress={() => {
-      setSelectedDebtor(item);
-      setEntryInfo(item);
-      setInfoModalVisible(true);
-    }}>
-      <View style={[styles.card, darkMode && styles.darkCard]}>
-        <View style={[styles.avatar, darkMode && styles.darkAvatar]}>
-          <Ionicons name="person-outline" size={22} color={darkMode ? "#fff" : "#0B3A53"} />
-        </View>
+  const renderDebtorItem = (item, index) => (
+    <AnimatedBox delay={index * 100} type="slideUp" key={item.id}>
+      <TouchableOpacity onPress={() => {
+        setSelectedDebtor(item);
+        setEntryInfo(item);
+        setInfoModalVisible(true);
+      }}>
+        <View style={[styles.card, darkMode && styles.darkCard]}>
+          <View style={[styles.avatar, darkMode && styles.darkAvatar]}>
+            <Ionicons name="person-outline" size={22} color={darkMode ? "#fff" : "#0B3A53"} />
+          </View>
 
-        <View style={styles.cardText}>
-          <Text style={[styles.name, darkMode && styles.darkText]} numberOfLines={1}>
-            {item.name}
-          </Text>
-          <Text style={[styles.phone, darkMode && { color: "#aaa" }]}>{item.phone}</Text>
-        </View>
+          <View style={styles.cardText}>
+            <Text style={[styles.name, darkMode && styles.darkText]} numberOfLines={1}>
+              {item.name}
+            </Text>
+            <Text style={[styles.phone, darkMode && { color: "#aaa" }]}>{item.phone}</Text>
+          </View>
 
-        <Text style={[styles.amount, darkMode && styles.darkText]}>{item.amount}</Text>
-      </View>
-    </TouchableOpacity>
+          <Text style={[styles.amount, darkMode && styles.darkText]}>{item.amount}</Text>
+        </View>
+      </TouchableOpacity>
+    </AnimatedBox>
   );
 
 
@@ -379,77 +382,27 @@ export default function DebtorsScreen({ navigation }) {
         {!isPressState && (
           <>
             <View style={styles.menuContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.navItem,
-                  isExpanded && styles.navItemExpanded,
-                  selectedItem === "Dashboard" && isExpanded && styles.navItemSelected
-                ]}
-                onPress={() => handleNavItemPress("Dashboard")}
-              >
-                <Ionicons name="battery-charging-outline" size={22} color="#fff" />
-                {isExpanded && <Text style={styles.navText}>Dashboard</Text>}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.navItem,
-                  isExpanded && styles.navItemExpanded,
-                  selectedItem === "Stock" && isExpanded && styles.navItemSelected
-                ]}
-                onPress={() => handleNavItemPress("Stock")}
-              >
-                <Ionicons name="cube-outline" size={22} color="#fff" />
-                {isExpanded && <Text style={styles.navText}>Stock</Text>}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.navItem,
-                  isExpanded && styles.navItemExpanded,
-                  selectedItem === "Sales" && isExpanded && styles.navItemSelected
-                ]}
-                onPress={() => handleNavItemPress("Sales")}
-              >
-                <Ionicons name="flash-outline" size={22} color="#fff" />
-                {isExpanded && <Text style={styles.navText}>Sales</Text>}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.navItem,
-                  isExpanded && styles.navItemExpanded,
-                  selectedItem === "Reports" && isExpanded && styles.navItemSelected
-                ]}
-                onPress={() => handleNavItemPress("Reports")}
-              >
-                <Ionicons name="document-text-outline" size={22} color="#fff" />
-                {isExpanded && <Text style={styles.navText}>Reports</Text>}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.navItem,
-                  isExpanded && styles.navItemExpanded,
-                  selectedItem === "Debtors" && isExpanded && styles.navItemSelected
-                ]}
-                onPress={() => handleNavItemPress("Debtors")}
-              >
-                <Ionicons name="wallet-outline" size={22} color="#fff" />
-                {isExpanded && <Text style={styles.navText}>Debtors</Text>}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.navItem,
-                  isExpanded && styles.navItemExpanded,
-                  selectedItem === "Profile" && isExpanded && styles.navItemSelected
-                ]}
-                onPress={() => handleNavItemPress("Profile")}
-              >
-                <Ionicons name="person-outline" size={22} color="#fff" />
-                {isExpanded && <Text style={styles.navText}>Profile</Text>}
-              </TouchableOpacity>
+              {["Dashboard", "Stock", "Sales", "Reports", "Debtors", "Profile"].map((item, index) => (
+                <AnimatedBox 
+                  key={item}
+                  isButton={true}
+                  onPress={() => handleNavItemPress(item)}
+                  style={[
+                    styles.navItem,
+                    isExpanded && styles.navItemExpanded,
+                    selectedItem === item && isExpanded && styles.navItemSelected
+                  ]}
+                >
+                  <Ionicons name={
+                    item === "Dashboard" ? "battery-charging-outline" :
+                      item === "Stock" ? "cube-outline" :
+                        item === "Sales" ? "flash-outline" :
+                          item === "Reports" ? "document-text-outline" :
+                            item === "Debtors" ? "wallet-outline" : "person-outline"
+                  } size={22} color="#fff" />
+                  {isExpanded && <Text style={styles.navText}>{item}</Text>}
+                </AnimatedBox>
+              ))}
             </View>
 
             {/* Divider */}
@@ -457,20 +410,14 @@ export default function DebtorsScreen({ navigation }) {
 
             {/* Utility Items */}
             <View style={styles.utilityContainer}>
-              <TouchableOpacity
-                style={[styles.navItem, isExpanded && styles.navItemExpanded]}
-                onPress={() => setHelpModalVisible(true)}
-              >
+              <AnimatedBox isButton={true} style={[styles.navItem, isExpanded && styles.navItemExpanded]} onPress={() => setHelpModalVisible(true)}>
                 <Ionicons name="help-circle-outline" size={22} color="#fff" />
                 {isExpanded && <Text style={styles.navText}>Help</Text>}
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.navItem, isExpanded && styles.navItemExpanded]}
-                onPress={handleLogout}
-              >
+              </AnimatedBox>
+              <AnimatedBox isButton={true} style={[styles.navItem, isExpanded && styles.navItemExpanded]} onPress={handleLogout}>
                 <Ionicons name="log-out-outline" size={22} color="#fff" />
                 {isExpanded && <Text style={styles.navText}>Logout</Text>}
-              </TouchableOpacity>
+              </AnimatedBox>
             </View>
 
             {/* Theme Toggle - At the bottom, only when expanded */}
@@ -521,92 +468,101 @@ export default function DebtorsScreen({ navigation }) {
             }
           >
             {/* HEADER */}
-            <View style={[styles.headerRow, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, marginBottom: 20 }]}>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                {navigation?.canGoBack() && (
-                  <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                    <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
-                  </TouchableOpacity>
-                )}
-                <View style={styles.logoContainerHeader}>
-                  <Image source={require("../assets/images/ppl.png")} style={{ width: 36, height: 36 }} />
-                  <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
+            <AnimatedBox type="fade" duration={600}>
+              <View style={[styles.headerRow, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, marginBottom: 20 }]}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  {navigation?.canGoBack() && (
+                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                      <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
+                    </TouchableOpacity>
+                  )}
+                  <View style={styles.logoContainerHeader}>
+                    <Image source={require("../assets/images/ppl.png")} style={{ width: 36, height: 36 }} />
+                    <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
+                  </View>
                 </View>
+                <TouchableOpacity onPress={() => setHelpModalVisible(true)}>
+                  <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
+                </TouchableOpacity>
               </View>
-              <TouchableOpacity onPress={() => setHelpModalVisible(true)}>
-                <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
-              </TouchableOpacity>
-            </View>
+            </AnimatedBox>
 
             {/* TABS */}
-            <View style={[styles.tabs, darkMode && styles.darkTabs]}>
-              {["debtors", "creditors"].map((tab) => (
-                <TouchableOpacity
-                  key={tab}
-                  style={[styles.tab, activeTab === tab && styles.activeTab]}
-                  onPress={() => setActiveTab(tab)}
-                >
-                  <Text style={[styles.tabText, activeTab === tab && styles.activeTabText, darkMode && !(activeTab === tab) && styles.darkText]}>
-                    {tab === "debtors" ? "To Receive" : "To Pay"}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+            <AnimatedBox type="slideUp" delay={100}>
+              <View style={[styles.tabs, darkMode && styles.darkTabs]}>
+                {["debtors", "creditors"].map((tab) => (
+                  <TouchableOpacity
+                    key={tab}
+                    style={[styles.tab, activeTab === tab && styles.activeTab]}
+                    onPress={() => setActiveTab(tab)}
+                  >
+                    <Text style={[styles.tabText, activeTab === tab && styles.activeTabText, darkMode && !(activeTab === tab) && styles.darkText]}>
+                      {tab === "debtors" ? "To Receive" : "To Pay"}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </AnimatedBox>
 
             {/* SUMMARY CARD */}
-            <View style={[styles.summaryCard, darkMode && styles.darkSummaryCard]}>
-              <View>
-                <Text style={[styles.summaryLabel, darkMode && { color: "#ccc" }]}>
-                  {activeTab === "debtors" ? "Total Debtors Balance" : "Total Creditors Balance"}
-                </Text>
-                <Text style={styles.summaryValue}>
-                  {Math.abs(debtorsList.reduce((acc, d) => acc + (Number(d.rawAmount) || 0), 0)).toLocaleString()} FRW
-                </Text>
+            <AnimatedBox type="zoomIn" delay={200}>
+              <View style={[styles.summaryCard, darkMode && styles.darkSummaryCard]}>
+                <View>
+                  <Text style={[styles.summaryLabel, darkMode && { color: "#ccc" }]}>
+                    {activeTab === "debtors" ? "Total Debtors Balance" : "Total Creditors Balance"}
+                  </Text>
+                  <Text style={styles.summaryValue}>
+                    {Math.abs(debtorsList.reduce((acc, d) => acc + (Number(d.rawAmount) || 0), 0)).toLocaleString()} FRW
+                  </Text>
+                </View>
+                <View style={styles.summaryIconBox}>
+                  <Ionicons name={activeTab === "debtors" ? "arrow-down-circle" : "arrow-up-circle"} size={32} color="#fff" />
+                </View>
               </View>
-              <View style={styles.summaryIconBox}>
-                <Ionicons name={activeTab === "debtors" ? "arrow-down-circle" : "arrow-up-circle"} size={32} color="#fff" />
-              </View>
-            </View>
+            </AnimatedBox>
 
             {/* TITLE */}
-            <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>
-              {activeTab === "debtors" ? "Current Debtors" : "Current Creditors"}
-            </Text>
+            <AnimatedBox type="slideUp" delay={300}>
+                <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>
+                {activeTab === "debtors" ? "Current Debtors" : "Current Creditors"}
+                </Text>
+            </AnimatedBox>
 
             {/* SEARCH & SORT */}
-            <View style={styles.searchRow}>
-              <TextInput
-                placeholder="Search by name or phone..."
-                placeholderTextColor="#777"
-                value={searchText}
-                onChangeText={setSearchText}
-                style={styles.searchInput}
-              />
+            <AnimatedBox type="fade" delay={400}>
+                <View style={styles.searchRow}>
+                <TextInput
+                    placeholder="Search by name or phone..."
+                    placeholderTextColor="#777"
+                    value={searchText}
+                    onChangeText={setSearchText}
+                    style={styles.searchInput}
+                />
 
-
-              <TouchableOpacity
-                style={styles.sortBtn}
-                onPress={() => setSortOpen(!sortOpen)}
-              >
-                <Text style={styles.sortText}>{sortBy}</Text>
-                <Ionicons name="chevron-down" size={14} color="#fff" />
-              </TouchableOpacity>
-            </View>
+                <TouchableOpacity
+                    style={styles.sortBtn}
+                    onPress={() => setSortOpen(!sortOpen)}
+                >
+                    <Text style={styles.sortText}>{sortBy}</Text>
+                    <Ionicons name="chevron-down" size={14} color="#fff" />
+                </TouchableOpacity>
+                </View>
+            </AnimatedBox>
 
             {/* LIST */}
             <View style={{ paddingBottom: 100 }}>
-              {filteredData.map(renderDebtorItem)}
+              {filteredData.map((item, index) => renderDebtorItem(item, index))}
             </View>
 
             {/* ADD BUTTON */}
-            <TouchableOpacity style={styles.addBtn}
+            <AnimatedBox usePulse={true} isButton={true} style={styles.addBtn}
               onPress={() => setModalVisible(true)}
             >
               <Ionicons name="add" size={18} color="#fff" />
               <Text style={styles.addText}>
                 {activeTab === "debtors" ? "Add Person" : "Add Person"}
               </Text>
-            </TouchableOpacity>
+            </AnimatedBox>
           </ScrollView>
         </KeyboardAvoidingView>
       </View>

@@ -1,4 +1,5 @@
 import BackgroundScreen from "../components/Background2.jsx";
+import AnimatedBox from "../components/AnimatedBox.jsx";
 import React, { useState } from "react";
 import {
   View,
@@ -81,40 +82,45 @@ export default function ResetPasswordScreen({ navigation, route }) {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.content}>
-            <Image
-              source={require("../assets/images/ppl.png")}
-              style={styles.logo}
-            />
+            <AnimatedBox delay={100} type="slideUp">
+              <Image
+                source={require("../assets/images/ppl.png")}
+                style={styles.logo}
+              />
+            </AnimatedBox>
 
-            <Text style={styles.welcometext}>
-              Reset your password. And make sure to put a password
-              that is easy for you to remember.
-            </Text>
+            <AnimatedBox delay={200} type="slideUp">
+              <Text style={styles.welcometext}>
+                Reset your password. And make sure to put a password
+                that is easy for you to remember.
+              </Text>
+            </AnimatedBox>
 
-            <TextInput
-              style={styles.input}
-              placeholder="Create Password"
-              placeholderTextColor="#107EBA"
-              secureTextEntry
-              value={newPassword}
-              onChangeText={setNewPassword}
-            />
+            <AnimatedBox delay={300} type="slideUp" style={{ width: "100%" }}>
+              <TextInput
+                style={styles.input}
+                placeholder="Create Password"
+                placeholderTextColor="#107EBA"
+                secureTextEntry
+                value={newPassword}
+                onChangeText={setNewPassword}
+              />
+            </AnimatedBox>
 
-            <TextInput
-              style={styles.input}
-              placeholder="Confirm Password"
-              placeholderTextColor="#107EBA"
-              secureTextEntry
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-            />
+            <AnimatedBox delay={400} type="slideUp" style={{ width: "100%" }}>
+              <TextInput
+                style={styles.input}
+                placeholder="Confirm Password"
+                placeholderTextColor="#107EBA"
+                secureTextEntry
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+              />
+            </AnimatedBox>
 
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleReset}
-            >
+            <AnimatedBox delay={500} type="slideUp" isButton={true} style={[styles.button, { width: "100%" }]} onPress={handleReset}>
               <Text style={styles.buttonText}>{loading ? "RESETTING..." : "RESET PASSWORD"}</Text>
-            </TouchableOpacity>
+            </AnimatedBox>
 
           </View>
         </ScrollView>

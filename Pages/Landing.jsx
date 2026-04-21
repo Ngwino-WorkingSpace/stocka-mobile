@@ -1,4 +1,5 @@
 import Background from "../components/Background.jsx";
+import AnimatedBox from "../components/AnimatedBox.jsx";
 import React from "react";
 import {View, Text, StyleSheet,Image, TouchableOpacity} from "react-native";
 import {
@@ -23,20 +24,20 @@ export default function LandingScreen({navigation}){
         <View style={styles.container}>
           <Background/>
            <View style={styles.content}>
-                 <View style={styles.logoContainer}>
+                 <AnimatedBox delay={200} type="slideUp" style={styles.logoContainer}>
                    <Image source={require("../assets/images/ppl.png")} style={styles.logo} tintColor="#fff" />
                    <Text style={styles.title}>Stocka</Text>
-                 </View>
+                 </AnimatedBox>
             <View style={styles.GetStarted}>
-  <TouchableOpacity style={styles.getStartedBtn}
-    onPress={()=> navigation.navigate("Welcome")}
-   >
-    <Text style={styles.getStartedText}>Get started</Text>
-  </TouchableOpacity>
-</View>
+              <AnimatedBox delay={400} type="slideUp" isButton={true} style={styles.getStartedBtn} onPress={()=> navigation.navigate("Welcome")}>
+                <Text style={styles.getStartedText}>Get started</Text>
+              </AnimatedBox>
+            </View>
 
           </View>
-          <Text style={styles.bottomText}>NGWINO</Text>
+          <AnimatedBox delay={600} type="fade">
+            <Text style={styles.bottomText}>NGWINO</Text>
+          </AnimatedBox>
         </View>
 
     );

@@ -1,4 +1,5 @@
 import BackgroundScreen from "../components/Background2.jsx";
+import AnimatedBox from "../components/AnimatedBox.jsx";
 import React, { useState } from "react";
 import {
   View,
@@ -80,32 +81,35 @@ export default function OTPScreen({ navigation, route }) {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.content}>
-            <Image
-              source={require("../assets/images/ppl.png")}
-              style={styles.logo}
-            />
+            <AnimatedBox delay={100} type="slideUp">
+              <Image
+                source={require("../assets/images/ppl.png")}
+                style={styles.logo}
+              />
+            </AnimatedBox>
 
-            <Text style={styles.welcometext}>
-              An OTP Code has been sent to your phone {phoneNumber}, please
-              input the code below.
-            </Text>
+            <AnimatedBox delay={200} type="slideUp">
+              <Text style={styles.welcometext}>
+                An OTP Code has been sent to your phone {phoneNumber}, please
+                input the code below.
+              </Text>
+            </AnimatedBox>
 
-            <TextInput
-              style={styles.otpInputFull}
-              placeholder="Enter 5-digit OTP"
-              placeholderTextColor="#107EBA"
-              value={otp}
-              onChangeText={setOtp}
-              keyboardType="numeric"
-              maxLength={5}
-            />
+            <AnimatedBox delay={300} type="slideUp" style={{ width: "100%" }}>
+              <TextInput
+                style={styles.otpInputFull}
+                placeholder="Enter 5-digit OTP"
+                placeholderTextColor="#107EBA"
+                value={otp}
+                onChangeText={setOtp}
+                keyboardType="numeric"
+                maxLength={5}
+              />
+            </AnimatedBox>
 
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleVerify}
-            >
+            <AnimatedBox delay={400} type="slideUp" isButton={true} style={[styles.button, { width: "100%" }]} onPress={handleVerify}>
               <Text style={styles.buttonText}>{loading ? "VERIFYING..." : "RESET PASSWORD"}</Text>
-            </TouchableOpacity>
+            </AnimatedBox>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

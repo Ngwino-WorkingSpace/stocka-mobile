@@ -1,4 +1,5 @@
 import BackgroundScreen from "../components/Background2.jsx";
+import AnimatedBox from "../components/AnimatedBox.jsx";
 import React, { useState } from "react";
 import {
   View,
@@ -79,40 +80,45 @@ export default function ForgotPasswordScreen({ navigation }) {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.content}>
-            <Image
-              source={require("../assets/images/ppl.png")}
-              style={styles.logo}
-              tintColor="#fff"
-            />
+            <AnimatedBox delay={100} type="slideUp">
+              <Image
+                source={require("../assets/images/ppl.png")}
+                style={styles.logo}
+                tintColor="#fff"
+              />
+            </AnimatedBox>
 
-            <Text style={styles.welcometext}>
-              Please input your phone number and recovery code to reset your password.
-            </Text>
+            <AnimatedBox delay={200} type="slideUp">
+              <Text style={styles.welcometext}>
+                Please input your phone number and recovery code to reset your password.
+              </Text>
+            </AnimatedBox>
 
-            <TextInput
-              style={styles.input}
-              placeholder="Phone number"
-              placeholderTextColor="rgba(255, 255, 255, 0.4)"
-              value={Phonenumber}
-              onChangeText={setPhonenumber}
-              keyboardType="phone-pad"
-            />
+            <AnimatedBox delay={300} type="slideUp" style={{ width: "100%" }}>
+              <TextInput
+                style={styles.input}
+                placeholder="Phone number"
+                placeholderTextColor="rgba(255, 255, 255, 0.4)"
+                value={Phonenumber}
+                onChangeText={setPhonenumber}
+                keyboardType="phone-pad"
+              />
+            </AnimatedBox>
 
-            <TextInput
-              style={styles.input}
-              placeholder="Recovery Code"
-              placeholderTextColor="rgba(255, 255, 255, 0.4)"
-              value={recoveryPin}
-              onChangeText={setRecoveryPin}
-              keyboardType="numeric"
-            />
+            <AnimatedBox delay={400} type="slideUp" style={{ width: "100%" }}>
+              <TextInput
+                style={styles.input}
+                placeholder="Recovery Code"
+                placeholderTextColor="rgba(255, 255, 255, 0.4)"
+                value={recoveryPin}
+                onChangeText={setRecoveryPin}
+                keyboardType="numeric"
+              />
+            </AnimatedBox>
 
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleVerify}
-            >
+            <AnimatedBox delay={500} type="slideUp" isButton={true} style={[styles.button, { width: "100%" }]} onPress={handleVerify}>
               <Text style={styles.buttonText}>{loading ? "VERIFYING..." : "VERIFY CODE"}</Text>
-            </TouchableOpacity>
+            </AnimatedBox>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

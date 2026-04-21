@@ -22,6 +22,7 @@ import {
   Urbanist_600SemiBold,
 } from "@expo-google-fonts/urbanist";
 import Toast from 'react-native-toast-message';
+import AnimatedBox from "../components/AnimatedBox.jsx";
 
 export default function SignInScreen({ navigation }) {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -85,69 +86,77 @@ export default function SignInScreen({ navigation }) {
           keyboardShouldPersistTaps="handled"
         >
           <View style={styles.content}>
-            <Image
-              source={require("../assets/images/ppl.png")}
-              style={styles.logo}
-              tintColor="#fff"
-            />
-
-            <Text style={styles.welcometext}>
-              Welcome to TradeWise! Let's get you signed in
-            </Text>
-
-            <TextInput
-              style={styles.input}
-              placeholder="Phone number"
-              placeholderTextColor="rgba(255, 255, 255, 0.4)"
-              value={phoneNumber}
-              onChangeText={setPhoneNumber}
-              keyboardType="phone-pad"
-            />
-
-            <View style={styles.passwordContainer}>
-              <TextInput
-                style={styles.passwordInput}
-                placeholder="Password"
-                placeholderTextColor="rgba(255, 255, 255, 0.4)"
-                secureTextEntry={!showPassword}
-                value={password}
-                onChangeText={setPassword}
-              />
-              <TouchableOpacity
-                onPress={() => setShowPassword(!showPassword)}
-                style={styles.eyeIcon}
-              >
-                <Ionicons
-                  name={showPassword ? "eye" : "eye-off"}
-                  size={20}
-                  color="#fff"
+            <AnimatedBox delay={100} type="slideUp">
+                <Image
+                source={require("../assets/images/ppl.png")}
+                style={styles.logo}
+                tintColor="#fff"
                 />
-              </TouchableOpacity>
-            </View>
+            </AnimatedBox>
 
-            <Text style={styles.signinText}>
-              Don't have an account?{" "}
-              <Text
-                style={styles.highlighted}
-                onPress={() => navigation.navigate("signup")}
-              >
-                Sign up
-              </Text>
-            </Text>
+            <AnimatedBox delay={200} type="slideUp">
+                <Text style={styles.welcometext}>
+                Welcome to TradeWise! Let's get you signed in
+                </Text>
+            </AnimatedBox>
 
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleLogin}
-              disabled={loading}
-            >
-              <Text style={styles.buttonText}>{loading ? "Signing In..." : "Sign In"}</Text>
-            </TouchableOpacity>
+            <AnimatedBox delay={300} type="slideUp" style={{ width: '100%' }}>
+                <TextInput
+                style={styles.input}
+                placeholder="Phone number"
+                placeholderTextColor="rgba(255, 255, 255, 0.4)"
+                value={phoneNumber}
+                onChangeText={setPhoneNumber}
+                keyboardType="phone-pad"
+                />
+            </AnimatedBox>
 
-            <Text style={styles.forgot}
-              onPress={() => {
-                navigation.navigate("forgot-password");
-              }}
-            >Forgot Password?</Text>
+            <AnimatedBox delay={400} type="slideUp" style={{ width: '100%' }}>
+                <View style={styles.passwordContainer}>
+                <TextInput
+                    style={styles.passwordInput}
+                    placeholder="Password"
+                    placeholderTextColor="rgba(255, 255, 255, 0.4)"
+                    secureTextEntry={!showPassword}
+                    value={password}
+                    onChangeText={setPassword}
+                />
+                <TouchableOpacity
+                    onPress={() => setShowPassword(!showPassword)}
+                    style={styles.eyeIcon}
+                >
+                    <Ionicons
+                    name={showPassword ? "eye" : "eye-off"}
+                    size={20}
+                    color="#fff"
+                    />
+                </TouchableOpacity>
+                </View>
+            </AnimatedBox>
+
+            <AnimatedBox delay={500} type="slideUp" style={{ width: '100%' }}>
+                <Text style={styles.signinText}>
+                Don't have an account?{" "}
+                <Text
+                    style={styles.highlighted}
+                    onPress={() => navigation.navigate("signup")}
+                >
+                    Sign up
+                </Text>
+                </Text>
+            </AnimatedBox>
+
+            <AnimatedBox delay={600} isButton={true} onPress={handleLogin} style={[styles.button, { opacity: loading ? 0.7 : 1 }]}>
+                <Text style={styles.buttonText}>{loading ? "Signing In..." : "Sign In"}</Text>
+            </AnimatedBox>
+
+            <AnimatedBox delay={700} type="fade">
+                <Text style={styles.forgot}
+                onPress={() => {
+                    navigation.navigate("forgot-password");
+                }}
+                >Forgot Password?</Text>
+            </AnimatedBox>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

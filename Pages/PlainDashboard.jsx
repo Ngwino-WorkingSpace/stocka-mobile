@@ -22,6 +22,8 @@ import {
 } from "@expo-google-fonts/urbanist";
 import { Ionicons } from "@expo/vector-icons";
 
+import AnimatedBox from "../components/AnimatedBox.jsx";
+
 const MAIN = "#09111E";
 
 // Helper function to map display names to route names
@@ -272,77 +274,27 @@ export default function PlainDashboardScreen({ navigation }) {
         {!isPressState && (
           <>
             <View style={styles.menuContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.navItem,
-                  isExpanded && styles.navItemExpanded,
-                  selectedItem === "Dashboard" && isExpanded && styles.navItemSelected
-                ]}
-                onPress={() => handleNavItemPress("Dashboard")}
-              >
-                <Ionicons name="battery-charging-outline" size={22} color="#fff" />
-                {isExpanded && <Text style={styles.navText}>Dashboard</Text>}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.navItem,
-                  isExpanded && styles.navItemExpanded,
-                  selectedItem === "Stock" && isExpanded && styles.navItemSelected
-                ]}
-                onPress={() => handleNavItemPress("Stock")}
-              >
-                <Ionicons name="cube-outline" size={22} color="#fff" />
-                {isExpanded && <Text style={styles.navText}>Stock</Text>}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.navItem,
-                  isExpanded && styles.navItemExpanded,
-                  selectedItem === "Sales" && isExpanded && styles.navItemSelected
-                ]}
-                onPress={() => handleNavItemPress("Sales")}
-              >
-                <Ionicons name="flash-outline" size={22} color="#fff" />
-                {isExpanded && <Text style={styles.navText}>Sales</Text>}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.navItem,
-                  isExpanded && styles.navItemExpanded,
-                  selectedItem === "Reports" && isExpanded && styles.navItemSelected
-                ]}
-                onPress={() => handleNavItemPress("Reports")}
-              >
-                <Ionicons name="document-text-outline" size={22} color="#fff" />
-                {isExpanded && <Text style={styles.navText}>Reports</Text>}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.navItem,
-                  isExpanded && styles.navItemExpanded,
-                  selectedItem === "debtors" && isExpanded && styles.navItemSelected
-                ]}
-                onPress={() => handleNavItemPress("debtors")}
-              >
-                <Ionicons name="wallet-outline" size={22} color="#fff" />
-                {isExpanded && <Text style={styles.navText}>Debtors</Text>}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.navItem,
-                  isExpanded && styles.navItemExpanded,
-                  selectedItem === "Profile" && isExpanded && styles.navItemSelected
-                ]}
-                onPress={() => handleNavItemPress("Profile")}
-              >
-                <Ionicons name="person-outline" size={22} color="#fff" />
-                {isExpanded && <Text style={styles.navText}>Profile</Text>}
-              </TouchableOpacity>
+              {["Dashboard", "Stock", "Sales", "Reports", "debtors", "Profile"].map((item, index) => (
+                <AnimatedBox 
+                  key={item}
+                  isButton={true}
+                  onPress={() => handleNavItemPress(item)}
+                  style={[
+                    styles.navItem,
+                    isExpanded && styles.navItemExpanded,
+                    selectedItem === item && isExpanded && styles.navItemSelected
+                  ]}
+                >
+                  <Ionicons name={
+                    item === "Dashboard" ? "battery-charging-outline" :
+                      item === "Stock" ? "cube-outline" :
+                        item === "Sales" ? "flash-outline" :
+                          item === "Reports" ? "document-text-outline" :
+                            item === "debtors" ? "wallet-outline" : "person-outline"
+                  } size={22} color="#fff" />
+                  {isExpanded && <Text style={styles.navText}>{item === "debtors" ? "Debtors" : item}</Text>}
+                </AnimatedBox>
+              ))}
             </View>
 
             {/* Divider */}
@@ -350,21 +302,15 @@ export default function PlainDashboardScreen({ navigation }) {
 
             {/* Utility Items */}
             <View style={styles.utilityContainer}>
-              <TouchableOpacity
-                style={[styles.navItem, isExpanded && styles.navItemExpanded]}
-                onPress={() => setHelpModalVisible(true)}
-              >
+              <AnimatedBox isButton={true} style={[styles.navItem, isExpanded && styles.navItemExpanded]} onPress={() => setHelpModalVisible(true)}>
                 <Ionicons name="help-circle-outline" size={22} color="#fff" />
                 {isExpanded && <Text style={styles.navText}>Help</Text>}
-              </TouchableOpacity>
+              </AnimatedBox>
 
-              <TouchableOpacity
-                style={[styles.navItem, isExpanded && styles.navItemExpanded]}
-                onPress={() => setShowLogoutModal(true)}
-              >
+              <AnimatedBox isButton={true} style={[styles.navItem, isExpanded && styles.navItemExpanded]} onPress={() => setShowLogoutModal(true)}>
                 <Ionicons name="log-out-outline" size={22} color="#fff" />
                 {isExpanded && <Text style={styles.navText}>Logout</Text>}
-              </TouchableOpacity>
+              </AnimatedBox>
             </View>
 
             {/* Theme Toggle - At the bottom, only when expanded */}
@@ -419,56 +365,62 @@ export default function PlainDashboardScreen({ navigation }) {
             }
           >
             {/* HEADER */}
-            <View style={[styles.headerRow, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, marginBottom: 20 }]}>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                {navigation?.canGoBack() && (
-                  <TouchableOpacity
-                    onPress={() => navigation.goBack()}
-                    style={styles.backButton}
-                  >
-                    <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
+            <AnimatedBox type="fade" duration={600}>
+              <View style={[styles.headerRow, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, marginBottom: 20 }]}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  {navigation?.canGoBack() && (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={styles.backButton}
+                    >
+                      <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
+                    </TouchableOpacity>
+                  )}
+                  <View style={styles.logoContainerHeader}>
+                    <Image
+                      source={require("../assets/images/ppl.png")}
+                      style={{ width: 36, height: 36 }}
+                    />
+                    <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
+                  </View>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <TouchableOpacity onPress={() => setHelpModalVisible(true)} style={{ marginRight: 15 }}>
+                    <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
                   </TouchableOpacity>
-                )}
-                <View style={styles.logoContainerHeader}>
-                  <Image
-                    source={require("../assets/images/ppl.png")}
-                    style={{ width: 36, height: 36 }}
-                  />
-                  <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
                 </View>
               </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <TouchableOpacity onPress={() => setHelpModalVisible(true)} style={{ marginRight: 15 }}>
-                  <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
-                </TouchableOpacity>
-              </View>
-            </View>
+            </AnimatedBox>
 
             {/* TABS */}
-            <View style={styles.tabs}>
-              {["Daily", "Weekly", "Monthly", "Annually"].map((tab) => (
-                <TouchableOpacity
-                  key={tab}
-                  onPress={() => setSelectedTab(tab)}
-                  style={[
-                    styles.tab,
-                    selectedTab === tab && styles.activeTab,
-                  ]}
-                >
-                  <Text
+            <AnimatedBox type="slideUp" delay={100}>
+                <View style={styles.tabs}>
+                {["Daily", "Weekly", "Monthly", "Annually"].map((tab) => (
+                    <TouchableOpacity
+                    key={tab}
+                    onPress={() => setSelectedTab(tab)}
                     style={[
-                      styles.tabText,
-                      selectedTab === tab && styles.activeTabText,
+                        styles.tab,
+                        selectedTab === tab && styles.activeTab,
                     ]}
-                  >
-                    {tab}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+                    >
+                    <Text
+                        style={[
+                        styles.tabText,
+                        selectedTab === tab && styles.activeTabText,
+                        ]}
+                    >
+                        {tab}
+                    </Text>
+                    </TouchableOpacity>
+                ))}
+                </View>
+            </AnimatedBox>
 
             {/* TITLE */}
-            <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Your Dashboard</Text>
+            <AnimatedBox type="slideUp" delay={200}>
+                <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Your Dashboard</Text>
+            </AnimatedBox>
 
             {/* DASHBOARD CARDS - SINGLE BG */}
             <View style={styles.cardsContainer}>
@@ -494,72 +446,80 @@ export default function PlainDashboardScreen({ navigation }) {
                     btn: "Reload"
                   },
                 ].map((c, i) => (
-                  <View key={i} style={styles.card}>
+                  <AnimatedBox key={i} delay={300 + (i * 100)} type="zoomIn" style={styles.card}>
                     <Text style={styles.cardLabel}>{c.label}</Text>
                     <Text style={[styles.cardValue, c.valueColor && { color: c.valueColor }]}>{c.value}</Text>
                     {c.btn && (
-                      <View style={styles.cardBtn}>
+                      <AnimatedBox isButton={true} style={styles.cardBtn}>
                         <TouchableOpacity onPress={c.btn === 'Reload' ? fetchDashboardData : undefined}>
                           <Text style={styles.cardBtnText}>{c.btn}</Text>
                         </TouchableOpacity>
-                      </View>
+                      </AnimatedBox>
                     )}
-                  </View>
+                  </AnimatedBox>
                 ));
               })()}
             </View>
 
             {/* TRANSACTIONS */}
-            <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Recent transactions</Text>
+            <AnimatedBox delay={600} type="slideUp">
+                <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Recent transactions</Text>
+            </AnimatedBox>
             {transactions.length === 0 && !loading && (
               <Text style={[{ marginLeft: 20 , fontFamily: "Urbanist_400Regular" }, darkMode && styles.darkText]}>No recent transactions</Text>
             )}
             {transactions.map((t, i) => (
-              <View key={i} style={[styles.transaction, darkMode && styles.darkTransaction]}>
-                <Ionicons name={t.icon} size={24} color={MAIN} />
-                <View style={{ flex: 1, marginLeft: 10 }}>
-                  <Text style={[styles.transTitle, darkMode && styles.darkText]}>{t.txt}</Text>
-                  <Text style={[styles.transDate, darkMode && { color: "#aaa" }]}>{t.date}</Text>
+              <AnimatedBox key={i} delay={700 + (i * 50)} type="fade">
+                <View style={[styles.transaction, darkMode && styles.darkTransaction]}>
+                    <Ionicons name={t.icon} size={24} color={MAIN} />
+                    <View style={{ flex: 1, marginLeft: 10 }}>
+                    <Text style={[styles.transTitle, darkMode && styles.darkText]}>{t.txt}</Text>
+                    <Text style={[styles.transDate, darkMode && { color: "#aaa" }]}>{t.date}</Text>
+                    </View>
+                    <Text
+                    style={[
+                        styles.transPrice,
+                        t.price.startsWith("-") ? { color: "red" } : { color: "green" },
+                    ]}
+                    >
+                    {t.price}
+                    </Text>
                 </View>
-                <Text
-                  style={[
-                    styles.transPrice,
-                    t.price.startsWith("-") ? { color: "red" } : { color: "green" },
-                  ]}
-                >
-                  {t.price}
-                </Text>
-              </View>
+              </AnimatedBox>
             ))}
 
             {/* ALERTS */}
-            <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Alerts</Text>
+            <AnimatedBox delay={1000} type="slideUp">
+                <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Alerts</Text>
+            </AnimatedBox>
             {[
               { title: "Low Stock", text: metrics ? `${metrics.lowStockCount} products are low on stock` : "Checking..." },
               { title: "Expiration", text: metrics ? `${metrics.expiringBatchesCount} batches expire within 2 days` : "Checking..." },
             ].map((a, i) => (
-              <View key={i} style={[styles.alert, darkMode && styles.darkAlert]}>
-                <Ionicons name="warning-outline" size={22} color="red" />
-                <View style={{ marginLeft: 10 }}>
-                  <Text style={styles.alertTitle}>{a.title}</Text>
-                  <Text style={[styles.alertText, darkMode && { color: "#aaa" }]}>{a.text}</Text>
+              <AnimatedBox key={i} delay={1100 + (i * 100)} type="slideRight">
+                <View style={[styles.alert, darkMode && styles.darkAlert]}>
+                    <Ionicons name="warning-outline" size={22} color="red" />
+                    <View style={{ marginLeft: 10 }}>
+                    <Text style={styles.alertTitle}>{a.title}</Text>
+                    <Text style={[styles.alertText, darkMode && { color: "#aaa" }]}>{a.text}</Text>
+                    </View>
                 </View>
-              </View>
+              </AnimatedBox>
             ))}
 
             {/* BOTTOM BUTTONS */}
             <View style={styles.bottomBtns}>
-              <TouchableOpacity style={styles.actionBtn}
+              <AnimatedBox usePulse={true} isButton={true} style={styles.actionBtn}
                 onPress={() => navigation.navigate("Stock")}
               >
                 <Text style={styles.actionText}>Record a sale</Text>
-              </TouchableOpacity>
+              </AnimatedBox>
 
-              <TouchableOpacity style={[styles.actionBtnOutline, darkMode && styles.darkActionBtnOutline]}
+              <AnimatedBox isButton={true} style={[styles.actionBtnOutline, darkMode && styles.darkActionBtnOutline]}
                 onPress={() => navigation.navigate("Stock")}
               >
                 <Text style={[styles.actionTextOutline, darkMode && styles.darkActionTextOutline]}>Add a product</Text>
-              </TouchableOpacity>
+              </AnimatedBox>
             </View>
           </ScrollView>
         </KeyboardAvoidingView>

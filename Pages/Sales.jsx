@@ -22,6 +22,7 @@ import {
 } from "@expo-google-fonts/urbanist";
 
 import { Ionicons } from "@expo/vector-icons";
+import AnimatedBox from "../components/AnimatedBox.jsx";
 const MAIN = "#09111E";
 const ACTIVE_TAB = "#FFD700"; // Gold for active tab
 
@@ -383,99 +384,100 @@ export default function SalesScreen({ navigation }) {
           >
             <View style={{ padding: 15 }}>
               {/* Header */}
-              <View style={[styles.headerRow, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, marginBottom: 20 }]}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  {navigation?.canGoBack() && (
-                    <TouchableOpacity
-                      onPress={() => navigation.goBack()}
-                      style={styles.backButton}
-                    >
-                      <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
+              <AnimatedBox type="fade" duration={600}>
+                <View style={[styles.headerRow, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, marginBottom: 20 }]}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    {navigation?.canGoBack() && (
+                        <TouchableOpacity
+                        onPress={() => navigation.goBack()}
+                        style={styles.backButton}
+                        >
+                        <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
+                        </TouchableOpacity>
+                    )}
+                    <View style={styles.logoContainerHeader}>
+                        <Image source={require("../assets/images/ppl.png")} style={{ width: 36, height: 36 }} />
+                        <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
+                    </View>
+                    </View>
+                    <TouchableOpacity onPress={() => setHelpModalVisible(true)}>
+                    <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
                     </TouchableOpacity>
-                  )}
-                  <View style={styles.logoContainerHeader}>
-                    <Image source={require("../assets/images/ppl.png")} style={{ width: 36, height: 36 }} />
-                    <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
-                  </View>
                 </View>
-                <TouchableOpacity onPress={() => setHelpModalVisible(true)}>
-                  <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
-                </TouchableOpacity>
-              </View>
+              </AnimatedBox>
 
               {/* TABS */}
-              <View style={styles.tabs}>
-                {tabs.map((tab) => (
-                  <TouchableOpacity
-                    key={tab}
-                    onPress={() => setSelectedTab(tab)}
-                    style={[
-                      styles.tab,
-                      selectedTab === tab && styles.activeTab,
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.tabText,
-                        selectedTab === tab && styles.activeTabText,
-                      ]}
+              <AnimatedBox type="slideUp" delay={100}>
+                <View style={styles.tabs}>
+                    {tabs.map((tab) => (
+                    <TouchableOpacity
+                        key={tab}
+                        onPress={() => setSelectedTab(tab)}
+                        style={[
+                        styles.tab,
+                        selectedTab === tab && styles.activeTab,
+                        ]}
                     >
-                      {tab}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
+                        <Text
+                        style={[
+                            styles.tabText,
+                            selectedTab === tab && styles.activeTabText,
+                        ]}
+                        >
+                        {tab}
+                        </Text>
+                    </TouchableOpacity>
+                    ))}
+                </View>
+              </AnimatedBox>
 
               {StockProducts.filter((p) =>
                 p.TextHead.toLowerCase().includes(searchText.toLowerCase())
-              ).map((item) => (
-                <View key={item.id} style={[styles.productCard, darkMode && styles.darkProductCard]}>
-                  {/* Left side: Image */}
-                  <View style={styles.imageWrapper}>
-                    <Image source={item.Image} style={styles.productImage} />
-                  </View>
-
-                  {/* Right side: Details */}
-                  <View style={styles.productInfo}>
-                    <Text style={[styles.productName, darkMode && styles.darkText]}>{item.TextHead}</Text>
-                    <Text style={[styles.productCategory, darkMode && { color: "#aaa" }]}>{item.subText}</Text>
-
-                    <View style={styles.labelsContainer}>
-                      <View style={styles.labelColumn}>
-                        <View style={styles.labelRow}>
-                          <Text style={[styles.label, darkMode && { color: "#aaa" }]}>{item.label1}</Text>
-                          <Text style={[styles.value, darkMode && styles.darkText]}>{item.value1}</Text>
-                        </View>
-                        <View style={styles.labelRow}>
-                          <Text style={[styles.label, darkMode && { color: "#aaa" }]}>{item.label2}</Text>
-                          <Text style={[styles.value, darkMode && styles.darkText]}>{item.value2}</Text>
-                        </View>
-                        <View style={styles.labelRow}>
-                          <Text style={[styles.label, darkMode && { color: "#aaa" }]}>{item.label3}</Text>
-                          <Text style={[styles.value, darkMode && styles.darkText]}>{item.value3}</Text>
-                        </View>
-                      </View>
-
-                      <View style={styles.labelColumn}>
-                        <View style={styles.labelRow}>
-                          <Text style={[styles.label, darkMode && { color: "#aaa" }]}>{item.label4}</Text>
-                          <Text style={[styles.value, darkMode && styles.darkText, item.value4Color && { color: item.value4Color }]}>{item.value4}</Text>
-                        </View>
-                        <View style={styles.labelRow}>
-                          <Text style={[styles.label, darkMode && { color: "#aaa" }]}>{item.label5}</Text>
-                          <Text style={[styles.value, darkMode && styles.darkText]}>{item.value5}</Text>
-                        </View>
-                      </View>
+              ).map((item, index) => (
+                <AnimatedBox key={item.id} delay={index * 100} type="slideUp">
+                    <View style={[styles.productCard, darkMode && styles.darkProductCard]}>
+                    <View style={styles.imageWrapper}>
+                        <Image source={item.Image} style={styles.productImage} />
                     </View>
 
-                    <TouchableOpacity
-                      style={styles.viewButton}
-                      onPress={() => setSelectedSale(item)}
-                    >
-                      <Text style={styles.viewButtonText}>View Details</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
+                    <View style={styles.productInfo}>
+                        <Text style={[styles.productName, darkMode && styles.darkText]}>{item.TextHead}</Text>
+                        <Text style={[styles.productCategory, darkMode && { color: "#aaa" }]}>{item.subText}</Text>
+
+                        <View style={styles.labelsContainer}>
+                        <View style={styles.labelColumn}>
+                            <View style={styles.labelRow}>
+                            <Text style={[styles.label, darkMode && { color: "#aaa" }]}>{item.label1}</Text>
+                            <Text style={[styles.value, darkMode && styles.darkText]}>{item.value1}</Text>
+                            </View>
+                            <View style={styles.labelRow}>
+                            <Text style={[styles.label, darkMode && { color: "#aaa" }]}>{item.label2}</Text>
+                            <Text style={[styles.value, darkMode && styles.darkText]}>{item.value2}</Text>
+                            </View>
+                            <View style={styles.labelRow}>
+                            <Text style={[styles.label, darkMode && { color: "#aaa" }]}>{item.label3}</Text>
+                            <Text style={[styles.value, darkMode && styles.darkText]}>{item.value3}</Text>
+                            </View>
+                        </View>
+
+                        <View style={styles.labelColumn}>
+                            <View style={styles.labelRow}>
+                            <Text style={[styles.label, darkMode && { color: "#aaa" }]}>{item.label4}</Text>
+                            <Text style={[styles.value, darkMode && styles.darkText, item.value4Color && { color: item.value4Color }]}>{item.value4}</Text>
+                            </View>
+                            <View style={styles.labelRow}>
+                            <Text style={[styles.label, darkMode && { color: "#aaa" }]}>{item.label5}</Text>
+                            <Text style={[styles.value, darkMode && styles.darkText]}>{item.value5}</Text>
+                            </View>
+                        </View>
+                        </View>
+
+                        <AnimatedBox isButton={true} onPress={() => setSelectedSale(item)} style={styles.viewButton}>
+                            <Text style={styles.viewButtonText}>View Details</Text>
+                        </AnimatedBox>
+                    </View>
+                    </View>
+                </AnimatedBox>
               ))}
 
               <View style={styles.MoreButton}>

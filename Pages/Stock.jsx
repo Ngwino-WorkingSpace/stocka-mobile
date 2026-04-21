@@ -23,6 +23,8 @@ import {
 } from "@expo-google-fonts/urbanist";
 import { Ionicons } from "@expo/vector-icons";
 
+import AnimatedBox from "../components/AnimatedBox.jsx";
+
 const MAIN = "#09111E";
 
 // Helper function to map display names to route names
@@ -514,63 +516,68 @@ export default function StockScreen({ navigation }) {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[MAIN]} />
           }
         >
-          <View style={[styles.headerRow, { justifyContent: 'space-between', alignItems: 'center', marginTop: 12, marginBottom: 20 }]}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              {navigation?.canGoBack() && (
-                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                  <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
-                </TouchableOpacity>
-              )}
-              <View style={styles.logoContainerHeader}>
-                <Image source={require("../assets/images/ppl.png")} style={{ width: 36, height: 36 }} />
-                <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
-              </View>
+          <AnimatedBox type="fade" duration={600}>
+            <View style={[styles.headerRow, { justifyContent: 'space-between', alignItems: 'center', marginTop: 12, marginBottom: 20 }]}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                {navigation?.canGoBack() && (
+                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                    <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
+                    </TouchableOpacity>
+                )}
+                <View style={styles.logoContainerHeader}>
+                    <Image source={require("../assets/images/ppl.png")} style={{ width: 36, height: 36 }} />
+                    <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
+                </View>
+                </View>
             </View>
-          </View>
+          </AnimatedBox>
 
-          <View style={styles.searchCategoryContainer}>
-            <TextInput style={styles.searchInput} placeholder="Search..." value={searchText} onChangeText={setSearchText} placeholderTextColor={darkMode ? "#aaa" : "#999"} />
-            <TouchableOpacity style={styles.categoryDropdown} onPress={() => setCategoryVisible(true)}>
-              <Text style={styles.categoryText}>{selectedCategory}</Text>
-              <Ionicons name="chevron-down" size={20} color="#fff" />
-            </TouchableOpacity>
-          </View>
+          <AnimatedBox type="slideUp" delay={100}>
+            <View style={styles.searchCategoryContainer}>
+                <TextInput style={styles.searchInput} placeholder="Search..." value={searchText} onChangeText={setSearchText} placeholderTextColor={darkMode ? "#aaa" : "#999"} />
+                <TouchableOpacity style={styles.categoryDropdown} onPress={() => setCategoryVisible(true)}>
+                <Text style={styles.categoryText}>{selectedCategory}</Text>
+                <Ionicons name="chevron-down" size={20} color="#fff" />
+                </TouchableOpacity>
+            </View>
+          </AnimatedBox>
 
-          <Text style={[styles.title, darkMode && styles.darkText]}>Products in Stock</Text>
+          <AnimatedBox type="slideUp" delay={200}>
+            <Text style={[styles.title, darkMode && styles.darkText]}>Products in Stock</Text>
+          </AnimatedBox>
 
           {filteredProducts.filter(p => p.TextHead.toLowerCase().includes(searchText.toLowerCase())).length === 0 ? (
             <Text style={{ textAlign: 'center', marginTop: 20, fontFamily: "Urbanist_400Regular", color: darkMode ? '#aaa' : '#666' }}>No products found</Text>
-          ) : filteredProducts.filter(p => p.TextHead.toLowerCase().includes(searchText.toLowerCase())).map((item) => (
-            <View key={item.id} style={[styles.productCard, darkMode && styles.darkProductCard]}>
-              <Image source={item.Image} style={styles.productImage} />
-              <View style={{ flex: 1, marginLeft: 12 }}>
-                <Text style={[styles.productName, darkMode && styles.darkText]}>{item.TextHead}</Text>
-                <Text style={[styles.productCategory, darkMode && { color: "#aaa" }]}>{item.subText}</Text>
-                <Text style={[styles.productKilos, darkMode && { color: "#aaa" }]}>{item.kilos}</Text>
+          ) : filteredProducts.filter(p => p.TextHead.toLowerCase().includes(searchText.toLowerCase())).map((item, index) => (
+            <AnimatedBox key={item.id} delay={index * 100} type="slideUp">
+                <View style={[styles.productCard, darkMode && styles.darkProductCard]}>
+                <Image source={item.Image} style={styles.productImage} />
+                <View style={{ flex: 1, marginLeft: 12 }}>
+                    <Text style={[styles.productName, darkMode && styles.darkText]}>{item.TextHead}</Text>
+                    <Text style={[styles.productCategory, darkMode && { color: "#aaa" }]}>{item.subText}</Text>
+                    <Text style={[styles.productKilos, darkMode && { color: "#aaa" }]}>{item.kilos}</Text>
 
-                <View style={styles.warningWrapper}>
-                  {item.minExpiry && (
-                    <View style={{ flexDirection: 'row', marginRight: 10, alignItems: 'center' }}>
-                      <Ionicons name="time-outline" size={16} color="#aaa" />
-                      <Text style={[styles.productExpiry, darkMode && { color: "#ff6b6b" }]}>{item.ViewText}</Text>
+                    <View style={styles.warningWrapper}>
+                    {item.minExpiry && (
+                        <View style={{ flexDirection: 'row', marginRight: 10, alignItems: 'center' }}>
+                        <Ionicons name="time-outline" size={16} color="#aaa" />
+                        <Text style={[styles.productExpiry, darkMode && { color: "#ff6b6b" }]}>{item.ViewText}</Text>
+                        </View>
+                    )}
+
                     </View>
-                  )}
 
+                    <AnimatedBox isButton={true} onPress={() => setSelectedProduct(item)} style={styles.viewButton}>
+                    <Text style={styles.viewButtonText}>View Details</Text>
+                    </AnimatedBox>
                 </View>
-
-                <TouchableOpacity
-                  style={styles.viewButton}
-                  onPress={() => setSelectedProduct(item)}
-                >
-                  <Text style={styles.viewButtonText}>View Details</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+                </View>
+            </AnimatedBox>
           ))}
 
-          <TouchableOpacity style={styles.productButton} onPress={() => setAddNewProductVisible(true)}>
+          <AnimatedBox isButton={true} usePulse={true} onPress={() => setAddNewProductVisible(true)} style={styles.productButton}>
             <Text style={styles.addText}>+ Add Product</Text>
-          </TouchableOpacity>
+          </AnimatedBox>
         </ScrollView>
       </SafeAreaView>
 
@@ -1018,17 +1025,18 @@ export default function StockScreen({ navigation }) {
 
 /* Sidebar NavItem Helper */
 const NavItem = ({ icon, label, active, expanded, onPress }) => (
-  <TouchableOpacity
+  <AnimatedBox
+    isButton={true}
+    onPress={onPress}
     style={[
       styles.navItem,
       expanded && styles.navItemExpanded,
-      active && expanded && styles.navItemSelected
+      active && expanded && styles.navItemSelected,
     ]}
-    onPress={onPress}
   >
     <Ionicons name={icon} size={22} color="#fff" />
     {expanded && <Text style={styles.navText}>{label}</Text>}
-  </TouchableOpacity>
+  </AnimatedBox>
 );
 
 /* Small reusable component */

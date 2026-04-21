@@ -21,6 +21,8 @@ import {
 } from "@expo-google-fonts/urbanist";
 import { Ionicons } from "@expo/vector-icons";
 
+import AnimatedBox from "../components/AnimatedBox.jsx";
+
 const MAIN = "#09111E";
 
 // Helper function to map display names to route names
@@ -256,17 +258,17 @@ export default function ReportsScreen({ navigation }) {
         {!isPressState && (
           <>
             <View style={styles.menuContainer}>
-              {["Dashboard", "Stock", "Sales", "Reports", "Debtors", "Profile"].map(item => (
-                <TouchableOpacity
+              {["Dashboard", "Stock", "Sales", "Reports", "Debtors", "Profile"].map((item, index) => (
+                <AnimatedBox 
                   key={item}
+                  isButton={true}
+                  onPress={() => handleNavItemPress(item)}
                   style={[
                     styles.navItem,
                     isExpanded && styles.navItemExpanded,
                     selectedItem === item && isExpanded && styles.navItemSelected
                   ]}
-                  onPress={() => handleNavItemPress(item)}
                 >
-                  {/* Simplified Icons map */}
                   <Ionicons name={
                     item === "Dashboard" ? "battery-charging-outline" :
                       item === "Stock" ? "cube-outline" :
@@ -275,19 +277,19 @@ export default function ReportsScreen({ navigation }) {
                             item === "Debtors" ? "wallet-outline" : "person-outline"
                   } size={22} color="#fff" />
                   {isExpanded && <Text style={styles.navText}>{item}</Text>}
-                </TouchableOpacity>
+                </AnimatedBox>
               ))}
             </View>
             {isExpanded && <View style={styles.divider} />}
             <View style={styles.utilityContainer}>
-              <TouchableOpacity style={[styles.navItem, isExpanded && styles.navItemExpanded]} onPress={() => setHelpModalVisible(true)}>
+              <AnimatedBox isButton={true} style={[styles.navItem, isExpanded && styles.navItemExpanded]} onPress={() => setHelpModalVisible(true)}>
                 <Ionicons name="help-circle-outline" size={22} color="#fff" />
                 {isExpanded && <Text style={styles.navText}>Help</Text>}
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.navItem, isExpanded && styles.navItemExpanded]} onPress={() => setShowLogoutModal(true)}>
+              </AnimatedBox>
+              <AnimatedBox isButton={true} style={[styles.navItem, isExpanded && styles.navItemExpanded]} onPress={() => setShowLogoutModal(true)}>
                 <Ionicons name="log-out-outline" size={22} color="#fff" />
                 {isExpanded && <Text style={styles.navText}>Logout</Text>}
-              </TouchableOpacity>
+              </AnimatedBox>
             </View>
             {isExpanded && (
               <View style={styles.themeToggleContainer}>
@@ -316,123 +318,158 @@ export default function ReportsScreen({ navigation }) {
             }
           >
             {/* HEADER */}
-            <View style={[styles.header, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                {navigation?.canGoBack() && (
-                  <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                    <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
-                  </TouchableOpacity>
-                )}
-                <View style={styles.logoContainerHeader}>
-                  <Image source={require("../assets/images/ppl.png")} style={{ width: 36, height: 36 }} />
-                  <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
+            <AnimatedBox type="fade" duration={600}>
+              <View style={[styles.header, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  {navigation?.canGoBack() && (
+                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                      <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
+                    </TouchableOpacity>
+                  )}
+                  <View style={styles.logoContainerHeader}>
+                    <Image source={require("../assets/images/ppl.png")} style={{ width: 36, height: 36 }} />
+                    <Text style={[styles.stockaText, darkMode && styles.darkText]}>Stocka</Text>
+                  </View>
                 </View>
+                <TouchableOpacity onPress={() => setHelpModalVisible(true)}>
+                  <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
+                </TouchableOpacity>
               </View>
-              <TouchableOpacity onPress={() => setHelpModalVisible(true)}>
-                <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
-              </TouchableOpacity>
-            </View>
+            </AnimatedBox>
 
             {/* TABS */}
-            <View style={styles.tabs}>
-              {["Daily", "Weekly", "Monthly", "Annually"].map((tab) => (
-                <TouchableOpacity
-                  key={tab}
-                  onPress={() => setSelectedTab(tab)}
-                  style={[styles.tab, selectedTab === tab && styles.activeTab]}
-                >
-                  <Text style={[styles.tabText, selectedTab === tab && styles.activeTabText]}>{tab}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+            <AnimatedBox type="slideUp" delay={100}>
+              <View style={styles.tabs}>
+                {["Daily", "Weekly", "Monthly", "Annually"].map((tab) => (
+                  <TouchableOpacity
+                    key={tab}
+                    onPress={() => setSelectedTab(tab)}
+                    style={[styles.tab, selectedTab === tab && styles.activeTab]}
+                  >
+                    <Text style={[styles.tabText, selectedTab === tab && styles.activeTabText]}>{tab}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </AnimatedBox>
 
             {/* SALES REPORT SECTION */}
-            <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Sales Report (Top Items)</Text>
+            <AnimatedBox type="slideUp" delay={200}>
+              <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Sales Report (Top Items)</Text>
+            </AnimatedBox>
             <View style={styles.salesReportContainer}>
               {salesReport.length === 0 ? (
-                <Text style={{ color: '#999', marginVertical: 10, fontFamily: "Urbanist_400Regular" }}>No sales recorded for this period.</Text>
+                <AnimatedBox type="fade" delay={300}>
+                  <Text style={{ color: '#999', marginVertical: 10, fontFamily: "Urbanist_400Regular" }}>No sales recorded for this period.</Text>
+                </AnimatedBox>
               ) : (
                 salesReport.map((item, index) => (
-                  <View key={index} style={[styles.salesItem, darkMode && styles.darkSalesItem]}>
-                    <View style={styles.salesIconContainer}>
-                      <Ionicons name={getIconForIndex(index)} size={28} color={MAIN} />
+                  <AnimatedBox key={index} type="slideUp" delay={300 + (index * 100)} style={{ width: "48%" }}>
+                    <View style={[styles.salesItem, darkMode && styles.darkSalesItem, { width: "100%" }]}>
+                      <View style={styles.salesIconContainer}>
+                        <Ionicons name={getIconForIndex(index)} size={28} color={MAIN} />
+                      </View>
+                      <Text style={[styles.salesLabel, darkMode && styles.darkText]} numberOfLines={1}>{item.name}</Text>
+                      <Text style={[styles.salesValue, darkMode && styles.darkText]}>{item.total.toLocaleString()} FRW</Text>
                     </View>
-                    <Text style={[styles.salesLabel, darkMode && styles.darkText]} numberOfLines={1}>{item.name}</Text>
-                    <Text style={[styles.salesValue, darkMode && styles.darkText]}>{item.total.toLocaleString()} FRW</Text>
-                  </View>
+                  </AnimatedBox>
                 ))
               )}
             </View>
 
             {/* TOP SELLING PRODUCTS SECTION */}
-            <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Top Selling products</Text>
+            <AnimatedBox type="slideUp" delay={400}>
+              <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Top Selling products</Text>
+            </AnimatedBox>
             <View style={styles.topProductsContainer}>
-              {topProducts.length > 1 && (
-                <View style={[styles.productCard, styles.productCardSecond, darkMode && styles.darkProductCard]}>
-                  <View style={styles.medalContainer}><Ionicons name="medal" size={32} color="#C0C0C0" /></View>
-                  <Text style={[styles.productName, darkMode && styles.darkText]}>{topProducts[1].name}</Text>
-                  <Text style={{ fontSize: 10, color: '#aaa' }}>{topProducts[1].quantity} sold</Text>
-                </View>
-              )}
+              {topProducts.length === 0 ? (
+                <AnimatedBox type="fade" delay={500}>
+                   <Text style={{ color: '#999', fontFamily: "Urbanist_400Regular" }}>No data available</Text>
+                </AnimatedBox>
+              ) : (
+                <>
+                  {topProducts.length > 1 && (
+                    <AnimatedBox type="slideUp" delay={500} style={{ width: "30%" }}>
+                      <View style={[styles.productCard, styles.productCardSecond, darkMode && styles.darkProductCard, { width: "100%" }]}>
+                        <View style={styles.medalContainer}><Ionicons name="medal" size={32} color="#C0C0C0" /></View>
+                        <Text style={[styles.productName, darkMode && styles.darkText]}>{topProducts[1].name}</Text>
+                        <Text style={{ fontSize: 10, color: '#aaa' }}>{topProducts[1].quantity} sold</Text>
+                      </View>
+                    </AnimatedBox>
+                  )}
 
-              {topProducts.length > 0 && (
-                <View style={[styles.productCard, styles.productCardFirst, darkMode && styles.darkProductCard]}>
-                  <View style={styles.medalContainer}><Ionicons name="medal" size={32} color="#FFD700" /></View>
-                  <Text style={[styles.productName, darkMode && styles.darkText]}>{topProducts[0].name}</Text>
-                  <Text style={{ fontSize: 10, color: '#aaa' }}>{topProducts[0].quantity} sold</Text>
-                </View>
-              )}
+                  {topProducts.length > 0 && (
+                    <AnimatedBox type="slideUp" delay={600} style={{ width: "30%" }}>
+                      <View style={[styles.productCard, styles.productCardFirst, darkMode && styles.darkProductCard, { width: "100%" }]}>
+                        <View style={styles.medalContainer}><Ionicons name="medal" size={32} color="#FFD700" /></View>
+                        <Text style={[styles.productName, darkMode && styles.darkText]}>{topProducts[0].name}</Text>
+                        <Text style={{ fontSize: 10, color: '#aaa' }}>{topProducts[0].quantity} sold</Text>
+                      </View>
+                    </AnimatedBox>
+                  )}
 
-              {topProducts.length > 2 && (
-                <View style={[styles.productCard, styles.productCardThird, darkMode && styles.darkProductCard]}>
-                  <View style={styles.medalContainer}><Ionicons name="medal" size={32} color="#CD7F32" /></View>
-                  <Text style={[styles.productName, darkMode && styles.darkText]}>{topProducts[2].name}</Text>
-                  <Text style={{ fontSize: 10, color: '#aaa' }}>{topProducts[2].quantity} sold</Text>
-                </View>
+                  {topProducts.length > 2 && (
+                    <AnimatedBox type="slideUp" delay={700} style={{ width: "30%" }}>
+                      <View style={[styles.productCard, styles.productCardThird, darkMode && styles.darkProductCard, { width: "100%" }]}>
+                        <View style={styles.medalContainer}><Ionicons name="medal" size={32} color="#CD7F32" /></View>
+                        <Text style={[styles.productName, darkMode && styles.darkText]}>{topProducts[2].name}</Text>
+                        <Text style={{ fontSize: 10, color: '#aaa' }}>{topProducts[2].quantity} sold</Text>
+                      </View>
+                    </AnimatedBox>
+                  )}
+                </>
               )}
-              {topProducts.length === 0 && <Text style={{ color: '#999', fontFamily: "Urbanist_400Regular" }}>No data available</Text>}
             </View>
 
             {/* STOCK REPORT SECTION */}
-            <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Stock report</Text>
+            <AnimatedBox type="slideUp" delay={800}>
+              <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Stock report</Text>
+            </AnimatedBox>
             <View style={styles.stockReportContainer}>
-              <View style={[styles.stockItem, darkMode && styles.darkStockItem]}>
-                <View style={styles.stockIconContainer}>
-                  <Ionicons name="bar-chart-outline" size={28} color={MAIN} />
+              <AnimatedBox type="slideLeft" delay={900} style={{ flex: 1 }}>
+                <View style={[styles.stockItem, darkMode && styles.darkStockItem, { marginRight: 10 }]}>
+                    <View style={styles.stockIconContainer}>
+                    <Ionicons name="bar-chart-outline" size={28} color={MAIN} />
+                    </View>
+                    <Text style={[styles.stockLabel, darkMode && styles.darkText]} numberOfLines={1}>Total stock value</Text>
+                    <Text style={[styles.stockValue, darkMode && styles.darkText]}>{stockReport.totalValue?.toLocaleString()} FRW</Text>
                 </View>
-                <Text style={[styles.stockLabel, darkMode && styles.darkText]}>Total stock value</Text>
-                <Text style={[styles.stockValue, darkMode && styles.darkText]}>{stockReport.totalValue?.toLocaleString()} FRW</Text>
-              </View>
+              </AnimatedBox>
 
-              <View style={[styles.stockItem, darkMode && styles.darkStockItem]}>
-                <View style={styles.stockIconContainer}>
-                  <Ionicons name="cart-outline" size={28} color={MAIN} />
+              <AnimatedBox type="slideRight" delay={1000} style={{ flex: 1 }}>
+                <View style={[styles.stockItem, darkMode && styles.darkStockItem]}>
+                    <View style={styles.stockIconContainer}>
+                    <Ionicons name="cart-outline" size={28} color={MAIN} />
+                    </View>
+                    <Text style={[styles.stockLabel, darkMode && styles.darkText]} numberOfLines={1}>Expired products value</Text>
+                    <Text style={[styles.stockValue, darkMode && styles.darkText]}>{stockReport.expiredValue?.toLocaleString()} FRW</Text>
                 </View>
-                <Text style={[styles.stockLabel, darkMode && styles.darkText]}>Expired products value</Text>
-                <Text style={[styles.stockValue, darkMode && styles.darkText]}>{stockReport.expiredValue?.toLocaleString()} FRW</Text>
-              </View>
+              </AnimatedBox>
             </View>
 
             {/* GAIN / LOSS SUMMARY SECTION */}
-            <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Gain / Loss Summary</Text>
-            <View style={styles.summaryContainer}>
-              {gainLoss.type === 'profit' ? (
-                <View style={[styles.summaryCard, darkMode && styles.darkSummaryCard]}>
-                  <Text style={styles.summaryEmoji}>🥳</Text>
-                  <Text style={[styles.summaryText, darkMode && styles.darkText]}>{gainLoss.message}</Text>
-                </View>
-              ) : gainLoss.type === 'loss' ? (
-                <View style={[styles.summaryCard, darkMode && styles.darkSummaryCard]}>
-                  <Text style={styles.summaryEmoji}>😔</Text>
-                  <Text style={[styles.summaryText, darkMode && styles.darkText]}>{gainLoss.message}</Text>
-                </View>
-              ) : (
-                <View style={[styles.summaryCard, darkMode && styles.darkSummaryCard]}>
-                  <Text style={styles.summaryEmoji}>😐</Text>
-                  <Text style={[styles.summaryText, darkMode && styles.darkText]}>{gainLoss.message}</Text>
-                </View>
-              )}
-            </View>
+            <AnimatedBox type="slideUp" delay={1100}>
+              <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Gain / Loss Summary</Text>
+            </AnimatedBox>
+            <AnimatedBox type="zoomIn" delay={1200}>
+              <View style={styles.summaryContainer}>
+                {gainLoss.type === 'profit' ? (
+                  <View style={[styles.summaryCard, darkMode && styles.darkSummaryCard]}>
+                    <Text style={styles.summaryEmoji}>🥳</Text>
+                    <Text style={[styles.summaryText, darkMode && styles.darkText]}>{gainLoss.message}</Text>
+                  </View>
+                ) : gainLoss.type === 'loss' ? (
+                  <View style={[styles.summaryCard, darkMode && styles.darkSummaryCard]}>
+                    <Text style={styles.summaryEmoji}>😔</Text>
+                    <Text style={[styles.summaryText, darkMode && styles.darkText]}>{gainLoss.message}</Text>
+                  </View>
+                ) : (
+                  <View style={[styles.summaryCard, darkMode && styles.darkSummaryCard]}>
+                    <Text style={styles.summaryEmoji}>😐</Text>
+                    <Text style={[styles.summaryText, darkMode && styles.darkText]}>{gainLoss.message}</Text>
+                  </View>
+                )}
+              </View>
+            </AnimatedBox>
           </ScrollView>
         </KeyboardAvoidingView>
       </View>

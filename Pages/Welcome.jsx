@@ -2,6 +2,7 @@ import BackgroundScreen from "../components/Background2.jsx";
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import AnimatedBox from "../components/AnimatedBox.jsx";
 import {
   useFonts,
   Urbanist_400Regular,
@@ -26,27 +27,35 @@ export default function LandingScreen({navigation}) {
 
       {/* Centered content */}
       <View style={styles.centeredContent}>
-        <Image
-          source={require("../assets/images/ppl.png")}
-          style={styles.logo}
-          tintColor="#fff"
-        />
+        <AnimatedBox delay={100} type="slideUp">
+            <Image
+            source={require("../assets/images/ppl.png")}
+            style={styles.logo}
+            tintColor="#fff"
+            />
+        </AnimatedBox>
 
-        <Text style={styles.subtitle}>Welcome to</Text>
-        <Text style={styles.title}>Stocka</Text>
-        <Text style={styles.paragraph}>
-          Stocka is the smart way to run a business without the headache.
-          It records every transaction automatically, tracks profits and losses
-          in real time, and replaces messy ledgers and complex calculations so
-          you can focus on growing your business, not chasing numbers.
-        </Text>
+        <AnimatedBox delay={300} type="slideUp">
+            <Text style={styles.subtitle}>Welcome to</Text>
+        </AnimatedBox>
 
-        <TouchableOpacity style={styles.button}
-         onPress={()=>navigation.navigate("signup")}
-        >
+        <AnimatedBox delay={500} type="slideUp">
+            <Text style={styles.title}>Stocka</Text>
+        </AnimatedBox>
+
+        <AnimatedBox delay={700} type="slideUp">
+            <Text style={styles.paragraph}>
+            Stocka is the smart way to run a business without the headache.
+            It records every transaction automatically, tracks profits and losses
+            in real time, and replaces messy ledgers and complex calculations so
+            you can focus on growing your business, not chasing numbers.
+            </Text>
+        </AnimatedBox>
+
+        <AnimatedBox delay={900} isButton={true} onPress={()=>navigation.navigate("signup")} style={styles.button}>
           <Text style={styles.buttonText}>Continue</Text>
           <Ionicons name="arrow-forward-circle" size={27} color="#fff" />
-        </TouchableOpacity>
+        </AnimatedBox>
       </View>
 
       {/* Bottom right text */}

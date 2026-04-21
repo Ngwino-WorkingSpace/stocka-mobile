@@ -27,6 +27,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../src/context/ThemeContext';
 
+import AnimatedBox from "../components/AnimatedBox.jsx";
+
 const MAIN = "#09111E";
 
 // Helper function to map display names to route names
@@ -210,79 +212,27 @@ export default function ProfileScreen({ navigation }) {
         {!isPressState && (
           <>
             <View style={styles.menuContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.navItem,
-                  isExpanded && styles.navItemExpanded,
-                  selectedItem === "Dashboard" && isExpanded && styles.navItemSelected
-                ]}
-                onPress={() => handleNavItemPress("Dashboard")}
-              >
-                <Ionicons name="battery-charging-outline" size={22} color="#fff" />
-                {isExpanded && <Text style={styles.navText}>Dashboard</Text>}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.navItem,
-                  isExpanded && styles.navItemExpanded,
-                  selectedItem === "Stock" && isExpanded && styles.navItemSelected
-                ]}
-                onPress={() => handleNavItemPress("Stock")}
-              >
-                <Ionicons name="cube-outline" size={22} color="#fff" />
-                {isExpanded && <Text style={styles.navText}>Stock</Text>}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.navItem,
-                  isExpanded && styles.navItemExpanded,
-                  selectedItem === "Sales" && isExpanded && styles.navItemSelected
-                ]}
-                onPress={() => handleNavItemPress("Sales")}
-              >
-                <Ionicons name="flash-outline" size={22} color="#fff" />
-                {isExpanded && <Text style={styles.navText}>Sales</Text>}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.navItem,
-                  isExpanded && styles.navItemExpanded,
-                  selectedItem === "Reports" && isExpanded && styles.navItemSelected
-                ]}
-                onPress={() => handleNavItemPress("Reports")}
-              >
-                <Ionicons name="document-text-outline" size={22} color="#fff" />
-                {isExpanded && <Text style={styles.navText}>Reports</Text>}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.navItem,
-                  isExpanded && styles.navItemExpanded,
-                  selectedItem === "debtors" && isExpanded && styles.navItemSelected
-                ]}
-                onPress={() => handleNavItemPress("debtors")}
-              >
-                <Ionicons name="wallet-outline" size={22} color="#fff" />
-                {isExpanded && <Text style={styles.navText}>Debtors</Text>}
-              </TouchableOpacity>
-
-
-
-              <TouchableOpacity
-                style={[
-                  styles.navItem,
-                  isExpanded && styles.navItemExpanded,
-                  selectedItem === "Profile" && isExpanded && styles.navItemSelected
-                ]}
-                onPress={() => handleNavItemPress("Profile")}
-              >
-                <Ionicons name="person-outline" size={22} color="#fff" />
-                {isExpanded && <Text style={styles.navText}>Profile</Text>}
-              </TouchableOpacity>
+              {["Dashboard", "Stock", "Sales", "Reports", "debtors", "Profile"].map((item, index) => (
+                <AnimatedBox 
+                  key={item}
+                  isButton={true}
+                  onPress={() => handleNavItemPress(item)}
+                  style={[
+                    styles.navItem,
+                    isExpanded && styles.navItemExpanded,
+                    selectedItem === item && isExpanded && styles.navItemSelected
+                  ]}
+                >
+                  <Ionicons name={
+                    item === "Dashboard" ? "battery-charging-outline" :
+                      item === "Stock" ? "cube-outline" :
+                        item === "Sales" ? "flash-outline" :
+                          item === "Reports" ? "document-text-outline" :
+                            item === "debtors" ? "wallet-outline" : "person-outline"
+                  } size={22} color="#fff" />
+                  {isExpanded && <Text style={styles.navText}>{item.charAt(0).toUpperCase() + item.slice(1)}</Text>}
+                </AnimatedBox>
+              ))}
             </View>
 
             {/* Divider */}
@@ -290,21 +240,15 @@ export default function ProfileScreen({ navigation }) {
 
             {/* Utility Items */}
             <View style={styles.utilityContainer}>
-              <TouchableOpacity
-                style={[styles.navItem, isExpanded && styles.navItemExpanded]}
-                onPress={() => setHelpModalVisible(true)}
-              >
+              <AnimatedBox isButton={true} style={[styles.navItem, isExpanded && styles.navItemExpanded]} onPress={() => setHelpModalVisible(true)}>
                 <Ionicons name="help-circle-outline" size={22} color="#fff" />
                 {isExpanded && <Text style={styles.navText}>Help</Text>}
-              </TouchableOpacity>
+              </AnimatedBox>
 
-              <TouchableOpacity
-                style={[styles.navItem, isExpanded && styles.navItemExpanded]}
-                onPress={() => setShowLogoutModal(true)}
-              >
+              <AnimatedBox isButton={true} style={[styles.navItem, isExpanded && styles.navItemExpanded]} onPress={() => setShowLogoutModal(true)}>
                 <Ionicons name="log-out-outline" size={22} color="#fff" />
                 {isExpanded && <Text style={styles.navText}>Logout</Text>}
-              </TouchableOpacity>
+              </AnimatedBox>
             </View>
 
             {/* Theme Toggle - At the bottom, only when expanded */}
@@ -356,71 +300,73 @@ export default function ProfileScreen({ navigation }) {
           >
             {/* Header */}
             {/* Header */}
-            <View style={[styles.headerRow, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, marginBottom: 20 }]}>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                {navigation?.canGoBack() && (
-                  <TouchableOpacity
-                    onPress={() => navigation.goBack()}
-                    style={styles.backButton}
-                  >
-                    <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
-                  </TouchableOpacity>
-                )}
+            <AnimatedBox type="fade" duration={600}>
+              <View style={[styles.headerRow, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, marginBottom: 20 }]}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Image source={require("../assets/images/ppl.png")} style={{ width: 36, height: 36 }} />
-                  <Text style={[{ fontFamily: "Urbanist_700Bold" , fontSize: 20}, darkMode && styles.darkText]}>Stocka</Text>
+                  {navigation?.canGoBack() && (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={styles.backButton}
+                    >
+                      <Ionicons name="arrow-back" size={24} color={darkMode ? "#fff" : "#000"} />
+                    </TouchableOpacity>
+                  )}
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Image source={require("../assets/images/ppl.png")} style={{ width: 36, height: 36 }} />
+                    <Text style={[{ fontFamily: "Urbanist_700Bold" , fontSize: 20}, darkMode && styles.darkText]}>Stocka</Text>
+                  </View>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <TouchableOpacity onPress={() => setHelpModalVisible(true)} style={{ marginRight: 15 }}>
+                    <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
+                  </TouchableOpacity>
                 </View>
               </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <TouchableOpacity onPress={() => setHelpModalVisible(true)} style={{ marginRight: 15 }}>
-                  <Ionicons name="help-circle-outline" size={26} color={darkMode ? "#fff" : MAIN} />
-                </TouchableOpacity>
-              </View>
-            </View>
+            </AnimatedBox>
 
-            <Text style={[styles.title, darkMode && styles.darkText]}>Profile info</Text>
+            <AnimatedBox type="slideUp" delay={50}>
+              <Text style={[styles.title, darkMode && styles.darkText]}>Profile info</Text>
+            </AnimatedBox>
 
             {/* Profile Image */}
-            <View style={styles.avatarWrapper}>
-              <View style={[styles.avatar, darkMode && styles.darkAvatar]}>
-                <Ionicons name="person" size={60} color={darkMode ? "#fff" : "#000"} />
+            <AnimatedBox delay={100} type="slideUp">
+              <View style={styles.avatarWrapper}>
+                <View style={[styles.avatar, darkMode && styles.darkAvatar]}>
+                  <Ionicons name="person" size={60} color={darkMode ? "#fff" : "#000"} />
+                </View>
               </View>
-
-              {/* Editing disabled as requested */}
-              {/* <TouchableOpacity
-                style={styles.editIcon}
-                onPress={() => setEditable(!editable)}
-              >
-                <Ionicons name="pencil" size={16} color="#fff" />
-              </TouchableOpacity> */}
-            </View>
+            </AnimatedBox>
 
             {/* Inputs */}
-            <ProfileInput
-              label="Full name"
-              value={profile.name}
-              editable={editable}
-              onChangeText={(v) => setProfile({ ...profile, name: v })}
-              darkMode={darkMode}
-            />
+            <AnimatedBox delay={200} type="slideUp">
+              <ProfileInput
+                label="Full name"
+                value={profile.name}
+                editable={editable}
+                onChangeText={(v) => setProfile({ ...profile, name: v })}
+                darkMode={darkMode}
+              />
+            </AnimatedBox>
 
-            <ProfileInput
-              label="Phone number"
-              value={profile.phone}
-              editable={editable}
-              onChangeText={(v) => setProfile({ ...profile, phone: v })}
-              darkMode={darkMode}
-            />
+            <AnimatedBox delay={300} type="slideUp">
+              <ProfileInput
+                label="Phone number"
+                value={profile.phone}
+                editable={editable}
+                onChangeText={(v) => setProfile({ ...profile, phone: v })}
+                darkMode={darkMode}
+              />
+            </AnimatedBox>
 
-
-
-            <ProfileInput
-              label="Email"
-              value={profile.email}
-              editable={editable}
-              onChangeText={(v) => setProfile({ ...profile, email: v })}
-              darkMode={darkMode}
-            />
+            <AnimatedBox delay={400} type="slideUp">
+              <ProfileInput
+                label="Email"
+                value={profile.email}
+                editable={editable}
+                onChangeText={(v) => setProfile({ ...profile, email: v })}
+                darkMode={darkMode}
+              />
+            </AnimatedBox>
 
             {/* Buttons */}
             {/* Buttons commented out as requested */}

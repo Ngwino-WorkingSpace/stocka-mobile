@@ -1,4 +1,5 @@
 import BackgroundScreen from "../components/Background2.jsx";
+import AnimatedBox from "../components/AnimatedBox.jsx";
 import React, { useState } from "react";
 import {
   View,
@@ -46,20 +47,19 @@ export default function LastOTPScreen({ navigation }) {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.content}>
-            <View style={styles.congzIcon}>
+            <AnimatedBox type="zoomIn" delay={100} style={styles.congzIcon}>
                <Image source={require("../assets/images/ppl.png")} style={styles.logo} tintColor="#fff" />
-            </View>
+            </AnimatedBox>
 
-            <Text style={styles.welcometext}>
-                 Hello dear user,Your password has been successfully been resetYou will be using the new password when logging in.
-            </Text>
+            <AnimatedBox type="slideUp" delay={200}>
+              <Text style={styles.welcometext}>
+                   Hello dear user, Your password has been successfully reset. You will be using the new password when logging in.
+              </Text>
+            </AnimatedBox>
 
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => navigation.navigate("Login")}
-            >
+            <AnimatedBox type="slideUp" delay={300} isButton={true} style={[styles.button, { width: "100%" }]} onPress={() => navigation.navigate("Login")}>
               <Text style={styles.buttonText}>CONTINUE</Text>
-            </TouchableOpacity>
+            </AnimatedBox>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
