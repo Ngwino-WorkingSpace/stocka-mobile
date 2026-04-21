@@ -848,7 +848,11 @@ const FormInput = ({
 
 
 const styles = StyleSheet.create({
-  container: { flex: 1, flexDirection: "row", position: "relative" },
+  container: { 
+    flex: 1, 
+    flexDirection: "column", 
+    position: "relative" 
+  },
 
   floatingPress: {
     position: "absolute",
