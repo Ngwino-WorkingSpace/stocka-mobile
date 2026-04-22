@@ -28,8 +28,9 @@ import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context'
 import { useTheme } from '../src/context/ThemeContext';
 import AppSidebar from "../components/AppSidebar";
 import AnimatedBox from "../components/AnimatedBox";
+import {Nosifer_400Regular} from "@expo-google-fonts/nosifer";  
 
-const MAIN = "#09111E";
+const MAIN = "#09111E"; 
 
 // Helper function to map display names to route names
 const getRouteName = (itemName) => {
@@ -95,6 +96,7 @@ export default function ProfileScreen({ navigation }) {
     Urbanist_500Medium,
     Urbanist_600SemiBold,
     Urbanist_700Bold,
+    Nosifer_400Regular 
   });
 
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -134,7 +136,7 @@ export default function ProfileScreen({ navigation }) {
                   )}
                   <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 10 }}>
                     <Image source={require("../assets/images/ppl.png")} style={{ width: 36, height: 36 }} />
-                    <Text style={[{ fontFamily: "Urbanist_700Bold", fontSize: 20 }, darkMode && styles.darkText]}>Stocka</Text>
+                    <Text style={[{ fontFamily: "Nosifer_400Regular", fontSize: 19 }, darkMode && styles.darkText]}>Stocka</Text>
                   </View>
                 </View>
                 <TouchableOpacity onPress={() => setHelpModalVisible(true)}>

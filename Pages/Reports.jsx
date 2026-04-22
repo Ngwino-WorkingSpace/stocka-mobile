@@ -19,6 +19,7 @@ import {
   Urbanist_600SemiBold,
   Urbanist_700Bold,
 } from "@expo-google-fonts/urbanist";
+import {Nosifer_400Regular} from "@expo-google-fonts/nosifer";
 import { Ionicons } from "@expo/vector-icons";
 import AppSidebar from "../components/AppSidebar";
 import AnimatedBox from "../components/AnimatedBox.jsx";
@@ -74,6 +75,7 @@ export default function ReportsScreen({ navigation }) {
     Urbanist_500Medium,
     Urbanist_600SemiBold,
     Urbanist_700Bold,
+    Nosifer_400Regular
   });
 
   const fetchReports = async () => {
@@ -472,8 +474,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   stockaText: {
-    fontFamily: "Urbanist_700Bold",
-    fontSize: 20,
+    fontFamily: "Nosifer_400Regular",
+    fontSize: 19,
     color: MAIN,
   },
   tabs: {

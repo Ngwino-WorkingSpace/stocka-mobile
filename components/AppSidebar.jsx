@@ -11,7 +11,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import AnimatedBox from "./AnimatedBox";
 import { useFonts, Urbanist_400Regular, Urbanist_700Bold, Urbanist_500Medium, Urbanist_600SemiBold } from "@expo-google-fonts/urbanist";
-import {Nosifer_400Regular, Nosifer_700Regular} from "@expo-google-fonts/nosifer";
+import {Nosifer_400Regular} from "@expo-google-fonts/nosifer";
 
 const { width } = Dimensions.get("window");
 const MAIN = "#09111E";
@@ -26,6 +26,11 @@ const AppSidebar = ({
   onLogout,
   onHelp,
 }) => {
+  const [fontsLoaded] = useFonts({
+    Nosifer_400Regular,
+    Urbanist_400Regular,
+  });
+
   const isPressState = sidebarState === "press";
   const isCollapsed = sidebarState === "collapsed";
   const isExpanded = sidebarState === "expanded";
@@ -34,7 +39,7 @@ const AppSidebar = ({
   const handleArrowPress = () => setSidebarState("expanded");
   const handlePressTextClick = () => setSidebarState("collapsed");
 
-  const menuItems = [
+    const menuItems = [
     { label: "Dashboard", icon: "battery-charging-outline" },
     { label: "Stock", icon: "cube-outline" },
     { label: "Sales", icon: "flash-outline" },
@@ -257,8 +262,8 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   stockText: {
-    fontFamily: "Urbanist_700Bold",
-    fontSize: 18,
+    fontFamily: "Nosifer_400Regular",
+    fontSize: 19,
     color: "#fff",
     marginLeft: 10,
   },

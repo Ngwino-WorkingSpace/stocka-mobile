@@ -25,9 +25,11 @@ import {
   Urbanist_600SemiBold,
   Urbanist_700Bold,
 } from "@expo-google-fonts/urbanist";
+import {Nosifer_400Regular} from "@expo-google-fonts/nosifer";
 
 const { width } = Dimensions.get("window");
 const MAIN = "#09111E";
+
 
 // Helper function to map display names to route names
 const getRouteName = (itemName) => {
@@ -93,6 +95,14 @@ export default function DebtorsScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedDebtor, setSelectedDebtor] = useState(null);
+
+  const [fontsLoaded] = useFonts({
+  Nosifer_400Regular,
+  Urbanist_400Regular,
+  Urbanist_500Medium,
+  Urbanist_600SemiBold,
+  Urbanist_700Bold,
+});
 
   const fetchDebtors = async () => {
     try {
@@ -988,8 +998,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   stockaText: {
-    fontFamily: "Urbanist_700Bold",
-    fontSize: 22,
+    fontFamily: "Nosifer_400Regular",
+    fontSize: 19,
     color: MAIN,
     marginLeft: 10,
   },

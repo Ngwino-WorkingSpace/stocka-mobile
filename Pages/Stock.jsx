@@ -21,6 +21,7 @@ import {
   Urbanist_600SemiBold,
   Urbanist_700Bold,
 } from "@expo-google-fonts/urbanist";
+import {Nosifer_400Regular} from "@expo-google-fonts/nosifer";
 import { Ionicons } from "@expo/vector-icons";
 
 import AnimatedBox from "../components/AnimatedBox.jsx";
@@ -76,6 +77,7 @@ export default function StockScreen({ navigation }) {
     Urbanist_500Medium,
     Urbanist_600SemiBold,
     Urbanist_700Bold,
+    Nosifer_400Regular
   });
 
   const [searchText, setSearchText] = useState("");
@@ -1038,7 +1040,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logoContainer: { flexDirection: "row", alignItems: "center" },
-  stockaText: { fontFamily: "Urbanist_700Bold", fontSize: 22, color: MAIN, marginLeft: 10 },
+  stockaText: { fontFamily: "Nosifer_400Regular", fontSize: 19, color: MAIN, marginLeft: 10 },
 
   searchCategoryContainer: { flexDirection: "row", marginBottom: 20 },
   searchInput: { flex: 1, backgroundColor: "#F0F0F0", borderRadius: 8, padding: 10, marginRight: 10, fontFamily: "Urbanist_400Regular", color: "#000" },
