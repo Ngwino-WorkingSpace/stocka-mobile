@@ -172,9 +172,9 @@ export default function SignupScreen({ navigation }) {
               </Text>
             </AnimatedBox>
 
-            <AnimatedBox delay={900} isButton={true} onPress={handleRegister} style={[styles.button, { opacity: loading ? 0.7 : 1 }]}>
+            <TouchableOpacity onPress={handleRegister} style={[styles.button, { opacity: loading ? 0.7 : 1 }]}>
               <Text style={styles.buttonText}>{loading ? "Signing Up..." : "Sign Up"}</Text>
-            </AnimatedBox>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

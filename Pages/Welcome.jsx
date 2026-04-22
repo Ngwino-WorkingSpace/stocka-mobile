@@ -52,12 +52,12 @@ export default function LandingScreen({ navigation }) {
           </Text>
         </AnimatedBox>
 
-        <AnimatedBox delay={900} isButton={true} onPress={() => navigation.navigate("signup")} style={styles.button}>
+        <TouchableOpacity onPress={() => navigation.navigate("signup")} style={styles.button}>
           <Text style={styles.buttonText}>Continue</Text>
           <Ionicons name="arrow-forward-circle" size={27} color="#fff" />
-        </AnimatedBox>
-      </View>
-
+        </TouchableOpacity>
+      
+</View>
       {/* Bottom right text */}
       <Text style={styles.bottomText}>NGWINO</Text>
     </View>
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     justifyContent: "left",
     backgroundColor: "#09111E",
     paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     borderRadius: 30,
     borderWidth: 1,
     borderColor: "#fff",

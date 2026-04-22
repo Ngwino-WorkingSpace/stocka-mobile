@@ -146,9 +146,9 @@ export default function SignInScreen({ navigation }) {
               </Text>
             </AnimatedBox>
 
-            <AnimatedBox delay={600} isButton={true} onPress={handleLogin} style={[styles.button, { opacity: loading ? 0.7 : 1 }]}>
+            <TouchableOpacity onPress={handleLogin} style={styles.button}>
               <Text style={styles.buttonText}>{loading ? "Signing In..." : "Sign In"}</Text>
-            </AnimatedBox>
+            </TouchableOpacity>
 
             <AnimatedBox delay={700} type="fade">
               <Text style={styles.forgot}
@@ -248,6 +248,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
     marginTop: 10,
+    cursor: "pointer",
 
     ...Platform.select({
       ios: {

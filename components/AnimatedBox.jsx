@@ -127,25 +127,26 @@ export default function AnimatedBox({
     ],
   };
 
-  const AnimatedContent = (
-    <Animated.View style={animatedStyle}>
-      {children}
-    </Animated.View>
-  );
+ const AnimatedContent = (
+  <Animated.View style={[animatedStyle, style]}>
+    {children}
+  </Animated.View>
+);
 
   // 🔥 BUTTON MODE (IMPORTANT FIX)
   if (isButton) {
-    return (
-      <Pressable
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        onPress={handlePress}
-        style={style}   // 👈 ONLY THIS holds ALL UI (border, width, bg, etc.)
-      >
-        {AnimatedContent}
-      </Pressable>
-    );
-  }
+  return (
+    <Pressable
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      onPress={handlePress}
+    >
+      <Animated.View style={[animatedStyle, style]}>
+        {children}
+      </Animated.View>
+    </Pressable>
+  );
+}
 
   // 📦 NORMAL MODE
   return <Animated.View style={style}>{AnimatedContent}</Animated.View>;

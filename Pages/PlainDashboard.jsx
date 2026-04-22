@@ -328,17 +328,17 @@ export default function PlainDashboardScreen({ navigation }) {
 
             {/* BOTTOM BUTTONS */}
             <View style={styles.bottomBtns}>
-              <AnimatedBox usePulse={true} isButton={true} style={styles.actionBtn}
+              <TouchableOpacity style={styles.actionBtn}
                 onPress={() => navigation.navigate("Stock")}
               >
                 <Text style={styles.actionText}>Record a sale</Text>
-              </AnimatedBox>
+              </TouchableOpacity>
 
-              <AnimatedBox isButton={true} style={[styles.actionBtnOutline, darkMode && styles.darkActionBtnOutline]}
+              <TouchableOpacity style={[styles.actionBtnOutline, darkMode && styles.darkActionBtnOutline]}
                 onPress={() => navigation.navigate("Stock")}
               >
                 <Text style={[styles.actionTextOutline, darkMode && styles.darkActionTextOutline]}>Add a product</Text>
-              </AnimatedBox>
+              </TouchableOpacity>
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
