@@ -181,7 +181,7 @@ export default function ReportsScreen({ navigation }) {
   return (
     <View style={[styles.container, { backgroundColor: darkMode ? "#09111E" : "#fff" }]}>
       {/* CONTENT (Rendered first so absolute elements can overlay it) */}
-      <View style={{ flex: 1, marginLeft: isPressState ? 70 : isCollapsed ? 70 : 0 }}>
+      <View style={{ flex: 1, marginLeft: isPressState ? 45 : isCollapsed ? 70 : 0 }}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -442,6 +442,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: "#fff",
     position: "relative",
+    marginRight:10,
   },
   darkScrollView: {
     backgroundColor: "#09111E",
