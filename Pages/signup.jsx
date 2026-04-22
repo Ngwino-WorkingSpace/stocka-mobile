@@ -68,7 +68,7 @@ export default function SignupScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <BackgroundScreen />
+      {/* <BackgroundScreen /> */}
 
       <KeyboardAvoidingView
         style={styles.contentWrapper}
@@ -185,6 +185,7 @@ export default function SignupScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor:"#fff",
   },
 
   contentWrapper: {
@@ -261,13 +262,14 @@ const styles = StyleSheet.create({
 
   button: {
     width: "100%",
-    backgroundColor: "#1E90FF",
+    backgroundColor: "transparent",
     paddingVertical: 18,
     paddingHorizontal: 15,
     borderRadius: 12,
     alignItems: "center",
     marginTop: 10,
     borderWidth: 1,
+    borderColor:"#fff"
   },
 
   buttonText: {

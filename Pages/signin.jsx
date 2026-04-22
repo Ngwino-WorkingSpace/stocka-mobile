@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
 
   button: {
     width: "100%",
-    backgroundColor: "#1E90FF",
+    backgroundColor: "#fff",
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: "center",
@@ -261,13 +261,13 @@ const styles = StyleSheet.create({
         elevation: 5,
       },
       web: {
-        boxShadow: "0px 4px 5px rgba(10,94,140,0.5)",
+        boxShadow: "0px 4px 5px rgba(255,255,255,0.1)",
       },
     }),
   },
 
   buttonText: {
-    color: "#fff",
+    color: "#09111E",
     fontSize: 17, // was 18
     fontFamily: "Urbanist_600SemiBold",
   },
