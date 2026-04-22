@@ -30,29 +30,19 @@ const GradientDiagonalCircle = ({
         },
       ]}
     >
-      {stripes.map((_, index) => {
-        const progress = index / stripes.length;
-        const whiteIntensity = 1 - progress * 0.8;
-        const blueIntensity = progress * 0.8;
-
-        const r = Math.floor(255 * whiteIntensity + 100 * blueIntensity);
-        const g = Math.floor(255 * whiteIntensity + 150 * blueIntensity);
-        const b = Math.floor(255 * whiteIntensity + 255 * blueIntensity);
-        const opacity = 0.7 + progress * 0.2;
-
-        return (
-          <View
-            key={index}
-            style={[
-              styles.gradientStripe,
-              {
-                top: index * 4.5,
-                backgroundColor: `rgba(${r}, ${g}, ${b}, ${opacity})`,
-              },
-            ]}
-          />
-        );
-      })}
+      {stripes.map((_, index) => (
+        <View
+          key={index}
+          style={[
+            styles.gradientStripe,
+            {
+              top: index * 6,
+              backgroundColor: "#09111E",
+              opacity: 0.99
+            },
+          ]}
+        />
+      ))}
     </View>
   );
 };
@@ -148,7 +138,7 @@ export default function BackgroundScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#09111E",
+    backgroundColor: "#fff",
     position: "absolute",
   top: 0,
   left: 0,
@@ -171,11 +161,11 @@ const styles = StyleSheet.create({
   diagonalStripe: {
     position: "absolute",
     width: "250%",
-    height: 1.5,
-    backgroundColor: "#FFFFFF",
+    height: 2,
+    backgroundColor: "#09111E",
     transform: [{ rotate: "45deg" }],
     left: "-50%",
-    opacity: 0.6,
+    opacity: 0.05,
   },
 });
 

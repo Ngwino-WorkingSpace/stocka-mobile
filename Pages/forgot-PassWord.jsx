@@ -84,7 +84,7 @@ export default function ForgotPasswordScreen({ navigation }) {
               <Image
                 source={require("../assets/images/ppl.png")}
                 style={styles.logo}
-                tintColor="#fff"
+                tintColor="#09111E"
               />
             </AnimatedBox>
 
@@ -98,7 +98,7 @@ export default function ForgotPasswordScreen({ navigation }) {
               <TextInput
                 style={styles.input}
                 placeholder="Phone number"
-                placeholderTextColor="rgba(255, 255, 255, 0.4)"
+                placeholderTextColor="rgba(9, 17, 30, 0.4)"
                 value={Phonenumber}
                 onChangeText={setPhonenumber}
                 keyboardType="phone-pad"
@@ -109,7 +109,7 @@ export default function ForgotPasswordScreen({ navigation }) {
               <TextInput
                 style={styles.input}
                 placeholder="Recovery Code"
-                placeholderTextColor="rgba(255, 255, 255, 0.4)"
+                placeholderTextColor="rgba(9, 17, 30, 0.4)"
                 value={recoveryPin}
                 onChangeText={setRecoveryPin}
                 keyboardType="numeric"
@@ -129,6 +129,7 @@ export default function ForgotPasswordScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
   },
 
   contentWrapper: {
@@ -157,34 +158,40 @@ const styles = StyleSheet.create({
   },
 
   welcometext: {
-    color: "#fff",
-    fontSize: 15, // was 16
+    color: "#09111E",
+    fontSize: 15,
     textAlign: "center",
     marginBottom: 20,
     fontFamily: "Urbanist_500Medium",
+    opacity: 0.8,
   },
 
   input: {
     width: "100%",
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    backgroundColor: "#F8FAFC",
     paddingVertical: 16,
     paddingHorizontal: 15,
     borderRadius: 12,
-    color: "#fff",
+    color: "#09111E",
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
+    borderColor: "rgba(9, 17, 30, 0.1)",
     fontSize: 16,
     fontFamily: "Urbanist_400Regular",
   },
 
   button: {
     width: "100%",
-    backgroundColor: "#1E90FF",
+    backgroundColor: "#09111E",
     paddingVertical: 18,
     borderRadius: 12,
     alignItems: "center",
     marginTop: 10,
+    shadowColor: "#09111E",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
 
   buttonText: {
