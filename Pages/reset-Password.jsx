@@ -86,6 +86,7 @@ export default function ResetPasswordScreen({ navigation, route }) {
               <Image
                 source={require("../assets/images/ppl.png")}
                 style={styles.logo}
+                tintColor="#09111E"
               />
             </AnimatedBox>
 
@@ -100,7 +101,7 @@ export default function ResetPasswordScreen({ navigation, route }) {
               <TextInput
                 style={styles.input}
                 placeholder="Create Password"
-                placeholderTextColor="#107EBA"
+                placeholderTextColor="rgba(9, 17, 30, 0.4)"
                 secureTextEntry
                 value={newPassword}
                 onChangeText={setNewPassword}
@@ -132,6 +133,7 @@ export default function ResetPasswordScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
   },
 
   contentWrapper: {
@@ -160,69 +162,45 @@ const styles = StyleSheet.create({
   },
 
   welcometext: {
-    color: "#fff",
-    fontSize: 15, // was 16
+    color: "#09111E",
+    fontSize: 15,
     textAlign: "center",
     marginBottom: 20,
-    fontFamily: "Urbanist_400Regular",
+    fontFamily: "Urbanist_500Medium",
+    opacity: 0.8,
   },
 
   input: {
     width: "100%",
-    backgroundColor: "#09111E",
+    backgroundColor: "#F8FAFC",
     paddingVertical: 16,
     paddingHorizontal: 15,
-    borderRadius: 10,
-    color: "#107EBA",
+    borderRadius: 12,
+    color: "#09111E",
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: "#0F4461",
-    fontSize: 16, // was 17
+    borderColor: "rgba(9, 17, 30, 0.1)",
+    fontSize: 16,
     fontFamily: "Urbanist_400Regular",
-
-    ...Platform.select({
-      ios: {
-        shadowColor: "#0A5E8C",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.5,
-        shadowRadius: 5,
-      },
-      android: {
-        elevation: 5,
-      },
-      web: {
-        boxShadow: "0px 4px 5px rgba(10,94,140,0.5)",
-      },
-    }),
   },
 
   button: {
     width: "100%",
-    backgroundColor: "#1E90FF",
+    backgroundColor: "#09111E",
     paddingVertical: 18,
-    borderRadius: 10,
+    borderRadius: 12,
     alignItems: "center",
     marginTop: 10,
-
-    ...Platform.select({
-      ios: {
-        shadowColor: "#0A5E8C",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.5,
-        shadowRadius: 5,
-      },
-      android: {
-        elevation: 5,
-      },
-      web: {
-        boxShadow: "0px 4px 5px rgba(10,94,140,0.5)",
-      },
-    }),
+    shadowColor: "#09111E",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
 
   buttonText: {
     color: "#fff",
-    fontSize: 17, // was 18
+    fontSize: 17,
     fontFamily: "Urbanist_600SemiBold",
   },
 

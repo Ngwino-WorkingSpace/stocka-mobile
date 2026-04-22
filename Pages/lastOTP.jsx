@@ -47,9 +47,9 @@ export default function LastOTPScreen({ navigation }) {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.content}>
-            <AnimatedBox type="zoomIn" delay={100} style={styles.congzIcon}>
-               <Image source={require("../assets/images/ppl.png")} style={styles.logo} tintColor="#fff" />
-            </AnimatedBox>
+             <AnimatedBox type="zoomIn" delay={100} style={styles.congzIcon}>
+                <Image source={require("../assets/images/ppl.png")} style={styles.logo} tintColor="#09111E" />
+             </AnimatedBox>
 
             <AnimatedBox type="slideUp" delay={200}>
               <Text style={styles.welcometext}>
@@ -70,6 +70,7 @@ export default function LastOTPScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
   },
 
   contentWrapper: {
@@ -98,11 +99,12 @@ const styles = StyleSheet.create({
   },
 
   welcometext: {
-    color: "#fff",
-    fontSize: 15, // was 16
+    color: "#09111E",
+    fontSize: 15,
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: 40,
     fontFamily: "Urbanist_500Medium",
+    opacity: 0.8,
   },
 
   input: {
@@ -136,31 +138,21 @@ const styles = StyleSheet.create({
 
   button: {
     width: "100%",
-    backgroundColor: "#1E90FF",
+    backgroundColor: "#09111E",
     paddingVertical: 18,
-    borderRadius: 10,
+    borderRadius: 12,
     alignItems: "center",
     marginTop: 5,
-
-    ...Platform.select({
-      ios: {
-        shadowColor: "#0A5E8C",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.5,
-        shadowRadius: 5,
-      },
-      android: {
-        elevation: 5,
-      },
-      web: {
-        boxShadow: "0px 4px 5px rgba(10,94,140,0.5)",
-      },
-    }),
+    shadowColor: "#09111E",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
 
   buttonText: {
     color: "#fff",
-    fontSize: 17, // was 18
+    fontSize: 17,
     fontFamily: "Urbanist_600SemiBold",
   },
 

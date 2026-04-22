@@ -85,6 +85,7 @@ export default function OTPScreen({ navigation, route }) {
               <Image
                 source={require("../assets/images/ppl.png")}
                 style={styles.logo}
+                tintColor="#09111E"
               />
             </AnimatedBox>
 
@@ -99,7 +100,7 @@ export default function OTPScreen({ navigation, route }) {
               <TextInput
                 style={styles.otpInputFull}
                 placeholder="Enter 5-digit OTP"
-                placeholderTextColor="#107EBA"
+                placeholderTextColor="rgba(9, 17, 30, 0.4)"
                 value={otp}
                 onChangeText={setOtp}
                 keyboardType="numeric"
@@ -120,6 +121,7 @@ export default function OTPScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
   },
 
   contentWrapper: {
@@ -148,51 +150,45 @@ const styles = StyleSheet.create({
   },
 
   welcometext: {
-    color: "#fff",
-    fontSize: 15, // was 16
+    color: "#09111E",
+    fontSize: 15,
     textAlign: "center",
     marginBottom: 20,
     fontFamily: "Urbanist_500Medium",
+    opacity: 0.8,
   },
 
   input: {
     width: "100%",
-    backgroundColor: "#09111E",
+    backgroundColor: "#F8FAFC",
     paddingVertical: 16,
     paddingHorizontal: 15,
-    borderRadius: 10,
-    color: "#107EBA",
+    borderRadius: 12,
+    color: "#09111E",
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: "#0F4461",
-    fontSize: 16, // was 17
+    borderColor: "rgba(9, 17, 30, 0.1)",
+    fontSize: 16,
     fontFamily: "Urbanist_400Regular",
-
-    shadowColor: "#0A5E8C",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    elevation: 5,
   },
 
   button: {
     width: "100%",
-    backgroundColor: "#1E90FF",
+    backgroundColor: "#09111E",
     paddingVertical: 18,
-    borderRadius: 10,
+    borderRadius: 12,
     alignItems: "center",
     marginTop: 5,
-
-    shadowColor: "#0A5E8C",
+    shadowColor: "#09111E",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    elevation: 5,
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
 
   buttonText: {
     color: "#fff",
-    fontSize: 17, // was 18
+    fontSize: 17,
     fontFamily: "Urbanist_600SemiBold",
   },
 
@@ -253,23 +249,18 @@ const styles = StyleSheet.create({
   },
   otpInputFull: {
     width: "100%",
-    backgroundColor: "#09111E",
+    backgroundColor: "#F8FAFC",
     paddingVertical: 16,
     paddingHorizontal: 15,
-    borderRadius: 10,
-    color: "#107EBA",
+    borderRadius: 12,
+    color: "#09111E",
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: "#0F4461",
+    borderColor: "rgba(9, 17, 30, 0.1)",
     fontSize: 22,
     fontFamily: "Urbanist_600SemiBold",
     textAlign: "center",
     letterSpacing: 10,
-    shadowColor: "#0A5E8C",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    elevation: 5,
   },
 
 });

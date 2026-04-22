@@ -116,8 +116,10 @@ export default function ForgotPasswordScreen({ navigation }) {
               />
             </AnimatedBox>
 
-            <AnimatedBox delay={500} type="slideUp" isButton={true} style={[styles.button, { width: "100%" }]} onPress={handleVerify}>
-              <Text style={styles.buttonText}>{loading ? "VERIFYING..." : "VERIFY CODE"}</Text>
+            <AnimatedBox delay={500} type="slideUp" style={{ width: "100%" }}>
+              <TouchableOpacity style={[styles.button, { width: "100%" }]} onPress={handleVerify} disabled={loading}>
+                <Text style={styles.buttonText}>{loading ? "VERIFYING..." : "VERIFY CODE"}</Text>
+              </TouchableOpacity>
             </AnimatedBox>
           </View>
         </ScrollView>

@@ -32,7 +32,7 @@ export default function LandingScreen({navigation}){
       <Image
         source={require("../assets/images/ppl.png")}
         style={styles.logo}
-        tintColor="#fff"
+        tintColor="#09111E"
       />
       <Text style={styles.title}>Stocka</Text>
       </View>
@@ -64,6 +64,7 @@ export default function LandingScreen({navigation}){
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
   },
 
   content: {
@@ -89,7 +90,7 @@ const styles = StyleSheet.create({
 
   title: {
     fontSize: 32,
-    color: "#fff",
+    color: "#09111E",
     marginLeft: 2,
     fontFamily: "Urbanist_700Bold",
   },
@@ -99,8 +100,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 50,
     borderRadius: 30,
     borderWidth: 1,
-    borderColor: "#fff",
-    backgroundColor: "transparent",
+    borderColor: "#09111E",
+    backgroundColor: "#09111E",
+    shadowColor: "#09111E",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
 
   getStartedText: {
@@ -114,7 +120,7 @@ const styles = StyleSheet.create({
     bottom: 20,
     right: 20,
     fontSize: 18,
-    color: "#fff",
+    color: "#09111E",
     fontFamily: "Urbanist_400Regular",
   },
 });

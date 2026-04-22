@@ -31,7 +31,7 @@ export default function LandingScreen({ navigation }) {
           <Image
             source={require("../assets/images/ppl.png")}
             style={styles.logo}
-            tintColor="#fff"
+            tintColor="#09111E"
           />
         </AnimatedBox>
 
@@ -87,20 +87,21 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 25,
-    color: "#FFFFFF",
+    color: "#09111E",
     marginBottom: 5,
     fontFamily: "Urbanist_400Regular",
+    opacity: 0.8,
   },
   title: {
     fontSize: 55,
-    color: "#FFFFFF",
+    color: "#09111E",
     fontWeight: "bold",
     marginBottom: 15,
     fontFamily: "Urbanist_700Bold",
   },
   paragraph: {
     fontSize: 14,
-    color: "#FFFFFF",
+    color: "rgba(9, 17, 30, 0.7)",
     lineHeight: 22,
     textAlign: "center",  // centers text horizontally
     marginBottom: 10,
@@ -112,11 +113,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "left",
     backgroundColor: "#09111E",
-    paddingVertical: 8,
-    paddingHorizontal: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 25,
     borderRadius: 30,
-    borderWidth: 1,
-    borderColor: "#fff",
+    shadowColor: "#09111E",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 8,
   },
   buttonText: {
     color: "#fff",
@@ -130,7 +134,7 @@ const styles = StyleSheet.create({
     bottom: 2,
     right: 6,
     fontSize: 21,
-    color: "#fff",
+    color: "#09111E",
     fontWeight: "600",
     fontFamily: "Urbanist_400Regular",
   },
