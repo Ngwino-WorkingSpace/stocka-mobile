@@ -266,11 +266,16 @@ export default function PlainDashboardScreen({ navigation }) {
                   },
                 ].map((c, i) => (
                   <AnimatedBox key={i} delay={300 + (i * 100)} type="zoomIn" style={styles.card}>
-                    <Text style={styles.cardLabel}>{c.label}</Text>
-                    <Text style={[styles.cardValue, c.valueColor && { color: c.valueColor }]}>{c.value}</Text>
+                    <Text style={styles.cardLabel} numberOfLines={2}>{c.label}</Text>
+                    <Text style={[styles.cardValue, c.valueColor && { color: c.valueColor }]} numberOfLines={1} adjustsFontSizeToFit>{c.value}</Text>
                     {c.btn && (
-                      <AnimatedBox isButton={true} style={styles.cardBtn}>
-                        <TouchableOpacity onPress={c.btn === 'Reload' ? fetchDashboardData : undefined}>
+                      <AnimatedBox style={styles.cardBtn}>
+                        <TouchableOpacity onPress={c.btn === 'Reload' ? fetchDashboardData : undefined}  style={{
+                           width: '100%',
+                           alignItems: 'center',       // horizontal center
+                           justifyContent: 'center',   // vertical center
+                           height: '100%'              // ensure it fills parent
+    }}>
                           <Text style={styles.cardBtnText}>{c.btn}</Text>
                         </TouchableOpacity>
                       </AnimatedBox>
@@ -765,16 +770,45 @@ const styles = StyleSheet.create({
   cardsContainer: {
     backgroundColor: MAIN,
     borderRadius: 14,
-    padding: 15,
+    padding: 10,
     flexDirection: "row",
     justifyContent: "space-between",
     marginVertical: 12,
+    alignItems: 'flex-start',
   },
-  card: { width: "30%" },
-  cardLabel: { color: "#fff", fontSize: 11, fontFamily: "Urbanist_400Regular" },
-  cardValue: { color: "#fff", fontFamily: "Urbanist_400Regular", marginVertical: 6, fontSize: 12 },
-  cardBtn: { backgroundColor: "#fff", borderRadius: 10, paddingVertical: 4 },
-  cardBtnText: { color: MAIN, textAlign: "center", fontSize: 11, fontFamily: "Urbanist_400Regular" },
+  card: { 
+    flex: 1, 
+    alignItems: 'center',
+    paddingHorizontal: 4,
+  },
+  cardLabel: { 
+    color: "#fff", 
+    fontSize: 10, 
+    fontFamily: "Urbanist_500Medium",
+    textAlign: 'center',
+    minHeight: 30,
+  },
+  cardValue: { 
+    color: "#fff", 
+    fontFamily: "Urbanist_700Bold", 
+    marginVertical: 4, 
+    fontSize: 12,
+    textAlign: 'center',
+  },
+  cardBtn: { 
+    backgroundColor: "#fff", 
+    borderRadius: 30, 
+    paddingVertical: 2,
+    width: '90%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cardBtnText: { 
+    color: MAIN, 
+    textAlign: "center", 
+    fontSize: 10, 
+    fontFamily: "Urbanist_600SemiBold" 
+  },
   transaction: {
     flexDirection: "row",
     alignItems: "center",
