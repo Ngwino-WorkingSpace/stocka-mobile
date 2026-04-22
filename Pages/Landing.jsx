@@ -9,6 +9,7 @@ import {
   Urbanist_600SemiBold,
   Urbanist_700Bold,
 } from "@expo-google-fonts/urbanist";
+import { Nosifer_400Regular, Nosifer_700Bold } from "@expo-google-fonts/nosifer";
 
 export default function LandingScreen({navigation}){
 
@@ -17,6 +18,7 @@ export default function LandingScreen({navigation}){
     Urbanist_500Medium,
     Urbanist_600SemiBold,
     Urbanist_700Bold,
+    Nosifer_400Regular,
   });
 
   if (!fontsLoaded) return null;
@@ -92,7 +94,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     color: "#09111E",
     marginLeft: 2,
-    fontFamily: "Urbanist_700Bold",
+    fontFamily: "Nosifer_400Regular",
   },
 
   getStartedBtn: {

@@ -705,6 +705,12 @@ const styles = StyleSheet.create({
     color: MAIN,
     marginLeft: 10,
   },
+  title: {
+    fontFamily: "Nosifer_400Regular",
+    fontSize: 22,
+    color: MAIN,
+    marginLeft: 10,
+  },
   tabs: {
     flexDirection: "row",
     justifyContent: "space-between",

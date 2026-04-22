@@ -90,7 +90,7 @@ export default function SignupScreen({ navigation }) {
 
             <AnimatedBox delay={200} type="slideUp">
               <Text style={styles.welcometext}>
-                Welcome to TradeWise! Let's get you signed up
+                Welcome to Stocka ! Let's get you signed up
               </Text>
             </AnimatedBox>
 

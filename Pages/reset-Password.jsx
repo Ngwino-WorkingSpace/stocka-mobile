@@ -20,6 +20,7 @@ import {
   Urbanist_500Medium,
   Urbanist_600SemiBold,
 } from "@expo-google-fonts/urbanist";
+import { Nosifer_400Regular} from "@expo-google-fonts/nosifer";
 
 import { api } from "../src/services/api";
 import Toast from 'react-native-toast-message';
@@ -34,6 +35,7 @@ export default function ResetPasswordScreen({ navigation, route }) {
     Urbanist_400Regular,
     Urbanist_500Medium,
     Urbanist_600SemiBold,
+    Nosifer_400Regular
   });
 
   if (!fontsLoaded) return null;
@@ -83,13 +85,16 @@ export default function ResetPasswordScreen({ navigation, route }) {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.content}>
-            <AnimatedBox delay={100} type="slideUp">
-              <Image
-                source={require("../assets/images/ppl.png")}
-                style={styles.logo}
-                tintColor="#09111E"
-              />
-            </AnimatedBox>
+             <AnimatedBox delay={100} type="slideUp">
+                <View style={styles.logoRow}>
+                  <Image
+                    source={require("../assets/images/ppl.png")}
+                    style={styles.logo}
+                    tintColor="#09111E"
+                  />
+                  <Text style={styles.logoText}>Stocka</Text>
+                </View>
+                </AnimatedBox>
 
             <AnimatedBox delay={200} type="slideUp">
               <Text style={styles.welcometext}>
@@ -228,7 +233,26 @@ const styles = StyleSheet.create({
     fontWeight: "500",       // medium weight
     marginTop: 10,           // spacing from input fields above
     fontFamily: "Urbanist_400Regular",
-  }
+  },
+   logoRow: {
+    flexDirection: "row",       // 🔥 horizontal layout
+    alignItems: "center",       // 🔥 vertical alignment
+    justifyContent: "center",   // center horizontally
+    gap: 10,                    // 🔥 space between logo & text (modern way)
+    marginBottom: 20,
+  },
+
+  logo: {
+    width: 60,
+    height: 60,
+    resizeMode: "contain",
+  },
+
+  logoText: {
+    fontSize: 30,
+    color: "#09111E",
+    fontFamily: "Nosifer_400Regular",
+  },
 
 });
 
