@@ -188,7 +188,7 @@ export default function ReportsScreen({ navigation }) {
         >
           <ScrollView
             style={darkMode && styles.darkScrollView}
-            contentContainerStyle={{ paddingBottom: 100 }}
+            contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 100 }}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#09111E"]} />
             }
@@ -307,7 +307,7 @@ export default function ReportsScreen({ navigation }) {
             </AnimatedBox>
             <View style={styles.stockReportContainer}>
               <AnimatedBox type="slideLeft" delay={900} style={{ flex: 1 }}>
-                <View style={[styles.stockItem, darkMode && styles.darkStockItem, { marginRight: 10 }]}>
+                <View style={[styles.stockItem, darkMode && styles.darkStockItem]}>
                     <View style={styles.stockIconContainer}>
                     <Ionicons name="bar-chart-outline" size={28} color={MAIN} />
                     </View>
@@ -595,15 +595,17 @@ const styles = StyleSheet.create({
   },
   stockReportContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 10,
+    marginBottom: 20,
+    gap: 12,
   },
   stockItem: {
-    width: "48%",
+    width: "100%",
     backgroundColor: "#F9F9F9",
-    borderRadius: 12,
-    padding: 15,
+    borderRadius: 14,
+    padding: 20,
     alignItems: "center",
+    justifyContent: "center",
+    minHeight: 120,
   },
   stockIconContainer: {
     width: 50,
@@ -613,6 +615,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 8,
+    
   },
   stockLabel: {
     fontFamily: "Urbanist_500Medium",
