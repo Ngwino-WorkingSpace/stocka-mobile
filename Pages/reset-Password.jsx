@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Touchable,
 } from "react-native";
 
 import {
@@ -112,15 +113,17 @@ export default function ResetPasswordScreen({ navigation, route }) {
               <TextInput
                 style={styles.input}
                 placeholder="Confirm Password"
-                placeholderTextColor="#107EBA"
+                placeholderTextColor="rgba(9, 17, 30, 0.4)"
                 secureTextEntry
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
               />
             </AnimatedBox>
 
-            <AnimatedBox delay={500} type="slideUp" isButton={true} style={[styles.button, { width: "100%" }]} onPress={handleReset}>
-              <Text style={styles.buttonText}>{loading ? "RESETTING..." : "RESET PASSWORD"}</Text>
+            <AnimatedBox delay={500} type="slideUp" style={{width:"100%"}} >
+              <TouchableOpacity style={[styles.button, { width: "100%" }]} onPress={handleReset} disabled={loading}>
+                 <Text style={styles.buttonText}>{loading ? "RESETTING..." : "RESET PASSWORD"}</Text>
+               </TouchableOpacity>
             </AnimatedBox>
 
           </View>
