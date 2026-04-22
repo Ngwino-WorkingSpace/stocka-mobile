@@ -22,23 +22,41 @@ export default function LandingScreen({navigation}){
   if (!fontsLoaded) return null;
     return(
         <View style={styles.container}>
-          <Background/>
-           <View style={styles.content}>
-                 <AnimatedBox delay={200} type="slideUp" style={styles.logoContainer}>
-                   <Image source={require("../assets/images/ppl.png")} style={styles.logo} tintColor="#fff" />
-                   <Text style={styles.title}>Stocka</Text>
-                 </AnimatedBox>
-            <View style={styles.GetStarted}>
-              <AnimatedBox delay={400} type="slideUp" isButton={true} style={styles.getStartedBtn} onPress={()=> navigation.navigate("Welcome")}>
-                <Text style={styles.getStartedText}>Get started</Text>
-              </AnimatedBox>
-            </View>
+  <Background />
 
-          </View>
-          <AnimatedBox delay={600} type="fade">
-            <Text style={styles.bottomText}>NGWINO</Text>
-          </AnimatedBox>
-        </View>
+  <View style={styles.content}>
+    
+    {/* LOGO */}
+    <AnimatedBox delay={200} type="slideUp" >
+      <View style={styles.logoContainer}>
+      <Image
+        source={require("../assets/images/ppl.png")}
+        style={styles.logo}
+        tintColor="#fff"
+      />
+      <Text style={styles.title}>Stocka</Text>
+      </View>
+    </AnimatedBox>
+
+    {/* BUTTON */}
+    <AnimatedBox
+      delay={400}
+      type="slideUp"
+      isButton={true}
+      style={styles.getStartedBtn}
+      onPress={() => navigation.navigate("Welcome")}
+    >
+      <Text style={styles.getStartedText}>Get Started</Text>
+    </AnimatedBox>
+
+  </View>
+
+  {/* BOTTOM TEXT */}
+  <AnimatedBox delay={600} type="fade">
+    <Text style={styles.bottomText}>NGWINO</Text>
+  </AnimatedBox>
+
+</View>
 
     );
 }
@@ -47,67 +65,56 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+
   content: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 1,
-    paddingTop:50, // keeps content above background
+    paddingTop: 50,
+    flexDirection: "column",
   },
-  title: {
-    fontSize: 28,
-    color: "#FFFFFF",
-    fontWeight: "bold",
-    fontFamily:"Urbanist_700Bold",
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#FFFFFF",
-    marginTop: 8,
-     fontFamily:"Urbanist_400Regular",
-  },
-  GetStarted: {
-  alignItems: "center",
-},
 
-getStartedBtn: {
-  paddingVertical: 12,
-  paddingHorizontal: 40,
-  borderRadius: 25,
-  borderWidth: 1,
-  borderColor: "#fff", // MAIN color
-  backgroundColor: "transparent", // 👈 key part
-},
-
-getStartedText: {
-  fontFamily: "Urbanist_600SemiBold",
-  fontSize: 16,
-  color: "#fff",
-},
-
-   bottomText: {
-    position: 'absolute',
-    bottom: 20, // distance from the bottom
-    right: 20,  // distance from the right
-    fontSize: 23,
-    color: '#fff',
-    fontWeight:"600", // your color
-     fontFamily:"Urbanist_400Regular",
-  },
-  logoContainer:{
+  logoContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginRight: 13,
+    marginRight: 20, // 🔥 add some space to the right of the logo
+    justifyContent: "center" // 🔥 space between logo & button
   },
+
   logo: {
     width: 70,
     height: 70,
   },
-  title:{
-    fontSize: 30,
+
+  title: {
+    fontSize: 32,
     color: "#fff",
     marginLeft: 2,
-    fontFamily:"Urbanist_700Bold",
-  }
-});
+    fontFamily: "Urbanist_700Bold",
+  },
 
+  getStartedBtn: {
+    paddingVertical: 14,
+    paddingHorizontal: 50,
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: "#fff",
+    backgroundColor: "transparent",
+  },
+
+  getStartedText: {
+    fontFamily: "Urbanist_600SemiBold",
+    fontSize: 16,
+    color: "#fff",
+  },
+
+  bottomText: {
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+    fontSize: 18,
+    color: "#fff",
+    fontFamily: "Urbanist_400Regular",
+  },
+});
