@@ -11,7 +11,7 @@ export default function AnimatedBox({
   onPress,
   usePulse = false,
 }) {
-  // 🎯 Animation values
+  //Animation values
   const opacity = useRef(new Animated.Value(0)).current;
   const scale = useRef(new Animated.Value(1)).current;
   const pulse = useRef(new Animated.Value(1)).current;
@@ -26,7 +26,7 @@ export default function AnimatedBox({
 
   const rotate = useRef(new Animated.Value(0)).current;
 
-  // 🚀 Entry animation
+  //Entry animation
   useEffect(() => {
     Animated.sequence([
       Animated.delay(delay),
@@ -112,7 +112,6 @@ export default function AnimatedBox({
   };
 
   const handlePress = () => {
-    triggerRotate();
     onPress?.();
   };
 

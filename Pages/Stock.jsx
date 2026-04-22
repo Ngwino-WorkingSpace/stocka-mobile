@@ -481,7 +481,7 @@ export default function StockScreen({ navigation }) {
                 </AnimatedBox>
               ))}
 
-              <AnimatedBox isButton={true} usePulse={true} onPress={() => setAddNewProductVisible(true)} style={styles.productButton}>
+              <AnimatedBox isButton={true} onPress={() => setAddNewProductVisible(true)} style={styles.productButton}>
                 <Text style={styles.addText}>+ Add Product</Text>
               </AnimatedBox>
             </View>

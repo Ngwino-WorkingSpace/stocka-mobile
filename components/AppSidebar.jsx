@@ -118,9 +118,7 @@ const AppSidebar = ({
                     style={({ pressed }) => [
                       styles.navItem,
                       isExpanded && styles.navItemExpanded,
-                      // active item always has the highlight when expanded
                       isActive && isExpanded && styles.navItemSelected,
-                      // press: white bg overrides everything
                       pressed && styles.navItemHovered,
                     ]}
                   >
@@ -129,13 +127,13 @@ const AppSidebar = ({
                         <Ionicons
                           name={item.icon}
                           size={22}
-                          color={pressed ? "#09111E" : "#fff"}
+                          color={(isActive && isExpanded) || pressed ? "#09111E" : "#fff"}
                         />
                         {isExpanded && (
                           <Text
                             style={[
                               styles.navText,
-                              pressed && { color: "#09111E" },
+                              (isActive || pressed) && { color: "#09111E" },
                             ]}
                           >
                             {item.label}
@@ -282,7 +280,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   navItemSelected: {
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    backgroundColor: "#fff",
   },
   navItemHovered: {
     backgroundColor: "#fff",
