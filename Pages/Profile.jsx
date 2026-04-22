@@ -40,7 +40,7 @@ const getRouteName = (itemName) => {
     "Sales": "Sales",
     "Reports": "Reports",
     "Profile": "Profile",
-    "debtors": "debtors",
+    "Debtors": "debtors",
   };
   return routeMap[itemName] || itemName;
 };
