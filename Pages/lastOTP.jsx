@@ -57,9 +57,9 @@ export default function LastOTPScreen({ navigation }) {
               </Text>
             </AnimatedBox>
 
-            <AnimatedBox type="slideUp" delay={300} isButton={true} style={[styles.button, { width: "100%" }]} onPress={() => navigation.navigate("Login")}>
+            <TouchableOpacity  style={styles.button} onPress={() => navigation.navigate("Login")}>
               <Text style={styles.buttonText}>CONTINUE</Text>
-            </AnimatedBox>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

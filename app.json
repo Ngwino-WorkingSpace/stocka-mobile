@@ -4,7 +4,7 @@
     "slug": "Stocka",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/tradewise.png",
+    "icon": "./assets/images/ppl.png",
     "scheme": "stocka",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -19,7 +19,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/tradewise.png",
+        "foregroundImage": "./assets/images/ppl.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,

@@ -269,16 +269,12 @@ export default function PlainDashboardScreen({ navigation }) {
                     <Text style={styles.cardLabel} numberOfLines={2}>{c.label}</Text>
                     <Text style={[styles.cardValue, c.valueColor && { color: c.valueColor }]} numberOfLines={1} adjustsFontSizeToFit>{c.value}</Text>
                     {c.btn && (
-                      <AnimatedBox style={styles.cardBtn}>
-                        <TouchableOpacity onPress={c.btn === 'Reload' ? fetchDashboardData : undefined} style={{
-                          width: '100%',
-                          alignItems: 'center',       // horizontal center
-                          justifyContent: 'center',   // vertical center
-                          height: '100%'              // ensure it fills parent
-                        }}>
-                          <Text style={styles.cardBtnText}>{c.btn}</Text>
-                        </TouchableOpacity>
-                      </AnimatedBox>
+                      <TouchableOpacity 
+                        onPress={c.btn === 'Reload' ? fetchDashboardData : undefined} 
+                        style={styles.cardBtn}
+                      >
+                        <Text style={styles.cardBtnText}>{c.btn}</Text>
+                      </TouchableOpacity>
                     )}
                   </AnimatedBox>
                 ));
