@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import AnimatedBox from "../components/AnimatedBox.jsx";
 import AppSidebar from "../components/AppSidebar";
-import {useFonts, Urbanist_400Regular, Urbanist_700Bold, Urbanist_500Medium, Urbanist_600SemiBold} from "@expo-google-fonts/urbanist";
+import { useFonts, Urbanist_400Regular, Urbanist_700Bold, Urbanist_500Medium, Urbanist_600SemiBold } from "@expo-google-fonts/urbanist";
 import { Ionicons } from "@expo/vector-icons";
 
 
@@ -270,12 +270,12 @@ export default function PlainDashboardScreen({ navigation }) {
                     <Text style={[styles.cardValue, c.valueColor && { color: c.valueColor }]} numberOfLines={1} adjustsFontSizeToFit>{c.value}</Text>
                     {c.btn && (
                       <AnimatedBox style={styles.cardBtn}>
-                        <TouchableOpacity onPress={c.btn === 'Reload' ? fetchDashboardData : undefined}  style={{
-                           width: '100%',
-                           alignItems: 'center',       // horizontal center
-                           justifyContent: 'center',   // vertical center
-                           height: '100%'              // ensure it fills parent
-    }}>
+                        <TouchableOpacity onPress={c.btn === 'Reload' ? fetchDashboardData : undefined} style={{
+                          width: '100%',
+                          alignItems: 'center',       // horizontal center
+                          justifyContent: 'center',   // vertical center
+                          height: '100%'              // ensure it fills parent
+                        }}>
                           <Text style={styles.cardBtnText}>{c.btn}</Text>
                         </TouchableOpacity>
                       </AnimatedBox>
@@ -776,38 +776,40 @@ const styles = StyleSheet.create({
     marginVertical: 12,
     alignItems: 'flex-start',
   },
-  card: { 
-    flex: 1, 
+  card: {
+    flex: 1,
     alignItems: 'center',
     paddingHorizontal: 4,
   },
-  cardLabel: { 
-    color: "#fff", 
-    fontSize: 10, 
+  cardLabel: {
+    color: "#fff",
+    fontSize: 10,
     fontFamily: "Urbanist_500Medium",
     textAlign: 'center',
     minHeight: 30,
   },
-  cardValue: { 
-    color: "#fff", 
-    fontFamily: "Urbanist_700Bold", 
-    marginVertical: 4, 
+  cardValue: {
+    color: "#fff",
+    fontFamily: "Urbanist_700Bold",
+    marginVertical: 4,
     fontSize: 12,
     textAlign: 'center',
   },
-  cardBtn: { 
-    backgroundColor: "#fff", 
-    borderRadius: 30, 
-    paddingVertical: 2,
-    width: '90%',
+  cardBtn: {
+    backgroundColor: "#fff",
+    borderRadius: 15,
+    paddingVertical: 6,
+    width: '85%',
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 10,
   },
-  cardBtnText: { 
-    color: MAIN, 
-    textAlign: "center", 
-    fontSize: 10, 
-    fontFamily: "Urbanist_600SemiBold" 
+  cardBtnText: {
+    color: MAIN,
+    textAlign: "center",
+    fontSize: 10,
+    fontFamily: "Urbanist_700Bold",
+    textTransform: 'uppercase',
   },
   transaction: {
     flexDirection: "row",

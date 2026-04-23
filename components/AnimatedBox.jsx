@@ -147,6 +147,5 @@ export default function AnimatedBox({
   );
 }
 
-  // 📦 NORMAL MODE
-  return <Animated.View style={style}>{AnimatedContent}</Animated.View>;
+  return AnimatedContent;
 }
