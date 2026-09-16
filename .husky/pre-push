@@ -1,0 +1,17 @@
+#!/bin/sh
+
+protected_branch="main"
+
+while read local_ref local_sha remote_ref remote_sha
+do
+  if [ "$remote_ref" = "refs/heads/$protected_branch" ]; then
+    echo ""
+    echo ":x: ERROR: Direct pushes to '$protected_branch' are not allowed."
+    echo ":point_right: Please push your changes to another branch and create a Pull Request."
+    echo ""
+
+    exit 1
+  fi
+done
+
+exit 0
