@@ -1,17 +1,64 @@
 #!/bin/sh
+#
+# DEAR pre-push guard.
+#
+# Blocks, for every branch and tag:
+#   - direct pushes to protected branches (a Pull Request is required)
+#   - force pushes / history rewrites (anything that is not a fast-forward)
+#   - deleting remote refs from the command line
+#   - pushing commits that contain the PolinRider-style injection or committed secrets
+#
+# This hook is a seatbelt, not a lock: it can be skipped with --no-verify or HUSKY=0, and it
+# does not exist on a machine that never ran `npm install`. The rules are enforced for the
+# whole organisation by the GitHub organisation rulesets and the security-guard CI check.
 
-protected_branch="main"
+PROTECTED_BRANCHES="main"
+ZERO=0000000000000000000000000000000000000000
+EMPTY_TREE=4b825dc642cb6eb9a060e54bf8d69288fbee4904
 
-while read local_ref local_sha remote_ref remote_sha
-do
-  if [ "$remote_ref" = "refs/heads/$protected_branch" ]; then
-    echo ""
-    echo ":x: ERROR: Direct pushes to '$protected_branch' are not allowed."
-    echo ":point_right: Please push your changes to another branch and create a Pull Request."
-    echo ""
+fail() {
+  echo "" >&2
+  echo "âŒ $1" >&2
+  [ -n "$2" ] && echo "ðŸ‘‰ $2" >&2
+  echo "" >&2
+  exit 1
+}
 
-    exit 1
+command -v node >/dev/null 2>&1 ||
+  fail "Node.js is required to run the security guard." "Install Node.js, then push again."
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  branch="${remote_ref#refs/heads/}"
+
+  # 1. Protected branches: no direct pushes at all.
+  if [ "$branch" != "$remote_ref" ]; then
+    for protected in $PROTECTED_BRANCHES; do
+      [ "$branch" = "$protected" ] &&
+        fail "Direct pushes to '$protected' are not allowed." \
+          "Push a feature branch (git push -u origin HEAD) and open a Pull Request."
+    done
   fi
+
+  # 2. Deleting remote refs.
+  [ "$local_sha" = "$ZERO" ] &&
+    fail "Deleting '$remote_ref' from the command line is not allowed." \
+      "Delete merged branches from the GitHub pull request page."
+
+  # 3. Force push / history rewrite: the remote tip must be an ancestor of what we push.
+  if [ "$remote_sha" != "$ZERO" ]; then
+    git cat-file -e "$remote_sha^{commit}" 2>/dev/null ||
+      fail "'$remote_ref' has commits you do not have locally." \
+        "Run 'git fetch', merge or rebase your unpushed work, and push again. Force pushes are not allowed."
+    git merge-base --is-ancestor "$remote_sha" "$local_sha" ||
+      fail "Force push / history rewrite detected on '$remote_ref'." \
+        "Never rewrite pushed history. Add a new commit or merge instead."
+    base="$remote_sha"
+  else
+    base=$(git merge-base "$local_sha" origin/main 2>/dev/null || echo "$EMPTY_TREE")
+  fi
+
+  # 4. Malware / secrets scan of everything this push adds.
+  node scripts/security-guard.mjs range "$base" "$local_sha" || exit 1
 done
 
 exit 0
