@@ -1,0 +1,22 @@
+#!/bin/sh
+#
+# DEAR pre-commit guard: no commits on protected branches, and no malware / secrets in the index.
+# Seatbelt only; the enforced rules live in the GitHub ruleset and the security-guard CI check.
+
+branch=$(git symbolic-ref --short -q HEAD)
+case "$branch" in
+  main)
+    echo "" >&2
+    echo "âŒ Committing directly on '$branch' is not allowed." >&2
+    echo "ðŸ‘‰ Create a branch first: git switch -c feat/<short-name>" >&2
+    echo "" >&2
+    exit 1
+    ;;
+esac
+
+command -v node >/dev/null 2>&1 || {
+  echo "âŒ Node.js is required to run the security guard." >&2
+  exit 1
+}
+
+node scripts/security-guard.mjs staged

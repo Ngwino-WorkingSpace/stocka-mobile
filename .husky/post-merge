@@ -1,0 +1,9 @@
+#!/bin/sh
+#
+# After every `git pull`, warn loudly if the code that just arrived (or a file already on this
+# machine) contains the injection. Never blocks the pull: the point is to alert before the folder
+# is opened in VS Code, which is what triggers the malware.
+
+command -v node >/dev/null 2>&1 || exit 0
+node scripts/security-guard.mjs tree || echo "âš ï¸  Do NOT open this folder in VS Code until the problem above is resolved." >&2
+exit 0
